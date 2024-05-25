@@ -6,6 +6,7 @@ import Profile from "./page/Profile";
 import Login from "./page/Login";
 import Register from "./page/Register";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import PasswordReset from "./page/PasswordReset";
 
 function App() {
   return (
@@ -26,6 +27,9 @@ function App() {
         </Routes>
         <Routes>
           <Route path="/register" element={<Register />}></Route>
+        </Routes>
+        <Routes>
+          <Route path="/password-reset" element={<PasswordReset />}></Route>
         </Routes>
       </div>
     </Router>
