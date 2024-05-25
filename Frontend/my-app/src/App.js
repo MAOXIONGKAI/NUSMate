@@ -1,12 +1,13 @@
 import "./App.css";
 import Header from "./page/Header";
 import Main from "./page/Main";
-import Search from "./page/Search";
+import Discover from "./page/Discover";
 import Profile from "./page/Profile";
 import Login from "./page/Login";
 import Register from "./page/Register";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import PasswordReset from "./page/PasswordReset";
+import ForgotPassword from "./page/ForgotPassword";
+import Activity from "./page/Activity";
 
 function App() {
   return (
@@ -17,10 +18,13 @@ function App() {
           <Route path="/" element={<Main />}></Route>
         </Routes>
         <Routes>
-          <Route path="/search" element={<Search />}></Route>
+          <Route path="/discover" element={<Discover />}></Route>
         </Routes>
         <Routes>
           <Route path="/profile" element={<Profile />}></Route>
+        </Routes>
+        <Routes>
+          <Route path="/activity" element={<Activity />}></Route>
         </Routes>
         <Routes>
           <Route path="/login" element={<Login />}></Route>
@@ -29,7 +33,7 @@ function App() {
           <Route path="/register" element={<Register />}></Route>
         </Routes>
         <Routes>
-          <Route path="/password-reset" element={<PasswordReset />}></Route>
+          <Route path="/forgot-password" element={<ForgotPassword />}></Route>
         </Routes>
       </div>
     </Router>

@@ -1,6 +1,6 @@
 import React from "react";
 import MainLogo from "../image/Main-Logo.png";
-import { Container, Button, List } from "@mui/material";
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
 export default function Header() {
@@ -24,8 +24,13 @@ export default function Header() {
             </Button>
           </li>
           <li>
-            <Button component={Link} to="/search" variant="text">
-              Search
+            <Button component={Link} to="/discover" variant="text">
+              Discover
+            </Button>
+          </li>
+          <li>
+            <Button component={Link} to="/activity" variant="text">
+              Activity
             </Button>
           </li>
         </ul>
@@ -37,7 +42,7 @@ export default function Header() {
         variant="contained"
         style={{ color: "white", backgroundColor: "black", marginRight:"100px"}}
       >
-        Login/Register
+        Login / Register
       </Button>
     </header>
   );

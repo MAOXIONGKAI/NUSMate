@@ -1,5 +1,4 @@
 import React from "react";
-import Logo from "../image/Logo.png";
 import "../index.css";
 
 import Avatar from "@mui/material/Avatar";
@@ -39,14 +38,36 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function Login() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+  const savedFormData = JSON.parse(window.localStorage.getItem("loginFormData"));
+  const [formData, setFormData] = React.useState(
+    savedFormData !== null
+      ? savedFormData
+      : {
+          email: "",
+          password: "",
+          remember: false,
+        }
+  );
+
+  const handleChange = (event) => {
+    const { name, type, value, checked } = event.target;
+    setFormData((prev) => {
+      return {
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      };
     });
   };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(formData);
+    //Submit the form data from here when backend is ready...
+  };
+
+  React.useEffect(() => {
+    window.localStorage.setItem("loginFormData", JSON.stringify(formData));
+  }, [formData]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -70,6 +91,19 @@ export default function Login() {
           }}
         />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <Typography
+            component="h1"
+            variant="h5"
+            align="center"
+            style={{
+              fontFamily: "Handlee, sans-serif",
+              fontWeight: "800",
+              marginTop: "75px",
+              marginBottom: "0px",
+            }}
+          >
+            Discover Your Best Friend in NUS!
+          </Typography>
           <Box
             sx={{
               my: 8,
@@ -79,8 +113,10 @@ export default function Login() {
               alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "black", width: "100px", height: "100px"}}>
-              <Person sx={{width: "50%", height:"50%"}} />
+            <Avatar
+              sx={{ m: 1, bgcolor: "black", width: "100px", height: "100px" }}
+            >
+              <Person sx={{ width: "50%", height: "50%" }} />
             </Avatar>
             <Typography component="h1" variant="h5">
               Sign in
@@ -97,23 +133,30 @@ export default function Login() {
                 fullWidth
                 id="email"
                 label="Email Address"
-                name="email"
                 autoComplete="email"
                 autoFocus
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
               />
               <TextField
                 margin="normal"
                 required
                 fullWidth
-                name="password"
                 label="Password"
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
+                name="remember"
+                checked={formData.remember}
+                onChange={handleChange}
               />
               <Button
                 type="submit"
@@ -125,7 +168,7 @@ export default function Login() {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="/password-reset" variant="body2">
+                  <Link href="/forgot-password" variant="body2">
                     Forgot password?
                   </Link>
                 </Grid>
