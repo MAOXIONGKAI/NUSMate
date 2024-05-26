@@ -4,10 +4,10 @@ import Main from "./page/Main";
 import Discover from "./page/Discover";
 import Profile from "./page/Profile";
 import Login from "./page/Login";
-import Register from "./page/Register";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ForgotPassword from "./page/ForgotPassword";
 import Activity from "./page/Activity";
+import SignUp from "./page/SignUp";
 
 function App() {
   return (
@@ -30,7 +30,7 @@ function App() {
           <Route path="/login" element={<Login />}></Route>
         </Routes>
         <Routes>
-          <Route path="/register" element={<Register />}></Route>
+          <Route path="/sign-up" element={<SignUp />}></Route>
         </Routes>
         <Routes>
           <Route path="/forgot-password" element={<ForgotPassword />}></Route>
