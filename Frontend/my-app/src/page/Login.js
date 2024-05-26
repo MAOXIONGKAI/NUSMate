@@ -38,7 +38,14 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function Login() {
-  const savedFormData = JSON.parse(window.localStorage.getItem("loginFormData"));
+  let savedFormData;
+  try {
+    savedFormData = JSON.parse(window.localStorage.getItem("loginFormData"));
+  } catch (error) {
+    console.log(error);
+    savedFormData = null;
+  }
+
   const [formData, setFormData] = React.useState(
     savedFormData !== null
       ? savedFormData
@@ -66,7 +73,7 @@ export default function Login() {
         email: "",
         password: "",
         remember: false,
-      })
+      });
     }
     console.log(formData);
     //Submit the form data from here when backend is ready...
@@ -118,7 +125,7 @@ export default function Login() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              marginTop: 2
+              marginTop: 2,
             }}
           >
             <Avatar
