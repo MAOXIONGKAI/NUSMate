@@ -23,7 +23,7 @@ code {
   color: black;
   box-shadow: inset 0 0px 8px rgba(0, 0, 0, 0.5);
   display: flex;
-  height: 100px;
+  height: 75px;
 }
 
 .header-logo-link {
@@ -32,7 +32,7 @@ code {
 }
 
 .header-logo {
-  max-width: 250px;
+  max-height: 75px;
   padding: 15px;
 }
 

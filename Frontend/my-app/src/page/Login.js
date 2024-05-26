@@ -61,6 +61,13 @@ export default function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!formData.remember) {
+      window.localStorage.setItem("loginFormData", {
+        email: "",
+        password: "",
+        remember: false,
+      })
+    }
     console.log(formData);
     //Submit the form data from here when backend is ready...
   };
@@ -98,7 +105,7 @@ export default function Login() {
             style={{
               fontFamily: "Handlee, sans-serif",
               fontWeight: "800",
-              marginTop: "75px",
+              marginTop: "5",
               marginBottom: "0px",
             }}
           >
@@ -111,6 +118,7 @@ export default function Login() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              marginTop: 2
             }}
           >
             <Avatar
