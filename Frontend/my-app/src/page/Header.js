@@ -1,32 +1,49 @@
 import React from "react";
 import MainLogo from "../image/Main-Logo.png";
-
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 export default function Header() {
   return (
-      <header className="header">
-        <img
-          className="header-logo"
-          src={MainLogo}
-          alt="Main Logo for NUSMate Main Page"
-        />
-        <h1 className="header-title">Discover your best friend in NUS!</h1>
-        <nav className="header-nav-bar">
-          <ul className="header-nav-items">
-            <li>
-              <a href="/">Home</a>
-            </li>
-            <li>
-              <a href="/profile">Profile</a>
-            </li>
-            <li>
-              <a href="/search">Search</a>
-            </li>
-            <li>
-              <a href="login">Login/Register</a>
-            </li>
-          </ul>
-        </nav>
-      </header>
+    <header className="header">
+      <img
+        className="header-logo"
+        src={MainLogo}
+        alt="Main Logo for NUSMate Main Page"
+      />
+      <nav className="header-nav-bar">
+        <ul className="header-nav-items">
+          <li>
+            <Button component={Link} to="/" variant="text">
+              Home
+            </Button>
+          </li>
+          <li>
+            <Button component={Link} to="/profile" variant="text">
+              Profile
+            </Button>
+          </li>
+          <li>
+            <Button component={Link} to="/discover" variant="text">
+              Discover
+            </Button>
+          </li>
+          <li>
+            <Button component={Link} to="/activity" variant="text">
+              Activity
+            </Button>
+          </li>
+        </ul>
+      </nav>
+      <Button
+        className="header-login"
+        component={Link}
+        to="/login"
+        variant="contained"
+        style={{ color: "white", backgroundColor: "black", marginRight:"100px"}}
+      >
+        Login / Register
+      </Button>
+    </header>
   );
 }
