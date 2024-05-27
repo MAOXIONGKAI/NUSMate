@@ -2,7 +2,17 @@ import React from "react";
 import dayjs from "dayjs";
 
 import Box from "@mui/material/Box";
-import { FormControl, MenuItem, FormHelperText } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  MenuItem,
+  FormHelperText,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TextField, Typography } from "@mui/material";
@@ -10,6 +20,32 @@ import { TextField, Typography } from "@mui/material";
 import { singaporeLocations } from "../../data/FormOptions";
 
 export default function PersonalForm(prop) {
+  const [interest, setInterest] = React.useState("");
+
+  function addInterest() {
+    prop.setFormData((prev) => {
+      const newInterests = [...prev.interests, interest];
+      return {
+        ...prev,
+        interests: newInterests,
+      };
+    });
+    setInterest("")
+  }
+
+  function deleteInterest(index) {
+    const interestArr = prop.formData.interests
+    console.log(index)
+    const newInterests = [...interestArr.slice(0, index), 
+      ...interestArr.slice(index + 1)]
+    prop.setFormData((prev) => {
+      return {
+        ...prev,
+        interests: newInterests
+      }
+    })
+  }
+
   return (
     <Box
       component="form"
@@ -43,6 +79,7 @@ export default function PersonalForm(prop) {
 
       <FormControl sx={{ width: "50%", gap: "30px" }}>
         <TextField
+          autoFocus
           id="gender"
           select
           required
@@ -91,6 +128,35 @@ export default function PersonalForm(prop) {
             </MenuItem>
           ))}
         </TextField>
+
+        <Box fullWidth sx={{ display: "flex", flexDirection: "column" }}>
+          <Box sx={{ display: "flex", flexDirection: "row" }}>
+            <TextField
+              fullWidth
+              label="Interest"
+              placeholder="Please enter your interests"
+              value={interest}
+              onChange={(event) => {setInterest(event.target.value)}}
+            />
+            <Button sx={{ marginLeft: "auto" }} onClick={addInterest}>
+              <AddIcon />
+            </Button>
+          </Box>
+          <List>
+            {prop.formData.interests.map((interest, index) => (
+              <ListItem key={index}>
+                <Box
+                  sx={{ display: "flex", flexDirection: "row", width: "100%"}}
+                >
+                  <ListItemText>{interest}</ListItemText>
+                  <Button sx={{ marginLeft: "auto" }} onClick={() => deleteInterest(index)}>
+                    <DeleteIcon />
+                  </Button>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
 
         <TextField
           margin="normal"

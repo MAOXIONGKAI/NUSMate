@@ -1,8 +1,18 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import { FormControl, MenuItem } from "@mui/material";
+import { FormControl, MenuItem, ListSubheader } from "@mui/material";
 import { TextField, Typography } from "@mui/material";
-import { nationalities } from "../../data/FormOptions";
+import { educationStatus, nationalities } from "../../data/FormOptions";
+import {
+  FASSMajor,
+  SOBMajor,
+  SOCMajor,
+  CDEMajor,
+  YLLSOMMajor,
+  YSTCMMajor,
+  SSHSOPHMajors,
+  FOSMajor,
+} from "../../data/FormOptions";
 
 export default function NUSInfoForm(prop) {
   return (
@@ -32,17 +42,341 @@ export default function NUSInfoForm(prop) {
       </Typography>
       <FormControl sx={{ width: "50%", gap: "30px" }}>
         <TextField
-          id="major"
+          autoFocus
+          id="first_major"
           select
-          label="Major"
-          helperText="Please select your major"
-          name="major"
-          value={prop.formData.major}
+          required
+          label="First Major"
+          helperText="Please select your first major"
+          name="first_major"
+          value={prop.formData.first_major}
           onChange={prop.handleChange}
         >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            Faculty of Arts & Social Science
+          </ListSubheader>
+          {FASSMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            School of Business
+          </ListSubheader>
+          {SOBMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            School of Computing
+          </ListSubheader>
+          {SOCMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            College of Design & Engineering
+          </ListSubheader>
+          {CDEMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            Yong Loo Lin School of Medicine
+          </ListSubheader>
+          {YLLSOMMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            Yong Siew Toh Conservatory of Music
+          </ListSubheader>
+          {YSTCMMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            Faculty of Science
+          </ListSubheader>
+          {FOSMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          id="second_major"
+          select
+          label="Second Major"
+          helperText="Please select your second major(if applicable)"
+          name="second_major"
+          value={prop.formData.second_major}
+          onChange={prop.handleChange}
+        >
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            Faculty of Arts & Social Science
+          </ListSubheader>
+          {FASSMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            School of Business
+          </ListSubheader>
+          {SOBMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            School of Computing
+          </ListSubheader>
+          {SOCMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            College of Design & Engineering
+          </ListSubheader>
+          {CDEMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            Yong Loo Lin School of Medicine
+          </ListSubheader>
+          {YLLSOMMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            Yong Siew Toh Conservatory of Music
+          </ListSubheader>
+          {YSTCMMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            Saw Swee Hock School of Public Health
+          </ListSubheader>
+          {SSHSOPHMajors.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+
+          <ListSubheader
+            sx={{
+              fontWeight: "1000",
+              color: "Black",
+              fontSize: "22px",
+              textDecoration: "underline",
+            }}
+          >
+            Faculty of Science
+          </ListSubheader>
+          {FOSMajor.map((major) => (
+            <MenuItem
+              key={major}
+              value={major}
+              sx={{ color: "dimgray", fontWeight: "400" }}
+            >
+              {major}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          id="education_status"
+          select
+          label="Education Status"
+          helperText="Please select your education status"
+          name="education_status"
+          value={prop.formData.education_status}
+          onChange={prop.handleChange}
+        >
+          {educationStatus.map((status) => (
+            <MenuItem key={status} value={status}>
+              {status}
+            </MenuItem>
+          ))}
         </TextField>
 
         <TextField
@@ -54,9 +388,10 @@ export default function NUSInfoForm(prop) {
           value={prop.formData.year_of_study}
           onChange={prop.handleChange}
         >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          <MenuItem value={1}>1</MenuItem>
+          <MenuItem value={2}>2</MenuItem>
+          <MenuItem value={3}>3</MenuItem>
+          <MenuItem value={4}>4</MenuItem>
         </TextField>
 
         <TextField
@@ -69,22 +404,10 @@ export default function NUSInfoForm(prop) {
           onChange={prop.handleChange}
         >
           {nationalities.map((nationality) => (
-            <MenuItem key={nationality} value={nationality}>{nationality}</MenuItem>
+            <MenuItem key={nationality} value={nationality}>
+              {nationality}
+            </MenuItem>
           ))}
-        </TextField>
-
-        <TextField
-          id="cca"
-          select
-          label="CCA"
-          helperText="Please select your CAA"
-          name="cca"
-          value={prop.formData.cca}
-          onChange={prop.handleChange}
-        >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
         </TextField>
       </FormControl>
     </Box>

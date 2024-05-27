@@ -32,13 +32,16 @@ export default function SignUp() {
           email: "",
           password: "",
           confirmPassword: "",
-          major: "",
+          first_major: "",
+          second_major: "",
+          education_status: "",
           year_of_study: 0,
           nationality: "",
           cca: "",
           gender: "",
           birthday: null,
           location: "",
+          interests: [],
           description: "",
         }
   );
