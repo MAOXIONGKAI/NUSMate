@@ -15,8 +15,7 @@ import Grid from "@mui/material/Grid";
 import Person from "@mui/icons-material/Person";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
-
+import RandomImage from "../data/RandomImage";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 // ^Note that this code is from template, the comment is not written by me.
@@ -97,8 +96,7 @@ export default function Login() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
+            backgroundImage: `url(${RandomImage()})`,
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
