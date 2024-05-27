@@ -38,7 +38,7 @@ export default function NUSInfoForm(prop) {
           fontWeight: "600",
         }}
       >
-        Share us more about your schoollife in NUS!
+        Share with us more about your schoollife in NUS!
       </Typography>
       <FormControl sx={{ width: "50%", gap: "30px" }}>
         <TextField

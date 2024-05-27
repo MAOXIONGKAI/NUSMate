@@ -7,9 +7,12 @@ import {
   FormControl,
   MenuItem,
   FormHelperText,
-  List,
-  ListItem,
-  ListItemText,
+  TableContainer,
+  Table,
+  TableRow,
+  TableCell,
+  Paper,
+  TableHead,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,6 +26,7 @@ export default function PersonalForm(prop) {
   const [interest, setInterest] = React.useState("");
 
   function addInterest() {
+    if (interest === "") return;
     prop.setFormData((prev) => {
       const newInterests = [...prev.interests, interest];
       return {
@@ -30,20 +34,22 @@ export default function PersonalForm(prop) {
         interests: newInterests,
       };
     });
-    setInterest("")
+    setInterest("");
   }
 
   function deleteInterest(index) {
-    const interestArr = prop.formData.interests
-    console.log(index)
-    const newInterests = [...interestArr.slice(0, index), 
-      ...interestArr.slice(index + 1)]
+    const interestArr = prop.formData.interests;
+    console.log(index);
+    const newInterests = [
+      ...interestArr.slice(0, index),
+      ...interestArr.slice(index + 1),
+    ];
     prop.setFormData((prev) => {
       return {
         ...prev,
-        interests: newInterests
-      }
-    })
+        interests: newInterests,
+      };
+    });
   }
 
   return (
@@ -77,7 +83,7 @@ export default function PersonalForm(prop) {
         so that we can finish creating your profile!
       </Typography>
 
-      <FormControl sx={{ width: "50%", gap: "30px" }}>
+      <FormControl sx={{ width: "50%", gap: "40px" }}>
         <TextField
           autoFocus
           id="gender"
@@ -130,37 +136,50 @@ export default function PersonalForm(prop) {
         </TextField>
 
         <Box fullWidth sx={{ display: "flex", flexDirection: "column" }}>
+          <FormHelperText>
+            Please input your interests/hobby/passion
+          </FormHelperText>
           <Box sx={{ display: "flex", flexDirection: "row" }}>
             <TextField
               fullWidth
               label="Interest"
               placeholder="Please enter your interests"
               value={interest}
-              onChange={(event) => {setInterest(event.target.value)}}
+              onChange={(event) => {
+                setInterest(event.target.value);
+              }}
             />
             <Button sx={{ marginLeft: "auto" }} onClick={addInterest}>
               <AddIcon />
             </Button>
           </Box>
-          <List>
-            {prop.formData.interests.map((interest, index) => (
-              <ListItem key={index}>
-                <Box
-                  sx={{ display: "flex", flexDirection: "row", width: "100%"}}
-                >
-                  <ListItemText>{interest}</ListItemText>
-                  <Button sx={{ marginLeft: "auto" }} onClick={() => deleteInterest(index)}>
-                    <DeleteIcon />
-                  </Button>
-                </Box>
-              </ListItem>
-            ))}
-          </List>
+          <TableContainer component={Paper} sx={{ mt: 2 }}>
+            <Table width="100%">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left">No.</TableCell>
+                  <TableCell align="center">Interest</TableCell>
+                  <TableCell align="right">Modify</TableCell>
+                </TableRow>
+              </TableHead>
+              {prop.formData.interests.map((interest, index) => (
+                <TableRow>
+                  <TableCell align="left">{index + 1}</TableCell>
+                  <TableCell align="center">{interest}</TableCell>
+                  <TableCell align="right">
+                    <Button>
+                      <DeleteIcon onClick={() => deleteInterest(index)} />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </Table>
+          </TableContainer>
         </Box>
 
         <TextField
+        helperText="Add a short description to help others know you better!"
           margin="normal"
-          required
           fullWidth
           multiline
           rows={5}
