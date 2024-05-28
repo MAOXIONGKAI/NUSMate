@@ -2,6 +2,7 @@ import React from "react";
 import MainLogo from "../image/Main-Logo.png";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import StyledButton from "../component/StyledButton";
 
 export default function Header() {
   return (
@@ -35,15 +36,14 @@ export default function Header() {
           </li>
         </ul>
       </nav>
-      <Button
-        className="header-login"
+
+      <StyledButton
+        text="Login / Register"
         component={Link}
         to="/login"
         variant="contained"
-        style={{ color: "white", backgroundColor: "black", marginRight:"100px"}}
-      >
-        Login / Register
-      </Button>
+        style={{ color: "white", marginRight: "100px", fontSize: "16px" }}
+      />
     </header>
   );
 }
