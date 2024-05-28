@@ -1,5 +1,6 @@
 import React from "react";
 import "../index.css";
+import Copyright from "./Copyright";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -14,30 +15,18 @@ import Grid from "@mui/material/Grid";
 import Person from "@mui/icons-material/Person";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://github.com/MAOXIONGKAI/NUSMate">
-        Team XtraOrdinary Kaleidoscope
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import RandomImage from "../data/RandomImage";
 
 // TODO remove, this demo shouldn't need to reset the theme.
+// ^Note that this code is from template, the comment is not written by me.
+// Do not touch this code, this is for future reference
 
 const defaultTheme = createTheme();
 
 export default function Login() {
+  //Read saved form data from local storage
+  //If there's valid data set the default value as the saved data
+  //If there's no data/invalid data, set the default value as null
   let savedFormData;
   try {
     savedFormData = JSON.parse(window.localStorage.getItem("loginFormData"));
@@ -46,6 +35,9 @@ export default function Login() {
     savedFormData = null;
   }
 
+  //Form data state
+  //If there's any valid saved form data, initialize as the saved data
+  //Else, initialize it as object with default value for each field
   const [formData, setFormData] = React.useState(
     savedFormData !== null
       ? savedFormData
@@ -56,8 +48,13 @@ export default function Login() {
         }
   );
 
+  //Handle change event every time the form element is changed
   const handleChange = (event) => {
+    //Get relevant information from the element that triggered the event
     const { name, type, value, checked } = event.target;
+
+    //Update the formData field based on element that triggered the event
+    //with user's input value
     setFormData((prev) => {
       return {
         ...prev,
@@ -66,8 +63,12 @@ export default function Login() {
     });
   };
 
+  //Handle submit event when user submit the form
   const handleSubmit = (event) => {
+    //Prevent the page from refresh when user click submit
     event.preventDefault();
+
+    //If remember me option not checked, erase local stored form data when submit
     if (!formData.remember) {
       window.localStorage.setItem("loginFormData", {
         email: "",
@@ -75,10 +76,12 @@ export default function Login() {
         remember: false,
       });
     }
+
     console.log(formData);
     //Submit the form data from here when backend is ready...
   };
 
+  //Update local stored form data when formData state is changed
   React.useEffect(() => {
     window.localStorage.setItem("loginFormData", JSON.stringify(formData));
   }, [formData]);
@@ -93,8 +96,7 @@ export default function Login() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
+            backgroundImage: `url(${RandomImage()})`,
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -112,7 +114,7 @@ export default function Login() {
             style={{
               fontFamily: "Handlee, sans-serif",
               fontWeight: "800",
-              marginTop: "5",
+              marginTop: "5%",
               marginBottom: "0px",
             }}
           >
@@ -188,7 +190,7 @@ export default function Login() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="/register" variant="body2">
+                  <Link href="/sign-up" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
