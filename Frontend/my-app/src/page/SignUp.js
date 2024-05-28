@@ -20,7 +20,7 @@ const steps = [
   "Complete our personality test",
 ];
 
-export default function SignUp() {
+export default function SignUp(prop) {
   // Reading saved data and load them from local storage
   const savedFormData = JSON.parse(
     window.localStorage.getItem("signUpFormData")
@@ -29,27 +29,29 @@ export default function SignUp() {
     window.localStorage.getItem("completeStatus")
   );
 
-  // States tracked within the component
+  //Sign Up form's default value
+  const defaultForm = {
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    first_major: "",
+    second_major: "",
+    education_status: "",
+    year_of_study: 0,
+    nationality: "",
+    gender: "",
+    birthday: null,
+    location: "",
+    interests: [],
+    description: "",
+  }
+
   // Initialize formData to track user inputs
   const [formData, setFormData] = React.useState(
     savedFormData !== null
       ? savedFormData
-      : {
-          username: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-          first_major: "",
-          second_major: "",
-          education_status: "",
-          year_of_study: 0,
-          nationality: "",
-          gender: "",
-          birthday: null,
-          location: "",
-          interests: [],
-          description: "",
-        }
+      : defaultForm
   );
 
   // The current active page in which user is filling up the form
@@ -88,14 +90,19 @@ export default function SignUp() {
   });
 
   // Interaction with higher layer using react effect hook
+  // Update user's profile data when sign up form is submitted successfully
+  React.useEffect(() => {
+    window.localStorage.setItem("profileData", JSON.stringify(prop.profile));
+  }, [prop.profile]);
+
   // Update the data in localStorage when any status is changed
   React.useEffect(() => {
     window.localStorage.setItem("signUpFormData", JSON.stringify(formData));
   }, [formData]);
 
   React.useEffect(() => {
-    window.localStorage.setItem("completeStatus", JSON.stringify(completed))
-  }, [completed])
+    window.localStorage.setItem("completeStatus", JSON.stringify(completed));
+  }, [completed]);
 
   // Validating whether each step is completed with valid data
   const validateStep = (step) => {
@@ -202,8 +209,9 @@ export default function SignUp() {
 
     if (!firstInvalidField) {
       console.log(formData);
+      prop.setProfile(formData);
+      setFormData(defaultForm)
       //Submit through API to database after backend is complete
-
     } else {
       setSubmittable(false);
       setInvalidField(firstInvalidField.name);
