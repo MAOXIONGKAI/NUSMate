@@ -46,6 +46,7 @@ export default function NUSInfoForm(prop) {
           id="first_major"
           select
           required
+          error={prop.error["First_Major"]}
           label="First Major"
           helperText="Please select your first major"
           name="first_major"
@@ -366,6 +367,8 @@ export default function NUSInfoForm(prop) {
         <TextField
           id="education_status"
           select
+          required
+          error={prop.error["Education_Status"]}
           label="Education Status"
           helperText="Please select your education status"
           name="education_status"
@@ -382,6 +385,8 @@ export default function NUSInfoForm(prop) {
         <TextField
           id="year-of-study"
           select
+          required
+          error={prop.error["Year_of_Study"]}
           label="Year of Study"
           helperText="Please select your year of study"
           name="year_of_study"
@@ -397,6 +402,8 @@ export default function NUSInfoForm(prop) {
         <TextField
           id="nationality"
           select
+          required
+          error={prop.error["Nationality"]}
           label="Nationality"
           helperText="Please select your nationality"
           name="nationality"
