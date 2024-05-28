@@ -1,9 +1,10 @@
 import React from "react";
+import ProfilePage from "../component/ProfilePage";
 
-export default function Profile() {
+export default function Profile(prop) {
   return (
     <>
-      <h1>This is my profile page</h1>
+      <ProfilePage />
     </>
   );
 }
