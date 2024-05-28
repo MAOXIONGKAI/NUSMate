@@ -3,7 +3,6 @@ import "../index.css";
 import Copyright from "./Copyright";
 
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -16,6 +15,7 @@ import Person from "@mui/icons-material/Person";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import RandomImage from "../data/RandomImage";
+import StyledButton from "../component/StyledButton";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 // ^Note that this code is from template, the comment is not written by me.
@@ -175,14 +175,7 @@ export default function Login() {
                 checked={formData.remember}
                 onChange={handleChange}
               />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button>
+              <StyledButton fullWidth text="Sign" type="submit" variant="contained"/>
               <Grid container>
                 <Grid item xs>
                   <Link href="/forgot-password" variant="body2">
