@@ -95,7 +95,7 @@ export default function SignUp() {
 
   React.useEffect(() => {
     window.localStorage.setItem("completeStatus", JSON.stringify(completed))
-  })
+  }, [completed])
 
   // Validating whether each step is completed with valid data
   const validateStep = (step) => {
@@ -203,6 +203,7 @@ export default function SignUp() {
     if (!firstInvalidField) {
       console.log(formData);
       //Submit through API to database after backend is complete
+
     } else {
       setSubmittable(false);
       setInvalidField(firstInvalidField.name);
