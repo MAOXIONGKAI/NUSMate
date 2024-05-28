@@ -8,7 +8,6 @@ import {
   Grid,
   Typography,
   Paper,
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -19,30 +18,27 @@ import dayjs from "dayjs";
 import StyledButton from "./StyledButton";
 
 export default function ProfilePage(prop) {
-  const formData = {
-    username: "MAO XIONGKAI",
-    email: "conan7153@gmail.com",
-    password: "123456789",
-    birthday: "2001-12-10T16:00:00.000Z",
-    confirmPassword: "123456789",
-    description:
-      "大家好，我是练习时长两年半的个人练习生毛雄凯，喜欢唱，跳，rap。Music~",
-    education_status: "Undergraduate",
-    first_major: "Computer Science",
-    gender: "Male",
-    interests: ["Sing", "Jump", "Rap", "Basketball"],
-    location: "Bukit Batok",
-    nationality: "Chinese",
-    second_major: "",
-    year_of_study: 1,
-  };
+  const {
+    username,
+    email,
+    first_major,
+    second_major,
+    education_status,
+    year_of_study,
+    nationality,
+    gender,
+    birthday,
+    location,
+    interests,
+    description
+  } = prop.profile;
 
   const year_th =
-    formData.year_of_study === 1
+    year_of_study === 1
       ? "st"
-      : formData.year_of_study === 2
+      : year_of_study === 2
       ? "nd"
-      : formData.year_of_study === 3
+      : year_of_study === 3
       ? "rd"
       : "th";
 
@@ -71,18 +67,18 @@ export default function ProfilePage(prop) {
               }}
             >
               <Typography variant="h4" sx={{ marginRight: "5px" }}>
-                {formData.username}
+                {username}
               </Typography>
               <Typography component="h5" variant="body2" color="gray">
-                {formData.gender === "Male"
+                {gender === "Male"
                   ? "(he/him)"
-                  : formData.gender === "Female"
+                  : gender === "Female"
                   ? "(she/her)"
                   : ""}
               </Typography>
             </Box>
             <Typography variant="subtitle1" color="textSecondary">
-              {formData.email}
+              {email}
             </Typography>
             <Typography
               variant="body1"
@@ -93,7 +89,7 @@ export default function ProfilePage(prop) {
                 textAlign: "center",
               }}
             >
-              {formData.description}
+              {description}
             </Typography>
             <StyledButton variant="contained" text="Edit Profile" />
           </Box>
@@ -115,16 +111,16 @@ export default function ProfilePage(prop) {
                         First Major:
                       </TableCell>
                       <TableCell style={{ fontWeight: "lighter" }}>
-                        {formData.first_major}
+                        {first_major}
                       </TableCell>
                     </TableRow>
-                    {formData.second_major && (
+                    {second_major && (
                       <TableRow>
                         <TableCell style={{ fontWeight: "bold" }}>
                           Second Major:
                         </TableCell>
                         <TableCell style={{ fontWeight: "lighter" }}>
-                          {formData.second_major}
+                          {second_major}
                         </TableCell>
                       </TableRow>
                     )}
@@ -133,7 +129,7 @@ export default function ProfilePage(prop) {
                         Education Status:
                       </TableCell>
                       <TableCell style={{ fontWeight: "lighter" }}>
-                        {formData.education_status}
+                        {education_status}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -141,7 +137,7 @@ export default function ProfilePage(prop) {
                         Year of Study:
                       </TableCell>
                       <TableCell style={{ fontWeight: "lighter" }}>
-                        {formData.year_of_study}
+                        {year_of_study}
                         {year_th} year
                       </TableCell>
                     </TableRow>
@@ -150,7 +146,7 @@ export default function ProfilePage(prop) {
                         Nationality:
                       </TableCell>
                       <TableCell style={{ fontWeight: "lighter" }}>
-                        {formData.nationality}
+                        {nationality}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -171,7 +167,7 @@ export default function ProfilePage(prop) {
                         Birthday:
                       </TableCell>
                       <TableCell style={{ fontWeight: "lighter" }}>
-                        {dayjs(formData.birthday).format("MMM D YYYY")}
+                        {dayjs(birthday).format("MMM D YYYY")}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -179,7 +175,7 @@ export default function ProfilePage(prop) {
                         Location:
                       </TableCell>
                       <TableCell style={{ fontWeight: "lighter" }}>
-                        {formData.location}
+                        {location}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -194,7 +190,7 @@ export default function ProfilePage(prop) {
                             paddingInlineStart: "20px",
                           }}
                         >
-                          {formData.interests.map((interest, index) => (
+                          {interests.map((interest, index) => (
                             <li key={index} style={{ fontWeight: "lighter" }}>
                               {interest}
                             </li>
