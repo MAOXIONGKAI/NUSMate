@@ -24,6 +24,7 @@ export default function AccountForm(prop) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            marginBottom: "20px"
           }}
         >
           <Typography
@@ -47,7 +48,7 @@ export default function AccountForm(prop) {
             onSubmit={prop.handleSubmit}
             sx={{ mt: 3 }}
           >
-            <Grid container spacing={2}>
+            <Grid container spacing={4}>
               <Grid item xs={12}>
                 <TextField
                   required
@@ -97,14 +98,6 @@ export default function AccountForm(prop) {
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
           </Box>
         </Box>
       </Container>
