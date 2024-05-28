@@ -15,7 +15,7 @@ function App() {
   const profileGet = JSON.parse(window.localStorage.getItem("signUpFormData"));
 
   //Keep track of user info using states
-  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(true);
   const [profile, setProfile] = React.useState(
     profileGet
       ? profileGet
