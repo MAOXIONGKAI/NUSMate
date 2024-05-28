@@ -104,8 +104,9 @@ export default function PersonalForm(prop) {
         <FormControl>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
+              id="birthday"
               label="Birthday"
-              renderInput={(params) => <TextField {...params} />}
+              slotProps={{ textField: { variant: 'outlined' } }}
               error={prop.error["Birthday"]}
               inputFormat="MM/dd/yyyy"
               name="birthday"
@@ -141,9 +142,11 @@ export default function PersonalForm(prop) {
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Box sx={{ display: "flex", flexDirection: "row" }}>
             <TextField
+              id="interest"
               fullWidth
               label="Interest"
               placeholder="Please enter your interests"
+              name="interest"
               value={interest}
               onChange={(event) => {
                 setInterest(event.target.value);
