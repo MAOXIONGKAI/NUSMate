@@ -1,5 +1,4 @@
 import React from "react";
-import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
@@ -24,6 +23,7 @@ export default function AccountForm(prop) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            marginBottom: "20px"
           }}
         >
           <Typography
@@ -47,11 +47,12 @@ export default function AccountForm(prop) {
             onSubmit={prop.handleSubmit}
             sx={{ mt: 3 }}
           >
-            <Grid container spacing={2}>
+            <Grid container spacing={4}>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
+                  error={prop.error["Username"]}
                   id="text"
                   label="Username"
                   autoComplete="username"
@@ -64,6 +65,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
+                  error={prop.error["Email"]}
                   id="email"
                   label="Email Address"
                   autoComplete="email"
@@ -76,6 +78,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
+                  error={prop.error["Password"]}
                   label="Password"
                   type="password"
                   id="password"
@@ -88,6 +91,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
+                  error={prop.error["Confirm_Password"]}
                   name="confirmPassword"
                   label="Confirm Password"
                   type="password"
@@ -97,14 +101,6 @@ export default function AccountForm(prop) {
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
           </Box>
         </Box>
       </Container>
