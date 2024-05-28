@@ -21,9 +21,16 @@ const steps = [
 ];
 
 export default function SignUp() {
+  // Reading saved data and load them from local storage
   const savedFormData = JSON.parse(
     window.localStorage.getItem("signUpFormData")
   );
+  const savedCompleteStatus = JSON.parse(
+    window.localStorage.getItem("completeStatus")
+  );
+
+  // States tracked within the component
+  // Initialize formData to track user inputs
   const [formData, setFormData] = React.useState(
     savedFormData !== null
       ? savedFormData
@@ -35,7 +42,7 @@ export default function SignUp() {
           first_major: "",
           second_major: "",
           education_status: "",
-          year_of_study: "",
+          year_of_study: 0,
           nationality: "",
           gender: "",
           birthday: null,
@@ -45,24 +52,27 @@ export default function SignUp() {
         }
   );
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    console.log(formData);
-  };
-
-  React.useEffect(() => {
-    window.localStorage.setItem("signUpFormData", JSON.stringify(formData));
-  }, [formData]);
-
+  // The current active page in which user is filling up the form
   const [activeStep, setActiveStep] = React.useState(0);
-  const [completed, setCompleted] = React.useState({});
+
+  // The current completion status of each step within the form
+  const [completed, setCompleted] = React.useState(
+    savedCompleteStatus ? savedCompleteStatus : {}
+  );
+
+  // Tracking whether the form can be submitted based on
+  // whether there's any missing required fields in the form
   const [submittable, setSubmittable] = React.useState(true);
+
+  // Tracking first invalid field in the form
   const [invalidField, setInvalidField] = React.useState("");
+
+  // Tracking the step in which the first invalid field is found
   const [invalidStep, setInvalidStep] = React.useState(-1);
+
+  // Tracking the error status of each field in the form
+  // such that when the first invalid field is indentified
+  // we can highlight it with red color
   const [error, setError] = React.useState({
     Username: false,
     Email: false,
@@ -77,6 +87,17 @@ export default function SignUp() {
     Location: false,
   });
 
+  // Interaction with higher layer using react effect hook
+  // Update the data in localStorage when any status is changed
+  React.useEffect(() => {
+    window.localStorage.setItem("signUpFormData", JSON.stringify(formData));
+  }, [formData]);
+
+  React.useEffect(() => {
+    window.localStorage.setItem("completeStatus", JSON.stringify(completed))
+  })
+
+  // Validating whether each step is completed with valid data
   const validateStep = (step) => {
     switch (step) {
       case 0:
@@ -105,6 +126,7 @@ export default function SignUp() {
     }
   };
 
+  // Handle action when user click next
   const handleNext = () => {
     if (validateStep(activeStep)) {
       setCompleted((prev) => ({ ...prev, [activeStep]: true }));
@@ -114,17 +136,39 @@ export default function SignUp() {
     setActiveStep((prev) => prev + 1);
   };
 
+  // Handle action when user click back
   const handleBack = () => {
     if (!validateStep(activeStep)) {
       setCompleted((prev) => ({ ...prev, [activeStep]: false }));
     }
+    setCompleted((prev) => ({ ...prev, [activeStep]: true }));
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  // Handle action when user jump page by clicking the step icon directly
   const handleStep = (step) => () => {
+    if (validateStep(activeStep)) {
+      setCompleted((prev) => ({ ...prev, [activeStep]: true }));
+    } else {
+      setCompleted((prev) => ({ ...prev, [activeStep]: false }));
+    }
     setActiveStep(step);
   };
 
+  // Tracking user's changes in form inputs
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    console.log(formData);
+  };
+
+  // Handle action when user submit the form
+  // A warning message will display if there's any missing input field
+  // submittable, first invalid value and error status of each field
+  // are tracked by this event as well
   const handleSubmit = (event) => {
     event.preventDefault();
 
