@@ -56,14 +56,6 @@ export default function SignUp() {
     console.log(formData);
   };
 
-  const handleSubmit = (event) => {
-    //Prevent web pages from refresh after form submission
-    event.preventDefault();
-
-    //Form data to be submitted after backend is finished
-    console.log(formData);
-  };
-
   React.useEffect(() => {
     window.localStorage.setItem("signUpFormData", JSON.stringify(formData));
   }, [formData]);
@@ -105,16 +97,41 @@ export default function SignUp() {
     setActiveStep(step);
   };
 
-  const handleComplete = () => {
-    const newCompleted = completed;
-    newCompleted[activeStep] = true;
-    setCompleted(newCompleted);
-    handleNext();
-  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-  const handleReset = () => {
-    setActiveStep(0);
-    setCompleted({});
+    // Array of required fields and their validation conditions
+    const requiredFields = [
+      { name: "username", condition: formData.username !== "" },
+      { name: "email", condition: formData.email !== "" },
+      { name: "password", condition: formData.password !== "" },
+      { name: "confirmPassword", condition: formData.confirmPassword !== "" },
+      { name: "first_major", condition: formData.first_major !== "" },
+      { name: "education_status", condition: formData.education_status !== "" },
+      {
+        name: "year_of_study",
+        condition: formData.year_of_study > 0 && formData.year_of_study < 5,
+      },
+      { name: "nationality", condition: formData.nationality !== "" },
+      { name: "gender", condition: formData.gender !== "" },
+      { name: "birthday", condition: formData.birthday !== null },
+      { name: "location", condition: formData.location !== "" },
+    ];
+
+    // Find the first field that does not meet its condition
+    const firstInvalidField = requiredFields.find((field) => !field.condition);
+
+    if (!firstInvalidField) {
+      // All required fields are valid
+      console.log(formData);
+    } else {
+      // Handle the first invalid field
+      console.error(
+        `The field "${firstInvalidField.name}" is required and is not filled.`
+      );
+      // Optionally, set an error message in your state to display to the user
+      // setFormErrors({ ...formErrors, [firstInvalidField.name]: 'This field is required.' });
+    }
   };
 
   return (
@@ -150,10 +167,6 @@ export default function SignUp() {
               <Typography sx={{ mt: 2, mb: 1 }}>
                 All steps completed - you&apos;re finished
               </Typography>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleReset}>Reset</Button>
-              </Box>
             </React.Fragment>
           ) : (
             <React.Fragment>
@@ -196,24 +209,14 @@ export default function SignUp() {
                   Back
                 </Button>
                 <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleNext} sx={{ mr: 1 }}>
-                  Next
-                </Button>
-                {activeStep !== steps.length &&
-                  (completed[activeStep] ? (
-                    <Typography
-                      variant="caption"
-                      sx={{ display: "inline-block" }}
-                    >
-                      Step {activeStep + 1} already completed
-                    </Typography>
-                  ) : (
-                    <Button onClick={handleComplete}>
-                      {completedSteps() === totalSteps() - 1
-                        ? "Finish"
-                        : "Complete Step"}
-                    </Button>
-                  ))}
+                {!(activeStep === 3) && (
+                  <Button onClick={handleNext} sx={{ mr: 1 }}>
+                    Next
+                  </Button>
+                )}
+                {activeStep === steps.length - 1 && (
+                  <Button onClick={handleSubmit}>Submit</Button>
+                )}
               </Box>
             </React.Fragment>
           )}
