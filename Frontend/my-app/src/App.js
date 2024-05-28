@@ -1,3 +1,4 @@
+import React from "react";
 import "./App.css";
 import Header from "./page/Header";
 import Main from "./page/Main";
@@ -10,10 +11,14 @@ import Activity from "./page/Activity";
 import SignUp from "./page/SignUp";
 
 function App() {
+  const profileGet = JSON.parse(window.localStorage.getItem("signUpFormData"));
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [profile, setProfile] = React.useState(profileGet);
+
   return (
     <Router>
       <div className="App">
-        <Header />
+        <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
         <Routes>
           <Route path="/" element={<Main />}></Route>
         </Routes>
@@ -21,7 +26,10 @@ function App() {
           <Route path="/discover" element={<Discover />}></Route>
         </Routes>
         <Routes>
-          <Route path="/profile" element={<Profile />}></Route>
+          <Route
+            path="/profile"
+            element={<Profile profile={profile} setProfile={setProfile} />}
+          ></Route>
         </Routes>
         <Routes>
           <Route path="/activity" element={<Activity />}></Route>
