@@ -89,6 +89,7 @@ export default function PersonalForm(prop) {
           id="gender"
           select
           required
+          error={prop.error["Gender"]}
           label="Gender"
           helperText="Please select your gender"
           name="gender"
@@ -105,6 +106,7 @@ export default function PersonalForm(prop) {
             <DatePicker
               label="Birthday"
               renderInput={(params) => <TextField {...params} />}
+              error={prop.error["Birthday"]}
               inputFormat="MM/dd/yyyy"
               name="birthday"
               value={dayjs(prop.formData.birthday)}
@@ -122,6 +124,7 @@ export default function PersonalForm(prop) {
           id="location"
           select
           required
+          error={prop.error["Location"]}
           label="Location"
           helperText="Please select your location"
           name="location"
@@ -135,10 +138,7 @@ export default function PersonalForm(prop) {
           ))}
         </TextField>
 
-        <Box fullWidth sx={{ display: "flex", flexDirection: "column" }}>
-          <FormHelperText>
-            Please input your interests/hobby/passion
-          </FormHelperText>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Box sx={{ display: "flex", flexDirection: "row" }}>
             <TextField
               fullWidth
@@ -153,6 +153,9 @@ export default function PersonalForm(prop) {
               <AddIcon />
             </Button>
           </Box>
+          <FormHelperText>
+            Please input your interests/hobby/passion
+          </FormHelperText>
           <TableContainer component={Paper} sx={{ mt: 2 }}>
             <Table width="100%">
               <TableHead>

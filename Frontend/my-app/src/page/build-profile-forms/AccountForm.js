@@ -52,6 +52,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
+                  error={prop.error["Username"]}
                   id="text"
                   label="Username"
                   autoComplete="username"
@@ -64,6 +65,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
+                  error={prop.error["Email"]}
                   id="email"
                   label="Email Address"
                   autoComplete="email"
@@ -76,6 +78,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
+                  error={prop.error["Password"]}
                   label="Password"
                   type="password"
                   id="password"
@@ -88,6 +91,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
+                  error={prop.error["Confirm_Password"]}
                   name="confirmPassword"
                   label="Confirm Password"
                   type="password"
