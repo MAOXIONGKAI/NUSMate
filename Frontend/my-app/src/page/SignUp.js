@@ -37,7 +37,6 @@ export default function SignUp() {
           education_status: "",
           year_of_study: 0,
           nationality: "",
-          cca: "",
           gender: "",
           birthday: null,
           location: "",
