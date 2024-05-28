@@ -35,7 +35,7 @@ export default function SignUp() {
           first_major: "",
           second_major: "",
           education_status: "",
-          year_of_study: 0,
+          year_of_study: "",
           nationality: "",
           gender: "",
           birthday: null,
