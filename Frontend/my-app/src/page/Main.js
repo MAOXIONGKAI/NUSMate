@@ -134,7 +134,9 @@ function LandingPage() {
                 <FeatureText>
                   <ListItemText
                     primary="#1 User Authentication"
-                    secondary="Create your very own user profile, including personal customization!"
+                    secondary="Create your very own user profile, 
+                    including personal customization such as your NUS profile, interests, Personality, and more. 
+                    Tailor your profile to showcase who you are and connect with others who share your passions!"
                   />
                 </FeatureText>
               </Feature>
@@ -144,7 +146,9 @@ function LandingPage() {
                 <FeatureText>
                   <ListItemText
                     primary="#2 Find Your Tribe"
-                    secondary="Connect with others through Sharing of Interests, Hobbies, Courses, and More!"
+                    secondary="On the home page
+                    you'll find a thoughtfully selected list of users who share common interests, hobbies, study years, courses, and locations. 
+                    Connect with like-minded individuals effortlessly!"
                   />
                 </FeatureText>
               </Feature>
@@ -154,7 +158,9 @@ function LandingPage() {
                 <FeatureText>
                   <ListItemText
                     primary="#3 Customized Search"
-                    secondary="Search others by hobbies, study years, location, and more to find your perfect match!"
+                    secondary="Discover and connect with like-minded individuals by using our advanced search filters! 
+                    Find people based on hobbies, years of study, locations, and more. 
+                    Easily meet those who match your specific interests and criteria!"
                   />
                 </FeatureText>
               </Feature>
@@ -164,7 +170,9 @@ function LandingPage() {
                 <FeatureText>
                   <ListItemText
                     primary="#4 Direct Communication"
-                    secondary="DM each other via an integrated chat system that supports text, emojis, and images!"
+                    secondary="Stay connected with our integrated chat system, 
+                    allowing users to send direct messages to each other. 
+                    Enjoy seamless communication with text, emojis, and even images!"
                   />
                 </FeatureText>
               </Feature>
@@ -174,7 +182,10 @@ function LandingPage() {
                 <FeatureText>
                   <ListItemText
                     primary="#5 Activity Posting"
-                    secondary="Share plans or activities, including date, time, location, and description!"
+                    secondary="Create and share your plans or activities with ease! 
+                    Post details such as date, time, location, and a description of the activity. 
+                    You can choose to make your events public for anyone to join or keep them private, 
+                    inviting only specific people!"
                   />
                 </FeatureText>
               </Feature>
@@ -184,7 +195,9 @@ function LandingPage() {
                 <FeatureText>
                   <ListItemText
                     primary="#6 Activity Tracking"
-                    secondary="Use the calendar to manage your events and commitments!"
+                    secondary="Easily view and manage your joined activities with our calendar system. 
+                    Keep track of upcoming events and commitments, ensuring you never miss out on anything important. 
+                    Stay organized and in control of your schedule!"
                   />
                 </FeatureText>
               </Feature>
@@ -194,7 +207,9 @@ function LandingPage() {
                 <FeatureText>
                   <ListItemText
                     primary="#7 Instant Matching"
-                    secondary="Create events and let the system do the work, match based on interests and availability!"
+                    secondary="When you create an event, 
+                    our system instantly searches for potential participants based on their interests and availability. 
+                    Matched users receive an invitation and can choose to accept or decline!"
                   />
                 </FeatureText>
               </Feature>
@@ -204,7 +219,9 @@ function LandingPage() {
                 <FeatureText>
                   <ListItemText
                     primary="#8 Drift Bottle"
-                    secondary="Connect with random nearby users, let location data introduce you to new people nearby!"
+                    secondary="Send and receive virtual 'drift bottles' to connect with random nearby users at NUS. 
+                    This feature uses location data to introduce you to others close by. 
+                    Start discovering new connections around you!"
                   />
                 </FeatureText>
               </Feature>
@@ -214,7 +231,9 @@ function LandingPage() {
                 <FeatureText>
                   <ListItemText
                     primary="#9 Birthday Celebration"
-                    secondary="Send birthday greetings and messages to anyone celebrating their special day!"
+                    secondary="Send heartfelt birthday greetings and messages to anyone celebrating their special day! 
+                    Connect with friends and loved ones by sending warm wishes directly through our platform. 
+                    Celebrate together, no matter the distance!"
                   />
                 </FeatureText>
               </Feature>
@@ -227,7 +246,7 @@ function LandingPage() {
             <Typography variant="h4" gutterBottom>
               About Us
             </Typography>
-            <Typography>Hi! We are Xiongkai and Xiao Ao.<br/>and we are Team XtraOrdinary Kaleidoscope.</Typography>
+            <Typography>Hi! We are Xiongkai and Xiao Ao.<br/>and we are Team XtraOrdinary Kaleidoscope!</Typography>
           </Box>
         </MainContent>
         <MainContent id="contact">
