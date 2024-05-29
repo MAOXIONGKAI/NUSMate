@@ -46,7 +46,7 @@ export default function NUSInfoForm(prop) {
           id="first_major"
           select
           required
-          error={prop.error["First_Major"]}
+          error={prop.error["first_major"]}
           label="First Major"
           helperText="Please select your first major"
           name="first_major"
@@ -368,7 +368,7 @@ export default function NUSInfoForm(prop) {
           id="education_status"
           select
           required
-          error={prop.error["Education_Status"]}
+          error={prop.error["education_status"]}
           label="Education Status"
           helperText="Please select your education status"
           name="education_status"
@@ -386,13 +386,14 @@ export default function NUSInfoForm(prop) {
           id="year-of-study"
           select
           required
-          error={prop.error["Year_of_Study"]}
+          error={prop.error["year_of_study"]}
           label="Year of Study"
           helperText="Please select your year of study"
           name="year_of_study"
           value={prop.formData.year_of_study}
           onChange={prop.handleChange}
         >
+          <MenuItem value="" disabled>Year of Study</MenuItem>
           <MenuItem value={1}>1</MenuItem>
           <MenuItem value={2}>2</MenuItem>
           <MenuItem value={3}>3</MenuItem>
@@ -403,7 +404,7 @@ export default function NUSInfoForm(prop) {
           id="nationality"
           select
           required
-          error={prop.error["Nationality"]}
+          error={prop.error["nationality"]}
           label="Nationality"
           helperText="Please select your nationality"
           name="nationality"

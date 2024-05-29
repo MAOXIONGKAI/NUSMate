@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { Typography } from "@mui/material";
-import Alert from "@mui/material/Alert";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -52,7 +51,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
-                  error={prop.error["Username"]}
+                  error={prop.error["username"]}
                   id="text"
                   label="Username"
                   autoComplete="username"
@@ -65,7 +64,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
-                  error={prop.error["Email"]}
+                  error={prop.error["email"]}
                   id="email"
                   label="Email Address"
                   autoComplete="email"
@@ -78,7 +77,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
-                  error={prop.error["Password"]}
+                  error={prop.error["password"]}
                   label="Password"
                   type="password"
                   id="password"
@@ -91,7 +90,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
-                  error={prop.error["Confirm_Password"]}
+                  error={prop.error["confirmPassword"]}
                   name="confirmPassword"
                   label="Confirm Password"
                   type="password"
@@ -104,9 +103,6 @@ export default function AccountForm(prop) {
           </Box>
         </Box>
       </Container>
-      {prop.formData.password !== prop.formData.confirmPassword && (
-        <Alert severity="error">The passwords do not match.</Alert>
-      )}
     </ThemeProvider>
   );
 }

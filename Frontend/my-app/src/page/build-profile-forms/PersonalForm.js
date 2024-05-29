@@ -19,7 +19,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TextField, Typography } from "@mui/material";
-import Alert from "@mui/material/Alert";
 
 import { singaporeLocations } from "../../data/FormOptions";
 
@@ -91,7 +90,7 @@ export default function PersonalForm(prop) {
           id="gender"
           select
           required
-          error={prop.error["Gender"]}
+          error={prop.error["gender"]}
           label="Gender"
           helperText="Please select your gender"
           name="gender"
@@ -108,8 +107,7 @@ export default function PersonalForm(prop) {
             <DatePicker
               id="birthday"
               label="Birthday"
-              slotProps={{ textField: { variant: 'outlined' } }}
-              error={prop.error["Birthday"]}
+              slotProps={{ textField: { variant: 'outlined', error: prop.error["birthday"] } }}
               inputFormat="MM/dd/yyyy"
               name="birthday"
               value={dayjs(prop.formData.birthday)}
@@ -120,14 +118,14 @@ export default function PersonalForm(prop) {
               }
             />
           </LocalizationProvider>
-          <FormHelperText>Select your birth date</FormHelperText>
+          <FormHelperText>Please select your date of birth</FormHelperText>
         </FormControl>
 
         <TextField
           id="location"
           select
           required
-          error={prop.error["Location"]}
+          error={prop.error["location"]}
           label="Location"
           helperText="Please select your location"
           name="location"
@@ -201,9 +199,6 @@ export default function PersonalForm(prop) {
       </FormControl>
     </Box>
     <Box>
-    {dayjs().isBefore(dayjs(prop.formData.birthday)) && (
-      <Alert severity="error">You cannot pick a date that is in the future as your birthday.</Alert>
-    )}
     </Box>
     </>
   );
