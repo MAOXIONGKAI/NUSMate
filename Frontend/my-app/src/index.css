@@ -88,3 +88,8 @@ code {
 .header-menuList > li {
   margin-right: 40px;
 }
+
+.tobeCompleted {
+  text-align: center;
+  justify-content: center;
+}

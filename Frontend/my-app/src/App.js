@@ -15,7 +15,7 @@ function App() {
   const profileGet = JSON.parse(window.localStorage.getItem("signUpFormData"));
 
   //Keep track of user info using states
-  const [loggedIn, setLoggedIn] = React.useState(true);
+  const [loggedIn, setLoggedIn] = React.useState(false);
   const [profile, setProfile] = React.useState(
     profileGet
       ? profileGet
@@ -42,10 +42,20 @@ function App() {
       <div className="App">
         <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         <Routes>
-          <Route path="/" element={<Main />}></Route>
+          <Route
+            path="/"
+            element={
+              <Main
+                loggedIn={loggedIn}
+                setLoggedIn={setLoggedIn}
+                profile={profile}
+                setProfile={setProfile}
+              />
+            }
+          ></Route>
         </Routes>
         <Routes>
-          <Route path="/discover" element={<Discover />}></Route>
+          <Route path="/discover" element={<Discover profile={profile} setProfile={setProfile} />}></Route>
         </Routes>
         <Routes>
           <Route
@@ -54,7 +64,7 @@ function App() {
           ></Route>
         </Routes>
         <Routes>
-          <Route path="/activity" element={<Activity />}></Route>
+          <Route path="/activity" element={<Activity profile={profile} setProfile={setProfile} />}></Route>
         </Routes>
         <Routes>
           <Route path="/login" element={<Login />}></Route>

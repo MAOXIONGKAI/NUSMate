@@ -6,7 +6,7 @@ export default function Copyright(props) {
     return (
       <Typography
         variant="body2"
-        color="text.secondary"
+        color= {props.color ? props.color : "text.secondary" }
         align="center"
         {...props}
       >
