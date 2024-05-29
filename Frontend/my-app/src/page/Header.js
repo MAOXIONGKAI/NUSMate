@@ -56,25 +56,25 @@ function LoggedInHeader(prop) {
 function LandingHeader(prop) {
   return (
     <header className="header">
-      <a href="/">
+      <a component={ Link } to="/" href="/">
         <img
           className="header-logo"
           src={MainLogo}
           alt="Main Logo for NUSMate Main Page"
         />
       </a>
-        <StyledButton
-          text="Login / Register"
-          component={Link}
-          to="/login"
-          variant="contained"
-          style={{
-            color: "white",
-            marginLeft: "auto",
-            marginRight: "100px",
-            fontSize: "16px",
-          }}
-        />
+      <StyledButton
+        text="Login / Register"
+        component={Link}
+        to="/login"
+        variant="contained"
+        style={{
+          color: "white",
+          marginLeft: "auto",
+          marginRight: "100px",
+          fontSize: "16px",
+        }}
+      />
     </header>
   );
 }
@@ -83,9 +83,15 @@ export default function Header(prop) {
   return (
     <>
       {prop.loggedIn ? (
-        <LoggedInHeader loggedIn={prop.loggedIn} setLoggedIn={prop.setLoggedIn} />
+        <LoggedInHeader
+          loggedIn={prop.loggedIn}
+          setLoggedIn={prop.setLoggedIn}
+        />
       ) : (
-        <LandingHeader loggedIn={prop.loggedIn} setLoggedIn={prop.setLoggedIn} />
+        <LandingHeader
+          loggedIn={prop.loggedIn}
+          setLoggedIn={prop.setLoggedIn}
+        />
       )}
     </>
   );

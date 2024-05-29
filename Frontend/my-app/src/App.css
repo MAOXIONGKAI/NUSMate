@@ -8,3 +8,8 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+.tobeCompleted {
+    text-align: center;
+    justify-content: center;
+}
