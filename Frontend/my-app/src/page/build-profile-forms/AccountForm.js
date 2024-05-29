@@ -5,6 +5,7 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { Typography } from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -13,7 +14,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 const defaultTheme = createTheme();
 
 export default function AccountForm(prop) {
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="sm">
@@ -23,7 +23,7 @@ export default function AccountForm(prop) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            marginBottom: "20px"
+            marginBottom: "20px",
           }}
         >
           <Typography
@@ -104,6 +104,9 @@ export default function AccountForm(prop) {
           </Box>
         </Box>
       </Container>
+      {prop.formData.password !== prop.formData.confirmPassword && (
+        <Alert severity="error">The passwords do not match.</Alert>
+      )}
     </ThemeProvider>
   );
 }

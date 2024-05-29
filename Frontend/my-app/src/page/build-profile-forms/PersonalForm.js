@@ -19,6 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TextField, Typography } from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 import { singaporeLocations } from "../../data/FormOptions";
 
@@ -53,6 +54,7 @@ export default function PersonalForm(prop) {
   }
 
   return (
+    <>
     <Box
       component="form"
       noValidate
@@ -198,5 +200,11 @@ export default function PersonalForm(prop) {
         />
       </FormControl>
     </Box>
+    <Box>
+    {dayjs().isBefore(dayjs(prop.formData.birthday)) && (
+      <Alert severity="error">You cannot pick a date that is in the future as your birthday.</Alert>
+    )}
+    </Box>
+    </>
   );
 }
