@@ -208,9 +208,13 @@ export default function SignUp(prop) {
     const firstInvalidField = requiredFields.find((field) => !field.condition);
 
     if (!firstInvalidField) {
+      //Testing code
       console.log(formData);
       prop.setProfile(formData);
+
+      //Reset form after successful form submission
       setFormData(defaultForm)
+      setCompleted({})
       //Submit through API to database after backend is complete
     } else {
       setSubmittable(false);
