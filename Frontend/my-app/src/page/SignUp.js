@@ -1,4 +1,5 @@
 import React from "react";
+import dayjs from "dayjs";
 
 import AccountForm from "./build-profile-forms/AccountForm";
 import NUSInfoForm from "./build-profile-forms/NUSInfoForm";
@@ -28,6 +29,13 @@ export default function SignUp(prop) {
   const savedCompleteStatus = JSON.parse(
     window.localStorage.getItem("completeStatus")
   );
+  const savedActiveStep = JSON.parse(window.localStorage.getItem("activeStep"));
+  const savedErrorMessage = JSON.parse(
+    window.localStorage.getItem("errorMessage")
+  );
+  const savedSubmissionStatus = JSON.parse(
+    window.localStorage.getItem("submissionStatus")
+  );
 
   //Sign Up form's default value
   const defaultForm = {
@@ -38,24 +46,25 @@ export default function SignUp(prop) {
     first_major: "",
     second_major: "",
     education_status: "",
-    year_of_study: 0,
+    year_of_study: "",
     nationality: "",
     gender: "",
     birthday: null,
     location: "",
     interests: [],
     description: "",
-  }
+  };
 
+  // React States
   // Initialize formData to track user inputs
   const [formData, setFormData] = React.useState(
-    savedFormData !== null
-      ? savedFormData
-      : defaultForm
+    savedFormData !== null ? savedFormData : defaultForm
   );
 
   // The current active page in which user is filling up the form
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = React.useState(
+    savedActiveStep ? savedActiveStep : 0
+  );
 
   // The current completion status of each step within the form
   const [completed, setCompleted] = React.useState(
@@ -64,32 +73,39 @@ export default function SignUp(prop) {
 
   // Tracking whether the form can be submitted based on
   // whether there's any missing required fields in the form
-  const [submittable, setSubmittable] = React.useState(true);
-
-  // Tracking first invalid field in the form
-  const [invalidField, setInvalidField] = React.useState("");
-
-  // Tracking the step in which the first invalid field is found
-  const [invalidStep, setInvalidStep] = React.useState(-1);
+  // display error message based on the data stored in this state
+  const [submissionStatus, setSubmissionStatus] = React.useState(
+    savedSubmissionStatus
+      ? savedSubmissionStatus
+      : {
+          submittable: true,
+          invalidField: "",
+          invalidStep: -1,
+        }
+  );
 
   // Tracking the error status of each field in the form
   // such that when the first invalid field is indentified
   // we can highlight it with red color
-  const [error, setError] = React.useState({
-    Username: false,
-    Email: false,
-    Password: false,
-    Confirm_Password: false,
-    First_Major: false,
-    Education_Status: false,
-    Year_of_Study: false,
-    Nationality: false,
-    Gender: false,
-    Birthday: false,
-    Location: false,
-  });
+  const [error, setError] = React.useState(
+    savedErrorMessage
+      ? savedErrorMessage
+      : {
+          username: false,
+          email: false,
+          password: false,
+          confirmPassword: false,
+          first_major: false,
+          education_status: false,
+          year_of_study: false,
+          nationality: false,
+          gender: false,
+          birthday: false,
+          location: false,
+        }
+  );
 
-  // Interaction with higher layer using react effect hook
+  //React Effect
   // Update user's profile data when sign up form is submitted successfully
   React.useEffect(() => {
     window.localStorage.setItem("profileData", JSON.stringify(prop.profile));
@@ -100,10 +116,57 @@ export default function SignUp(prop) {
     window.localStorage.setItem("signUpFormData", JSON.stringify(formData));
   }, [formData]);
 
+  // Update the completion status when it is changed
+  // so that the completion icon on the Stepper can be properly shown
+  // to reflect user's progress when filling up the form
   React.useEffect(() => {
     window.localStorage.setItem("completeStatus", JSON.stringify(completed));
   }, [completed]);
 
+  // Update the activeStep in localStorage when it is changed
+  // so that when the form refresh user still stays at the
+  // current active page
+  React.useEffect(() => {
+    window.localStorage.setItem("activeStep", JSON.stringify(activeStep));
+  }, [activeStep]);
+
+  // Keep track of submission status of the form
+  // so that when the form refresh user still can see what is the first missing
+  // field in the form
+  React.useEffect(() => {
+    window.localStorage.setItem(
+      "submissionStatus",
+      JSON.stringify(submissionStatus)
+    );
+  }, [submissionStatus]);
+
+  // Update the error in localStorage when it is changed
+  // so that when the form refresh user still can see the
+  // alert message and highlighted fields for invalid inputs
+  React.useEffect(() => {
+    window.localStorage.setItem("errorMessage", JSON.stringify(error));
+  }, [error]);
+
+  // Keep track of whether user's password and confirm password are the same
+  // so that the fields can be properly highlighted in red and show alert message
+  // when user put in invalid data
+  const passwordMatch = formData.password === formData.confirmPassword;
+  React.useEffect(() => {
+    setError((prev) => ({
+      ...prev,
+      password: !passwordMatch,
+      confirmPassword: !passwordMatch,
+    }));
+  }, [passwordMatch]);
+
+  // Keep track of birthday input from user and confirm that the selected
+  // birthday is before today
+  const validBirthday = dayjs().isAfter(formData.birthday);
+  React.useEffect(() => {
+    setError((prev) => ({ ...prev, birthday: !validBirthday }));
+  }, [validBirthday]);
+
+  // Form handling (Validation & Submission)
   // Validating whether each step is completed with valid data
   const validateStep = (step) => {
     switch (step) {
@@ -162,14 +225,31 @@ export default function SignUp(prop) {
     setActiveStep(step);
   };
 
-  // Tracking user's changes in form inputs
+  // Handling user's changes in form inputs
   const handleChange = (event) => {
+    // Update form data based on changed field and user's input
     const { name, value } = event.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
     console.log(formData);
+
+    // If user fill up any missing field, instantly change the
+    // error state of that field and subission status to make
+    // highlight color and alert message disappear,
+    if (
+      name !== "password" &&
+      name !== "confirmPassword" &&
+      name !== "birthday"
+    ) {
+      setError((prev) => ({ ...prev, [name]: false }));
+      setSubmissionStatus({
+        submittable: true,
+        invalidField: "",
+        invalidStep: -1,
+      });
+    }
   };
 
   // Handle action when user submit the form
@@ -180,46 +260,99 @@ export default function SignUp(prop) {
     event.preventDefault();
 
     const requiredFields = [
-      { name: "Username", step: 1, condition: formData.username !== "" },
-      { name: "Email", step: 1, condition: formData.email !== "" },
-      { name: "Password", step: 1, condition: formData.password !== "" },
       {
+        key: "username",
+        name: "Username",
+        step: 1,
+        condition: formData.username !== "",
+      },
+      {
+        key: "email",
+        name: "Email",
+        step: 1,
+        condition: formData.email !== "",
+      },
+      {
+        key: "password",
+        name: "Password",
+        step: 1,
+        condition: formData.password !== "",
+      },
+      {
+        key: "confirmPassword",
         name: "Confirm_Password",
         step: 1,
         condition: formData.confirmPassword !== "",
       },
-      { name: "First_Major", step: 2, condition: formData.first_major !== "" },
       {
+        key: "first_major",
+        name: "First_Major",
+        step: 2,
+        condition: formData.first_major !== "",
+      },
+      {
+        key: "education_status",
         name: "Education_Status",
         step: 2,
         condition: formData.education_status !== "",
       },
       {
+        key: "year_of_study",
         name: "Year_of_Study",
         step: 2,
         condition: formData.year_of_study > 0 && formData.year_of_study < 5,
       },
-      { name: "Nationality", step: 2, condition: formData.nationality !== "" },
-      { name: "Gender", step: 3, condition: formData.gender !== "" },
-      { name: "Birthday", step: 3, condition: formData.birthday !== null },
-      { name: "Location", step: 3, condition: formData.location !== "" },
+      {
+        key: "nationality",
+        name: "Nationality",
+        step: 2,
+        condition: formData.nationality !== "",
+      },
+      {
+        key: "gender",
+        name: "Gender",
+        step: 3,
+        condition: formData.gender !== "",
+      },
+      {
+        key: "birthday",
+        name: "Birthday",
+        step: 3,
+        condition: formData.birthday !== null,
+      },
+      {
+        key: "location",
+        name: "Location",
+        step: 3,
+        condition: formData.location !== "",
+      },
     ];
 
     const firstInvalidField = requiredFields.find((field) => !field.condition);
 
-    if (!firstInvalidField) {
+    if (!firstInvalidField && passwordMatch && validBirthday) {
+      //Testing code
       console.log(formData);
       prop.setProfile(formData);
-      setFormData(defaultForm)
+
+      //Reset form after successful form submission
+      setFormData(defaultForm);
+      setCompleted({});
+      setActiveStep(0);
       //Submit through API to database after backend is complete
     } else {
-      setSubmittable(false);
-      setInvalidField(firstInvalidField.name);
-      setInvalidStep(firstInvalidField.step);
+      setSubmissionStatus({
+        submittable: false,
+        invalidField: firstInvalidField.name,
+        invalidStep: firstInvalidField.step,
+      });
       requiredFields
         .slice(0, firstInvalidField.index)
-        .map((field) => setError((prev) => ({ ...prev, [field.name]: false })));
-      setError((prev) => ({ ...prev, [firstInvalidField.name]: true }));
+        .map((field) => setError((prev) => ({ ...prev, [field.key]: false })));
+      setError((prev) => ({
+        ...prev,
+        [firstInvalidField.key]: true,
+      }));
     }
   };
 
@@ -285,10 +418,18 @@ export default function SignUp(prop) {
                 handleSubmit={handleSubmit}
               />
             )}
-            {!submittable && (
+            {formData.password !== formData.confirmPassword && (
+              <Alert severity="error">The password and confirm password do not match.</Alert>
+            )}
+            {dayjs().isBefore(dayjs(formData.birthday)) && (
               <Alert severity="error">
-                The field {invalidField} in step {invalidStep} is required but
-                is not filled.
+                You cannot pick a date that is in the future as your birthday.
+              </Alert>
+            )}
+            {!submissionStatus.submittable && (
+              <Alert severity="error">
+                The field {submissionStatus.invalidField} in step{" "}
+                {submissionStatus.invalidStep} is required but is not filled.
               </Alert>
             )}
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>

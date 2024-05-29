@@ -13,7 +13,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 const defaultTheme = createTheme();
 
 export default function AccountForm(prop) {
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="sm">
@@ -23,7 +22,7 @@ export default function AccountForm(prop) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            marginBottom: "20px"
+            marginBottom: "20px",
           }}
         >
           <Typography
@@ -52,7 +51,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
-                  error={prop.error["Username"]}
+                  error={prop.error["username"]}
                   id="text"
                   label="Username"
                   autoComplete="username"
@@ -65,7 +64,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
-                  error={prop.error["Email"]}
+                  error={prop.error["email"]}
                   id="email"
                   label="Email Address"
                   autoComplete="email"
@@ -78,7 +77,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
-                  error={prop.error["Password"]}
+                  error={prop.error["password"]}
                   label="Password"
                   type="password"
                   id="password"
@@ -91,7 +90,7 @@ export default function AccountForm(prop) {
                 <TextField
                   required
                   fullWidth
-                  error={prop.error["Confirm_Password"]}
+                  error={prop.error["confirmPassword"]}
                   name="confirmPassword"
                   label="Confirm Password"
                   type="password"
