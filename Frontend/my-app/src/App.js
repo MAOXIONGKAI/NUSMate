@@ -1,4 +1,5 @@
 import React from "react";
+import axios from 'axios'
 import "./App.css";
 import Header from "./page/Header";
 import Main from "./page/Main";
@@ -23,14 +24,13 @@ function App() {
           username: "",
           email: "",
           password: "",
-          confirmPassword: "",
           first_major: "",
           second_major: "",
           education_status: "",
           year_of_study: 0,
           nationality: "",
           gender: "",
-          birthday: null,
+          birthday: "",
           location: "",
           interests: [],
           description: "",
@@ -72,7 +72,7 @@ function App() {
         <Routes>
           <Route
             path="/sign-up"
-            element={<SignUp profile={profile} setProfile={setProfile} />}
+            element={<SignUp profile={profile} setProfile={setProfile} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
           ></Route>
         </Routes>
         <Routes>

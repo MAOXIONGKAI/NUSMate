@@ -1,5 +1,6 @@
 import React from "react";
 import dayjs from "dayjs";
+import axios from "axios";
 
 import AccountForm from "./build-profile-forms/AccountForm";
 import NUSInfoForm from "./build-profile-forms/NUSInfoForm";
@@ -14,6 +15,8 @@ import Button from "@mui/material/Button";
 import { Link } from "@mui/material";
 import { Alert } from "@mui/material";
 
+import { useNavigate } from "react-router-dom";
+
 const steps = [
   "Start creating an account",
   "Build your NUS profile",
@@ -22,6 +25,9 @@ const steps = [
 ];
 
 export default function SignUp(prop) {
+  // Prompt user back to profile page after successful registration
+  const navigate = useNavigate();
+
   // Reading saved data and load them from local storage
   const savedFormData = JSON.parse(
     window.localStorage.getItem("signUpFormData")
@@ -107,9 +113,31 @@ export default function SignUp(prop) {
 
   //React Effect
   // Update user's profile data when sign up form is submitted successfully
-  React.useEffect(() => {
-    window.localStorage.setItem("profileData", JSON.stringify(prop.profile));
-  }, [prop.profile]);
+  const sendData = () => {
+    const send = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/profiles",
+          formData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Data successfully send to database: " + response.data);
+
+        //Reset form and relevant stored status after successful form submission
+        window.localStorage.removeItem("signUpFormData")
+        window.localStorage.removeItem("completeStatus")
+        window.localStorage.removeItem("activeStep")
+        return response.data
+      } catch (error) {
+        console.log("Error when sending form data to database");
+      }
+    };
+    return send();
+  };
 
   // Update the data in localStorage when any status is changed
   React.useEffect(() => {
@@ -161,7 +189,7 @@ export default function SignUp(prop) {
 
   // Keep track of birthday input from user and confirm that the selected
   // birthday is before today
-  const validBirthday = dayjs().isAfter(formData.birthday);
+  const validBirthday = dayjs().isAfter(dayjs(formData.birthday));
   React.useEffect(() => {
     setError((prev) => ({ ...prev, birthday: !validBirthday }));
   }, [validBirthday]);
@@ -256,7 +284,7 @@ export default function SignUp(prop) {
   // A warning message will display if there's any missing input field
   // submittable, first invalid value and error status of each field
   // are tracked by this event as well
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const requiredFields = [
@@ -333,13 +361,13 @@ export default function SignUp(prop) {
     if (!firstInvalidField && passwordMatch && validBirthday) {
       //Testing code
       console.log(formData);
-      prop.setProfile(formData);
 
-      //Reset form after successful form submission
-      setFormData(defaultForm);
-      setCompleted({});
-      setActiveStep(0);
       //Submit through API to database after backend is complete
+      if(sendData()) {
+        prop.setProfile(formData);
+        prop.setLoggedIn(true);
+        navigate("/profile");
+      }
     } else {
       setSubmissionStatus({
         submittable: false,
@@ -419,7 +447,9 @@ export default function SignUp(prop) {
               />
             )}
             {formData.password !== formData.confirmPassword && (
-              <Alert severity="error">The password and confirm password do not match.</Alert>
+              <Alert severity="error">
+                The password and confirm password do not match.
+              </Alert>
             )}
             {dayjs().isBefore(dayjs(formData.birthday)) && (
               <Alert severity="error">
