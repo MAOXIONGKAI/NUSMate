@@ -26,9 +26,10 @@ export default function PersonalForm(prop) {
   const [interest, setInterest] = React.useState("");
 
   function addInterest() {
-    if (interest === "") return;
+    const newInterest = interest.trim()
+    if (newInterest === "") return;
     prop.setFormData((prev) => {
-      const newInterests = [...prev.interests, interest];
+      const newInterests = [...prev.interests, newInterest];
       return {
         ...prev,
         interests: newInterests,
