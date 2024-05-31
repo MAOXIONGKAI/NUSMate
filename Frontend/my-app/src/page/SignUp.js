@@ -128,10 +128,10 @@ export default function SignUp(prop) {
         console.log("Data successfully send to database: " + response.data);
 
         //Reset form and relevant stored status after successful form submission
-        window.localStorage.removeItem("signUpFormData")
-        window.localStorage.removeItem("completeStatus")
-        window.localStorage.removeItem("activeStep")
-        return response.data
+        window.localStorage.removeItem("signUpFormData");
+        window.localStorage.removeItem("completeStatus");
+        window.localStorage.removeItem("activeStep");
+        return response.data;
       } catch (error) {
         console.log("Error when sending form data to database");
       }
@@ -186,6 +186,13 @@ export default function SignUp(prop) {
       confirmPassword: !passwordMatch,
     }));
   }, [passwordMatch]);
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const validEmailFormat =
+    emailRegex.test(formData.email) || formData.email === "";
+  React.useEffect(() => {
+    setError((prev) => ({ ...prev, email: !validEmailFormat }));
+  }, [validEmailFormat]);
 
   // Keep track of birthday input from user and confirm that the selected
   // birthday is before today
@@ -269,6 +276,7 @@ export default function SignUp(prop) {
     if (
       name !== "password" &&
       name !== "confirmPassword" &&
+      name !== "email" &&
       name !== "birthday"
     ) {
       setError((prev) => ({ ...prev, [name]: false }));
@@ -358,17 +366,26 @@ export default function SignUp(prop) {
 
     const firstInvalidField = requiredFields.find((field) => !field.condition);
 
-    if (!firstInvalidField && passwordMatch && validBirthday) {
+    if (
+      !firstInvalidField &&
+      passwordMatch &&
+      validEmailFormat &&
+      validBirthday
+    ) {
       //Testing code
       console.log(formData);
 
-      //Submit through API to database after backend is complete
-      if(sendData()) {
+      //Attempt to send data to database
+      if (sendData()) {
+        //If data successfully sent, save local profiel and logged in status
+        // Prompt user to his/her profile page
         prop.setProfile(formData);
         prop.setLoggedIn(true);
         navigate("/profile");
       }
-    } else {
+    } else if (firstInvalidField) {
+      // If invalid form due to any incomplete field, prompt the error message
+      // and highlight the first incomplete field in red
       setSubmissionStatus({
         submittable: false,
         invalidField: firstInvalidField.name,
@@ -446,10 +463,13 @@ export default function SignUp(prop) {
                 handleSubmit={handleSubmit}
               />
             )}
-            {formData.password !== formData.confirmPassword && (
+            {!passwordMatch && (
               <Alert severity="error">
                 The password and confirm password do not match.
               </Alert>
+            )}
+            {!validEmailFormat && (
+              <Alert severity="error">The email format is invalid.</Alert>
             )}
             {dayjs().isBefore(dayjs(formData.birthday)) && (
               <Alert severity="error">
