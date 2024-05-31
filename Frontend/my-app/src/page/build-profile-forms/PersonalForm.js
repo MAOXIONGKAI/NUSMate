@@ -99,7 +99,7 @@ export default function PersonalForm(prop) {
         >
           <MenuItem value="Male">Male</MenuItem>
           <MenuItem value="Female">Female</MenuItem>
-          <MenuItem value={"Prefer not to say"}>Prefer not to say</MenuItem>
+          <MenuItem value="Prefer not to say">Prefer not to say</MenuItem>
         </TextField>
 
         <FormControl>
