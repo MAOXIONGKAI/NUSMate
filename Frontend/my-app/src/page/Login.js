@@ -18,6 +18,7 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import RandomImage from "../data/RandomImage";
 import StyledButton from "../component/StyledButton";
+import Alert from "@mui/material/Alert";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 // ^Note that this code is from template, the comment is not written by me.
@@ -52,9 +53,13 @@ export default function Login(prop) {
         }
   );
 
+  const [invalidInfo, setInvalidInfo] = React.useState(false);
+  const [serverError, setServerError] = React.useState(false);
+
   // Fetch database profile data through axios
   // Takes the login info filled by user and send http request to Backend API
   const getData = async () => {
+    // Fetching profile data from database based on user's input
     try {
       const response = await axios.get(
         `http://localhost:5000/api/profiles/email/${formData.email}`,
@@ -65,19 +70,20 @@ export default function Login(prop) {
         }
       );
 
-      // If no response, there's no profile found
-      if (!response) {
-        console.log("Invalid email or password");
+      // If response is valid, check if the password match
+      if (response.data.password !== formData.password) {
+        setInvalidInfo(true)
         return;
       }
 
-      console.log(
-        "Data successfully get from database" + JSON.stringify(response.data)
-      );
       return response.data;
     } catch (error) {
       //Handling any issue related to the server
-      console.log("Error when trying to get profile data from database");
+      if (error.response && error.response.status === 404) {
+        setInvalidInfo(true);
+      } else {
+        setServerError(true);
+      }
     }
   };
 
@@ -98,8 +104,10 @@ export default function Login(prop) {
 
   //Handle submit event when user submit the form
   const handleSubmit = async (event) => {
-    //Prevent the page from refresh when user click submit
     event.preventDefault();
+
+    if (formData.email === "" || formData.password === "") return;
+    //Prevent the page from refresh when user click submit
 
     //If remember me option not checked, erase local stored form data when submit
     if (!formData.remember) {
@@ -135,7 +143,7 @@ export default function Login(prop) {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: `url(${RandomImage()})`,
+            //backgroundImage: `url(${RandomImage()})`, //Line disable to prevent too frequent request to unsplash API
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -214,6 +222,16 @@ export default function Login(prop) {
                 checked={formData.remember}
                 onChange={handleChange}
               />
+              {invalidInfo && (
+                <Alert severity="error" sx={{ marginTop: "20px" }}>
+                  Invalid Email or Password
+                </Alert>
+              )}
+              {serverError && (
+                <Alert severity="error" sx={{ marginTop: "20px" }}>
+                  Unknown Server Error, Please Try Again
+                </Alert>
+              )}
               <StyledButton
                 fullWidth
                 text="Sign"
