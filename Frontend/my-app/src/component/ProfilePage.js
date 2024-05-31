@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -40,13 +41,14 @@ import dayjs from "dayjs";
 import StyledButton from "./StyledButton";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CustomizedSnackbar from "./CustomizedSnackbar";
+import Alert from "@mui/material/Alert";
 
 export default function ProfilePage(prop) {
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [editedProfile, setEditedProfile] = React.useState(prop.profile);
   const {
     username,
-    email,
     first_major,
     second_major,
     education_status,
@@ -69,11 +71,16 @@ export default function ProfilePage(prop) {
       : "th";
 
   const [interest, setInterest] = React.useState("");
+  const [invalidUsername, setInvalidUsername] = React.useState(false);
+  const [invalidBirthday, setInvalidBirthday] = React.useState(false);
+  const [openSuccess, setOpenSuccess] = React.useState(false);
+  const [openFail, setOpenFail] = React.useState(false);
 
   function addInterest() {
-    if (interest === "") return;
+    const newInterest = interest.trim();
+    if (newInterest === "") return;
     setEditedProfile((prev) => {
-      const newInterests = [...prev.interests, interest];
+      const newInterests = [...prev.interests, newInterest];
       return {
         ...prev,
         interests: newInterests,
@@ -101,8 +108,73 @@ export default function ProfilePage(prop) {
     setEditedProfile((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSave = (event) => {
+    // Tidying up of info + input validation
+    if (editedProfile.username.trim() === "") {
+      setInvalidUsername(true);
+      return;
+    }
+
+    if (dayjs().isBefore(dayjs(editedProfile.birthday))) {
+      setInvalidBirthday(true);
+      return;
+    }
+
+    // If everything is valid, clear any existing warning message
+    setInvalidUsername(false);
+    setInvalidBirthday(false);
+
+    // Tidying up the edited profile data
+    // Trimming the string to get rid of excessive spaces at the
+    // and end of user inputs etc.
+    editedProfile.username = editedProfile.username.trim();
+    editedProfile.description = editedProfile.description.trim();
+
+    prop.setProfile(editedProfile);
+    const updateData = async () => {
+      try {
+        const response = await axios.put(
+          `http://localhost:5000/api/profiles/email/${editedProfile.email}`,
+          editedProfile,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Profile successfully updated");
+        setOpenSuccess(true);
+      } catch (error) {
+        setOpenFail(true);
+        console.log("Profile update failed due to unknown server error");
+      }
+    };
+    updateData();
+  };
+
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
+      {invalidUsername && (
+        <Alert sx={{ marginBottom: "20px" }} severity="error">
+          Invalid Username: Username cannot be empty string
+        </Alert>
+      )}
+      {invalidBirthday && (
+        <Alert sx={{ marginBottom: "20px" }} severity="error">
+          Invalid Birthday: Birthday cannot be in the future
+        </Alert>
+      )}
+      <CustomizedSnackbar
+        text="Profile Updated Successfully"
+        open={openSuccess}
+        setOpen={setOpenSuccess}
+      />
+      <CustomizedSnackbar
+        severity="error"
+        text="Profiled Updated Failed due to Unknown Server Error"
+        open={openFail}
+        setOpen={setOpenFail}
+      />
       <Card
         sx={{
           background: "#EFF9FF",
@@ -131,6 +203,7 @@ export default function ProfilePage(prop) {
             >
               {isEditMode ? (
                 <TextField
+                  sx={{ margin: "10px" }}
                   id="username"
                   label="Username"
                   name="username"
@@ -147,6 +220,7 @@ export default function ProfilePage(prop) {
               {isEditMode ? (
                 <TextField
                   select
+                  sx={{ margin: "10px" }}
                   id="gender"
                   label="Gender"
                   name="gender"
@@ -169,16 +243,15 @@ export default function ProfilePage(prop) {
                 </Typography>
               )}
             </Box>
-            <Typography variant="subtitle1" color="textSecondary">
-              {email}
-            </Typography>
             {isEditMode ? (
               <TextField
+                multiline
+                maxRows={5}
                 id="description"
                 label="description"
                 name="description"
                 value={editedProfile.description}
-                sx={{ width: "75%" }}
+                sx={{ width: "75%", margin: "10px" }}
                 onChange={handleChange}
               >
                 Description
@@ -204,6 +277,7 @@ export default function ProfilePage(prop) {
                     text="Save"
                     onClick={() => {
                       setIsEditMode(false);
+                      handleSave();
                     }}
                   />
                 </Grid>
@@ -401,7 +475,7 @@ export default function ProfilePage(prop) {
                         )}
                       </TableCell>
                     </TableRow>
-                    {second_major && (
+                    {(second_major || isEditMode) && (
                       <TableRow>
                         <TableCell style={{ fontWeight: "bold" }}>
                           Second Major:
@@ -416,6 +490,7 @@ export default function ProfilePage(prop) {
                               value={editedProfile.second_major}
                               onChange={handleChange}
                             >
+                              <MenuItem value={""}>Not Applicable</MenuItem>
                               <ListSubheader
                                 sx={{
                                   fontWeight: "1000",
@@ -732,16 +807,19 @@ export default function ProfilePage(prop) {
                           <Box
                             sx={{ display: "flex", flexDirection: "column" }}
                           >
-                            <Typography variant="body1" sx={{fontSize:"18px", fontWeight: "600"}}>
+                            <Typography
+                              variant="body1"
+                              sx={{ fontSize: "18px", fontWeight: "600" }}
+                            >
                               Interest:
                             </Typography>
                             <Box sx={{ display: "flex", flexDirection: "row" }}>
                               <TextField
                                 id="interest"
                                 fullWidth
-                                label="Interest"
                                 placeholder="Please enter your interests"
                                 name="interest"
+                                value={interest}
                                 onChange={(event) =>
                                   setInterest(event.target.value)
                                 }
