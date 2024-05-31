@@ -18,7 +18,7 @@ export default function NotificationMenu() {
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center"}}>
-        <Tooltip title="Account settings">
+        <Tooltip title="Notification">
           <IconButton
             onClick={handleClick}
             size="small"
