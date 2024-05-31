@@ -261,6 +261,7 @@ function HomePage(prop) {
 }
 
 export default function Main(prop) {
+  console.log(prop.loggedIn)
   return (
     <>{prop.loggedIn ? <HomePage profile={prop.profile} /> : <LandingPage />}</>
   );

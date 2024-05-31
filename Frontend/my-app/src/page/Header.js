@@ -42,7 +42,6 @@ function LoggedInHeader(prop) {
             </li>
             <li>
               <AccountMenu
-                loggedIn={prop.loggedIn}
                 setLoggedIn={prop.setLoggedIn}
               />
             </li>
@@ -53,7 +52,7 @@ function LoggedInHeader(prop) {
   );
 }
 
-function LandingHeader(prop) {
+function LandingHeader() {
   return (
     <header className="header">
       <a component={ Link } to="/" href="/">
@@ -84,12 +83,10 @@ export default function Header(prop) {
     <>
       {prop.loggedIn ? (
         <LoggedInHeader
-          loggedIn={prop.loggedIn}
           setLoggedIn={prop.setLoggedIn}
         />
       ) : (
         <LandingHeader
-          loggedIn={prop.loggedIn}
           setLoggedIn={prop.setLoggedIn}
         />
       )}
