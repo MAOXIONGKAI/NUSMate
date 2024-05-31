@@ -1,4 +1,6 @@
 import React from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "../index.css";
 import Copyright from "./Copyright";
 
@@ -16,6 +18,7 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import RandomImage from "../data/RandomImage";
 import StyledButton from "../component/StyledButton";
+import Alert from "@mui/material/Alert";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 // ^Note that this code is from template, the comment is not written by me.
@@ -23,7 +26,9 @@ import StyledButton from "../component/StyledButton";
 
 const defaultTheme = createTheme();
 
-export default function Login() {
+export default function Login(prop) {
+  const navigate = useNavigate();
+
   //Read saved form data from local storage
   //If there's valid data set the default value as the saved data
   //If there's no data/invalid data, set the default value as null
@@ -36,7 +41,7 @@ export default function Login() {
   }
 
   //Form data state
-  //If there's any valid saved form data, initialize as the saved data
+  //If there's any valid saved form data from localStorage, initialize as the saved data
   //Else, initialize it as object with default value for each field
   const [formData, setFormData] = React.useState(
     savedFormData !== null
@@ -47,6 +52,40 @@ export default function Login() {
           remember: false,
         }
   );
+
+  const [invalidInfo, setInvalidInfo] = React.useState(false);
+  const [serverError, setServerError] = React.useState(false);
+
+  // Fetch database profile data through axios
+  // Takes the login info filled by user and send http request to Backend API
+  const getData = async () => {
+    // Fetching profile data from database based on user's input
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/profiles/email/${formData.email}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // If response is valid, check if the password match
+      if (response.data.password !== formData.password) {
+        setInvalidInfo(true)
+        return;
+      }
+
+      return response.data;
+    } catch (error) {
+      //Handling any issue related to the server
+      if (error.response && error.response.status === 404) {
+        setInvalidInfo(true);
+      } else {
+        setServerError(true);
+      }
+    }
+  };
 
   //Handle change event every time the form element is changed
   const handleChange = (event) => {
@@ -64,9 +103,11 @@ export default function Login() {
   };
 
   //Handle submit event when user submit the form
-  const handleSubmit = (event) => {
-    //Prevent the page from refresh when user click submit
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (formData.email === "" || formData.password === "") return;
+    //Prevent the page from refresh when user click submit
 
     //If remember me option not checked, erase local stored form data when submit
     if (!formData.remember) {
@@ -77,7 +118,13 @@ export default function Login() {
       });
     }
 
-    console.log(formData);
+    const profileData = await getData();
+    console.log("Data received:" + JSON.stringify(profileData));
+    if (profileData) {
+      prop.setProfile(profileData);
+      prop.setLoggedIn(true);
+      navigate("/profile");
+    }
     //Submit the form data from here when backend is ready...
   };
 
@@ -96,7 +143,7 @@ export default function Login() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: `url(${RandomImage()})`,
+            //backgroundImage: `url(${RandomImage()})`, //Line disable to prevent too frequent request to unsplash API
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -175,7 +222,22 @@ export default function Login() {
                 checked={formData.remember}
                 onChange={handleChange}
               />
-              <StyledButton fullWidth text="Sign" type="submit" variant="contained"/>
+              {invalidInfo && (
+                <Alert severity="error" sx={{ marginTop: "20px" }}>
+                  Invalid Email or Password
+                </Alert>
+              )}
+              {serverError && (
+                <Alert severity="error" sx={{ marginTop: "20px" }}>
+                  Unknown Server Error, Please Try Again
+                </Alert>
+              )}
+              <StyledButton
+                fullWidth
+                text="Sign"
+                type="submit"
+                variant="contained"
+              />
               <Grid container>
                 <Grid item xs>
                   <Link href="/forgot-password" variant="body2">

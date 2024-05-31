@@ -111,6 +111,9 @@ export default function SignUp(prop) {
         }
   );
 
+  const [emailTaken, setEmailTaken] = React.useState(false);
+  const [usernameTaken, setUsernameTaken] = React.useState(false);
+
   //React Effect
   // Update user's profile data when sign up form is submitted successfully
   const sendData = () => {
@@ -128,10 +131,10 @@ export default function SignUp(prop) {
         console.log("Data successfully send to database: " + response.data);
 
         //Reset form and relevant stored status after successful form submission
-        window.localStorage.removeItem("signUpFormData")
-        window.localStorage.removeItem("completeStatus")
-        window.localStorage.removeItem("activeStep")
-        return response.data
+        window.localStorage.removeItem("signUpFormData");
+        window.localStorage.removeItem("completeStatus");
+        window.localStorage.removeItem("activeStep");
+        return response.data;
       } catch (error) {
         console.log("Error when sending form data to database");
       }
@@ -186,6 +189,13 @@ export default function SignUp(prop) {
       confirmPassword: !passwordMatch,
     }));
   }, [passwordMatch]);
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const validEmailFormat =
+    emailRegex.test(formData.email) || formData.email === "";
+  React.useEffect(() => {
+    setError((prev) => ({ ...prev, email: !validEmailFormat }));
+  }, [validEmailFormat]);
 
   // Keep track of birthday input from user and confirm that the selected
   // birthday is before today
@@ -269,6 +279,7 @@ export default function SignUp(prop) {
     if (
       name !== "password" &&
       name !== "confirmPassword" &&
+      name !== "email" &&
       name !== "birthday"
     ) {
       setError((prev) => ({ ...prev, [name]: false }));
@@ -279,6 +290,40 @@ export default function SignUp(prop) {
       });
     }
   };
+
+  // Check if the sign up form email is already registered
+  async function emailRegistered() {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/profiles/email/${formData.email}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.status !== 404;
+    } catch (error) {
+      console.log("Error when trying to check email with database");
+    }
+  }
+
+  // Check if the sign up form username is already registered
+  async function usernameRegistered() {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/profiles/username/${formData.username}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.status !== 404;
+    } catch (error) {
+      console.log("Error when trying to check username with database");
+    }
+  }
 
   // Handle action when user submit the form
   // A warning message will display if there's any missing input field
@@ -358,17 +403,39 @@ export default function SignUp(prop) {
 
     const firstInvalidField = requiredFields.find((field) => !field.condition);
 
-    if (!firstInvalidField && passwordMatch && validBirthday) {
+    if (
+      !firstInvalidField &&
+      passwordMatch &&
+      validEmailFormat &&
+      validBirthday
+    ) {
       //Testing code
       console.log(formData);
 
-      //Submit through API to database after backend is complete
-      if(sendData()) {
+      // Check if email or username has already been registered, if yes then do not
+      // create account in the database
+      // The code is written like this because the operations are asynchronous,
+      // directly checking the states may lead to unexpected results,
+      // hence cause duplicate accounts to be created /* */
+      const emailNotAvaiable = await emailRegistered();
+      const usernameNotAvailable = await usernameRegistered();
+      setEmailTaken(emailNotAvaiable);
+      setUsernameTaken(usernameNotAvailable);
+      if (emailNotAvaiable || usernameNotAvailable) {
+        return;
+      }
+
+      //If everything is clear, attempt to send data to database
+      if (sendData()) {
+        //If data successfully sent, save local profiel and logged in status
+        // Prompt user to his/her profile page
         prop.setProfile(formData);
         prop.setLoggedIn(true);
         navigate("/profile");
       }
-    } else {
+    } else if (firstInvalidField) {
+      // If invalid form due to any incomplete field, prompt the error message
+      // and highlight the first incomplete field in red
       setSubmissionStatus({
         submittable: false,
         invalidField: firstInvalidField.name,
@@ -446,10 +513,13 @@ export default function SignUp(prop) {
                 handleSubmit={handleSubmit}
               />
             )}
-            {formData.password !== formData.confirmPassword && (
+            {!passwordMatch && (
               <Alert severity="error">
                 The password and confirm password do not match.
               </Alert>
+            )}
+            {!validEmailFormat && (
+              <Alert severity="error">The email format is invalid.</Alert>
             )}
             {dayjs().isBefore(dayjs(formData.birthday)) && (
               <Alert severity="error">
@@ -461,6 +531,14 @@ export default function SignUp(prop) {
                 The field {submissionStatus.invalidField} in step{" "}
                 {submissionStatus.invalidStep} is required but is not filled.
               </Alert>
+            )}
+            {usernameTaken && (
+              <Alert severity="error">
+                Username has already been registered.
+              </Alert>
+            )}
+            {emailTaken && (
+              <Alert severity="error">Email has already been registered.</Alert>
             )}
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Button

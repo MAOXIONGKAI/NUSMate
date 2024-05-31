@@ -1,5 +1,4 @@
 import React from "react";
-import axios from 'axios'
 import "./App.css";
 import Header from "./page/Header";
 import Main from "./page/Main";
@@ -13,13 +12,14 @@ import SignUp from "./page/SignUp";
 
 function App() {
   //Reading data from online source(database, server, API etc)
-  const profileGet = JSON.parse(window.localStorage.getItem("signUpFormData"));
+  const savedProfile = JSON.parse(window.localStorage.getItem("profileData"));
+  const isLoggedIn = JSON.parse(window.localStorage.getItem("loggedInStatus"));
 
   //Keep track of user info using states
-  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(isLoggedIn);
   const [profile, setProfile] = React.useState(
-    profileGet
-      ? profileGet
+    savedProfile
+      ? savedProfile
       : {
           username: "",
           email: "",
@@ -36,6 +36,15 @@ function App() {
           description: "",
         }
   );
+
+  //React Effect
+  React.useEffect(() => {
+    window.localStorage.setItem("loggedInStatus", loggedIn)
+  }, [loggedIn])
+
+  React.useEffect(() => {
+    window.localStorage.setItem("profileData", JSON.stringify(profile))
+  }, [profile])
 
   return (
     <Router>
@@ -55,7 +64,10 @@ function App() {
           ></Route>
         </Routes>
         <Routes>
-          <Route path="/discover" element={<Discover profile={profile} setProfile={setProfile} />}></Route>
+          <Route
+            path="/discover"
+            element={<Discover profile={profile} setProfile={setProfile} />}
+          ></Route>
         </Routes>
         <Routes>
           <Route
@@ -64,15 +76,33 @@ function App() {
           ></Route>
         </Routes>
         <Routes>
-          <Route path="/activity" element={<Activity profile={profile} setProfile={setProfile} />}></Route>
+          <Route
+            path="/activity"
+            element={<Activity profile={profile} setProfile={setProfile} />}
+          ></Route>
         </Routes>
         <Routes>
-          <Route path="/login" element={<Login />}></Route>
+          <Route
+            path="/login"
+            element={
+              <Login
+                profile={profile}
+                setProfile={setProfile}
+                setLoggedIn={setLoggedIn}
+              />
+            }
+          ></Route>
         </Routes>
         <Routes>
           <Route
             path="/sign-up"
-            element={<SignUp profile={profile} setProfile={setProfile} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
+            element={
+              <SignUp
+                profile={profile}
+                setProfile={setProfile}
+                setLoggedIn={setLoggedIn}
+              />
+            }
           ></Route>
         </Routes>
         <Routes>
