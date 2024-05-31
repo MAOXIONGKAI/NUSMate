@@ -111,6 +111,9 @@ export default function SignUp(prop) {
         }
   );
 
+  const [emailTaken, setEmailTaken] = React.useState(false);
+  const [usernameTaken, setUsernameTaken] = React.useState(false);
+
   //React Effect
   // Update user's profile data when sign up form is submitted successfully
   const sendData = () => {
@@ -288,6 +291,40 @@ export default function SignUp(prop) {
     }
   };
 
+  // Check if the sign up form email is already registered
+  async function emailRegistered() {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/profiles/email/${formData.email}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.status !== 404;
+    } catch (error) {
+      console.log("Error when trying to check email with database");
+    }
+  }
+
+  // Check if the sign up form username is already registered
+  async function usernameRegistered() {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/profiles/username/${formData.username}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.status !== 404;
+    } catch (error) {
+      console.log("Error when trying to check username with database");
+    }
+  }
+
   // Handle action when user submit the form
   // A warning message will display if there's any missing input field
   // submittable, first invalid value and error status of each field
@@ -375,7 +412,20 @@ export default function SignUp(prop) {
       //Testing code
       console.log(formData);
 
-      //Attempt to send data to database
+      // Check if email or username has already been registered, if yes then do not
+      // create account in the database
+      // The code is written like this because the operations are asynchronous,
+      // directly checking the states may lead to unexpected results,
+      // hence cause duplicate accounts to be created /* */
+      const emailNotAvaiable = await emailRegistered();
+      const usernameNotAvailable = await usernameRegistered();
+      setEmailTaken(emailNotAvaiable);
+      setUsernameTaken(usernameNotAvailable);
+      if (emailNotAvaiable || usernameNotAvailable) {
+        return;
+      }
+
+      //If everything is clear, attempt to send data to database
       if (sendData()) {
         //If data successfully sent, save local profiel and logged in status
         // Prompt user to his/her profile page
@@ -481,6 +531,14 @@ export default function SignUp(prop) {
                 The field {submissionStatus.invalidField} in step{" "}
                 {submissionStatus.invalidStep} is required but is not filled.
               </Alert>
+            )}
+            {usernameTaken && (
+              <Alert severity="error">
+                Username has already been registered.
+              </Alert>
+            )}
+            {emailTaken && (
+              <Alert severity="error">Email has already been registered.</Alert>
             )}
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Button
