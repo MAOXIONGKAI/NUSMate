@@ -4,7 +4,7 @@ import ProfilePage from "../component/ProfilePage";
 export default function Profile(prop) {
   return (
     <>
-      <ProfilePage profile={prop.profile}/>
+      <ProfilePage profile={prop.profile} setProfile={prop.setProfile}/>
     </>
   );
 }
