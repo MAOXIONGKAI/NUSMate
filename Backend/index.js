@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const path = require("path"); // Add path module
-require("dotenv").config();
+require("dotenv").config()
 
 // Import models
 const Profile = require("./models/profile.model");
@@ -29,21 +28,10 @@ app.use(
 // Use routes
 app.use("/api/profiles", profileRoute);
 
-// Serve static assets if in production
-if (process.env.NODE_ENV === "production") {
-  // Set static folder
-  app.use(express.static("frontend/build"));
-
-  // Catch-all route for React frontend
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-  });
-} else {
-  // Testing Code
-  app.get("/", (req, res) => {
-    res.send("Hello from Node API again and again");
-  });
-}
+// Testing Code
+app.get("/", (req, res) => {
+  res.send("Hello from Node API again and again");
+});
 
 // Get MONGO_URI
 const MONGO_URI = process.env.MONGO_URI;
