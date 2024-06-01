@@ -6,7 +6,7 @@ const RandomImage = () => {
   const [imageUrl, setImageUrl] = useState("");
 
   // Access key gotten from unsplash official
-  const accessKey = "D5q3mOda2X6oSpFyeuIdAea4_VAyXZd-17Wl6XRbTno";
+  const accessKey = process.env.REACT_APP_UNSPLASH_API_KEY;
 
   // Use effect hook to make API call
   // This is to prevent infinite re-rendering due to React's way of
