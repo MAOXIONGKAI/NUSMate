@@ -1,8 +1,8 @@
 import React from "react";
+import axios from "axios";
 import Copyright from "./Copyright";
 
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
@@ -11,19 +11,61 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import StyledButton from "../component/StyledButton";
+import { Alert } from "@mui/material";
+import CustomizedSnackbar from "../component/CustomizedSnackbar";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
 export default function ForgotPassword() {
-  const handleSubmit = (event) => {
+  const [formData, setFormData] = React.useState({ email: "", password: "" });
+  const [profileNotFound, setProfileNotFound] = React.useState(false);
+  const [openSuccess, setOpenSuccess] = React.useState(false);
+  const [openFail, setOpenFail] = React.useState(false);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    console.log(formData);
+  };
+
+  const updateDatabase = async (email, password) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/profiles/email/${email}`,
+        {
+          password: password,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      console.log(
+        "Password Successfully Updated" + JSON.stringify(response.data)
+      );
+      setOpenSuccess(true);
+      setProfileNotFound(false);
+      setFormData({ email: "", password: "" });
+      return response.data;
+    } catch (error) {
+      setOpenFail(true);
+      if (error && error.response.status === 404) {
+        setProfileNotFound(true);
+        console.log("Profile Not Found: Email not associated with any profile");
+      }
+      console.log("Reset Password Failed due to server error");
+    }
+  };
+
+  const resetPassword = (event) => {
+    const email = formData.email.trim();
+    const newPassword = formData.password.trim();
+    if (email === "" || newPassword === "") return;
+
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    updateDatabase(email, newPassword);
   };
 
   return (
@@ -32,7 +74,7 @@ export default function ForgotPassword() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 5,
+            marginTop: 1,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -62,31 +104,50 @@ export default function ForgotPassword() {
               fontWeight: "300",
             }}
           >
-            Enter your email or username below, and we will help you reset your
-            password.
+            Enter your registered email and new password below to reset password
           </Typography>
           <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 3, marginTop: "25px" }}
+            sx={{ width: "100%", mt: 3, marginTop: "25px" }}
+            display="flex"
+            flexDirection="column"
+            gap="20px"
           >
             <TextField
               required
               fullWidth
-              name="account-info"
-              label="account-info"
+              name="email"
+              label="Email"
               type="text"
-              id="account-info"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
             />
-            <Button
-              type="submit"
+            <TextField
+              required
               fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Find Account
-            </Button>
+              name="password"
+              label="New Password"
+              type="password"
+              id="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            {profileNotFound && (
+              <Alert severity="error">
+                No Profile Found: Email not associated with any profile
+              </Alert>
+            )}
+            <StyledButton
+              fullWidth
+              text="Reset"
+              onClick={resetPassword}
+              style={{
+                color: "white",
+                marginLeft: "auto",
+                marginRight: "100px",
+                fontSize: "16px",
+              }}
+            />
             <Box textAlign="center">
               <Link href="/login" variant="body2">
                 Already have an account? Sign in
@@ -96,6 +157,17 @@ export default function ForgotPassword() {
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
+      <CustomizedSnackbar
+        text="Successfully Reset Password"
+        open={openSuccess}
+        setOpen={setOpenSuccess}
+      />
+      <CustomizedSnackbar
+        severity="error"
+        text="Password Reset Failed"
+        open={openFail}
+        setOpen={setOpenFail}
+      />
     </ThemeProvider>
   );
 }
