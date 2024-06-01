@@ -11,7 +11,7 @@ import Activity from "./page/Activity";
 import SignUp from "./page/SignUp";
 
 function App() {
-  //Reading data from online source(database, server, API etc)
+  //Reading data from online source (database, server, API, etc.)
   const savedProfile = JSON.parse(window.localStorage.getItem("profileData"));
   const isLoggedIn = JSON.parse(window.localStorage.getItem("loggedInStatus"));
 
@@ -39,12 +39,12 @@ function App() {
 
   //React Effect
   React.useEffect(() => {
-    window.localStorage.setItem("loggedInStatus", loggedIn)
-  }, [loggedIn])
+    window.localStorage.setItem("loggedInStatus", JSON.stringify(loggedIn));
+  }, [loggedIn]);
 
   React.useEffect(() => {
-    window.localStorage.setItem("profileData", JSON.stringify(profile))
-  }, [profile])
+    window.localStorage.setItem("profileData", JSON.stringify(profile));
+  }, [profile]);
 
   return (
     <Router>
@@ -61,27 +61,19 @@ function App() {
                 setProfile={setProfile}
               />
             }
-          ></Route>
-        </Routes>
-        <Routes>
+          />
           <Route
             path="/discover"
             element={<Discover profile={profile} setProfile={setProfile} />}
-          ></Route>
-        </Routes>
-        <Routes>
+          />
           <Route
             path="/profile"
             element={<Profile profile={profile} setProfile={setProfile} />}
-          ></Route>
-        </Routes>
-        <Routes>
+          />
           <Route
             path="/activity"
             element={<Activity profile={profile} setProfile={setProfile} />}
-          ></Route>
-        </Routes>
-        <Routes>
+          />
           <Route
             path="/login"
             element={
@@ -91,9 +83,7 @@ function App() {
                 setLoggedIn={setLoggedIn}
               />
             }
-          ></Route>
-        </Routes>
-        <Routes>
+          />
           <Route
             path="/sign-up"
             element={
@@ -103,10 +93,8 @@ function App() {
                 setLoggedIn={setLoggedIn}
               />
             }
-          ></Route>
-        </Routes>
-        <Routes>
-          <Route path="/forgot-password" element={<ForgotPassword />}></Route>
+          />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>
       </div>
     </Router>
