@@ -134,10 +134,11 @@ export default function ProfilePage(prop) {
     editedProfile.description = editedProfile.description.trim();
 
     prop.setProfile(editedProfile);
+    const backendURL = process.env.REACT_APP_BACKEND_URL
     const updateData = async () => {
       try {
         const response = await axios.put(
-          `http://localhost:5000/api/profiles/email/${editedProfile.email}`,
+          `${backendURL}/api/profiles/email/${editedProfile.email}`,
           editedProfile,
           {
             headers: {
