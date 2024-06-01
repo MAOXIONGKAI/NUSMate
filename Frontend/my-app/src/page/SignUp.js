@@ -121,7 +121,7 @@ export default function SignUp(prop) {
     const send = async () => {
       try {
         const response = await axios.post(
-          `${backendURL}/profiles`,
+          `${backendURL}/api/profiles`,
           formData,
           {
             headers: {
@@ -297,7 +297,7 @@ export default function SignUp(prop) {
     const backendURL = process.env.REACT_APP_BACKEND_URL
     try {
       const response = await axios.get(
-        `${backendURL}/profiles/email/${formData.email}`,
+        `${backendURL}/api/profiles/email/${formData.email}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -315,7 +315,7 @@ export default function SignUp(prop) {
     const backendURL = process.env.REACT_APP_BACKEND_URL
     try {
       const response = await axios.get(
-        `${backendURL}/profiles/username/${formData.username}`,
+        `${backendURL}/api/profiles/username/${formData.username}`,
         {
           headers: {
             "Content-Type": "application/json",

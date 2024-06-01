@@ -32,9 +32,10 @@ export default function ForgotPassword() {
   };
 
   const updateDatabase = async (email, password) => {
+    const backendURL = process.env.REACT_APP_BACKEND_URL
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/profiles/email/${email}`,
+        `${backendURL}/api/profiles/email/${email}`,
         {
           password: password,
         },

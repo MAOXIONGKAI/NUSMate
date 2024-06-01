@@ -138,7 +138,7 @@ export default function ProfilePage(prop) {
     const updateData = async () => {
       try {
         const response = await axios.put(
-          `${backendURL}/profiles/email/${editedProfile.email}`,
+          `${backendURL}/api/profiles/email/${editedProfile.email}`,
           editedProfile,
           {
             headers: {

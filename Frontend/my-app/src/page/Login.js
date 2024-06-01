@@ -63,7 +63,7 @@ export default function Login(prop) {
     // Fetching profile data from database based on user's input
     try {
       const response = await axios.get(
-        `${backendURL}/profiles/email/${formData.email}`,
+        `${backendURL}/api/profiles/email/${formData.email}`,
         {
           headers: {
             "Content-Type": "application/json",
