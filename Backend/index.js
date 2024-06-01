@@ -1,9 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config()
-const path = require("path");
-
-app.use(express.static(path.join(__dirname, "build")));
 
 // Import models
 const Profile = require("./models/profile.model");
