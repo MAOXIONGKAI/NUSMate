@@ -143,7 +143,7 @@ export default function Login(prop) {
           sm={4}
           md={7}
           sx={{
-            //backgroundImage: `url(${RandomImage()})`, //Line disable to prevent too frequent request to unsplash API
+            backgroundImage: `url(${RandomImage()})`, //Line disable to prevent too frequent request to unsplash API
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
