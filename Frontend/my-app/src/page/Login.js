@@ -59,10 +59,11 @@ export default function Login(prop) {
   // Fetch database profile data through axios
   // Takes the login info filled by user and send http request to Backend API
   const getData = async () => {
+    const backendURL = process.env.REACT_APP_BACKEND_URL
     // Fetching profile data from database based on user's input
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/profiles/email/${formData.email}`,
+        `${backendURL}/profiles/email/${formData.email}`,
         {
           headers: {
             "Content-Type": "application/json",
