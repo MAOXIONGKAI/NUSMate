@@ -2,6 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "proxy":"https://nusmate.onrender.com",
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.11.4",
