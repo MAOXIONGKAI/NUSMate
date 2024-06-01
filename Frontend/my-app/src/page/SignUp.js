@@ -117,10 +117,11 @@ export default function SignUp(prop) {
   //React Effect
   // Update user's profile data when sign up form is submitted successfully
   const sendData = () => {
+    const backendURL = process.env.REACT_APP_BACKEND_URL
     const send = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/profiles",
+          `${backendURL}/api/profiles`,
           formData,
           {
             headers: {
@@ -293,9 +294,10 @@ export default function SignUp(prop) {
 
   // Check if the sign up form email is already registered
   async function emailRegistered() {
+    const backendURL = process.env.REACT_APP_BACKEND_URL
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/profiles/email/${formData.email}`,
+        `${backendURL}/api/profiles/email/${formData.email}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -310,9 +312,10 @@ export default function SignUp(prop) {
 
   // Check if the sign up form username is already registered
   async function usernameRegistered() {
+    const backendURL = process.env.REACT_APP_BACKEND_URL
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/profiles/username/${formData.username}`,
+        `${backendURL}/api/profiles/username/${formData.username}`,
         {
           headers: {
             "Content-Type": "application/json",
