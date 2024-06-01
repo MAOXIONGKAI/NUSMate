@@ -893,7 +893,7 @@ export default function ProfilePage(prop) {
                         Personality:
                       </TableCell>
                       <TableCell style={{ fontWeight: "lighter" }}>
-                        Nil
+                        Feature Coming Soon...
                       </TableCell>
                     </TableRow>
                   </TableBody>
