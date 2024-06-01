@@ -210,10 +210,10 @@ export default function SignUp(prop) {
     switch (step) {
       case 0:
         return (
-          formData.username !== "" &&
-          formData.email !== "" &&
-          formData.password !== "" &&
-          formData.confirmPassword !== ""
+          formData.username.trim() !== "" &&
+          formData.email.trim() !== "" &&
+          formData.password.trim() !== "" &&
+          formData.confirmPassword.trim() !== ""
         );
       case 1:
         return (
@@ -337,25 +337,25 @@ export default function SignUp(prop) {
         key: "username",
         name: "Username",
         step: 1,
-        condition: formData.username !== "",
+        condition: formData.username.trim() !== "",
       },
       {
         key: "email",
         name: "Email",
         step: 1,
-        condition: formData.email !== "",
+        condition: formData.email.trim() !== "",
       },
       {
         key: "password",
         name: "Password",
         step: 1,
-        condition: formData.password !== "",
+        condition: formData.password.trim() !== "",
       },
       {
         key: "confirmPassword",
         name: "Confirm_Password",
         step: 1,
-        condition: formData.confirmPassword !== "",
+        condition: formData.confirmPassword.trim() !== "",
       },
       {
         key: "first_major",
@@ -426,6 +426,11 @@ export default function SignUp(prop) {
       }
 
       //If everything is clear, attempt to send data to database
+      //First tidy up the text input for some of the fields
+      formData.username = formData.username.trim()
+      formData.description = formData.description.trim()
+
+      //Then proceeds to send data to database
       if (sendData()) {
         //If data successfully sent, save local profiel and logged in status
         // Prompt user to his/her profile page
