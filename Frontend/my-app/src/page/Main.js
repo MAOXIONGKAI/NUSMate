@@ -16,6 +16,15 @@ import "../App.css";
 import Logo from "../image/Logo.png";
 import StyledButton from "../component/StyledButton";
 import Copyright from "./Copyright";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Diversity1Icon from "@mui/icons-material/Diversity1";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import ForumIcon from "@mui/icons-material/Forum";
+import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import TravelExploreIcon from "@mui/icons-material/TravelExplore";
+import NearMeIcon from "@mui/icons-material/NearMe";
+import CakeIcon from "@mui/icons-material/Cake";
 
 const HeroContent = styled(Box)(({ theme }) => ({
   padding: theme.spacing(8, 0, 6),
@@ -54,7 +63,8 @@ const FeatureText = styled(Box)(({ theme }) => ({
 }));
 
 const Footer = styled(Box)(({ theme }) => ({
-  background: "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+  background:
+    "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
   padding: theme.spacing(3),
   color: "#fff",
   textAlign: "center",
@@ -131,16 +141,18 @@ function LandingPage() {
           <List>
             <ListItem className="fade-in">
               <Feature>
+                <AccountCircleIcon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
                     primary="#1 User Authentication"
-                    secondary="Create your very own user profile, including personal customization!"
+                    secondary="Create your very own user profile and start exploring our platform!"
                   />
                 </FeatureText>
               </Feature>
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
+                <Diversity1Icon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
                     primary="#2 Find Your Tribe"
@@ -151,6 +163,7 @@ function LandingPage() {
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
+                <PersonSearchIcon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
                     primary="#3 Customized Search"
@@ -161,46 +174,53 @@ function LandingPage() {
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
+                <ForumIcon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
                     primary="#4 Direct Communication"
-                    secondary="DM each other via an integrated chat system that supports text, emojis, and images!"
+                    secondary="DM each other via an integrated chat system to know each other better!"
                   />
                 </FeatureText>
               </Feature>
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
+                <ConnectWithoutContactIcon
+                  sx={{ height: "60px", width: "60px" }}
+                />
                 <FeatureText>
                   <ListItemText
                     primary="#5 Activity Posting"
-                    secondary="Share plans or activities, including date, time, location, and description!"
+                    secondary="Share holiday plans or social activities, and invite other people to join!"
                   />
                 </FeatureText>
               </Feature>
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
+                <CalendarMonthIcon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
                     primary="#6 Activity Tracking"
-                    secondary="Use the calendar to manage your events and commitments!"
+                    secondary="Track your social engagement with other users on the platform!"
                   />
                 </FeatureText>
               </Feature>
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
+                <TravelExploreIcon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
                     primary="#7 Instant Matching"
-                    secondary="Create events and let the system do the work, match based on interests and availability!"
+                    secondary="Hard to find friends to join you? Let the system do the job for you!"
                   />
                 </FeatureText>
               </Feature>
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
+                <NearMeIcon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
                     primary="#8 Drift Bottle"
@@ -211,6 +231,7 @@ function LandingPage() {
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
+                <CakeIcon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
                     primary="#9 Birthday Celebration"
@@ -227,7 +248,26 @@ function LandingPage() {
             <Typography variant="h4" gutterBottom>
               About Us
             </Typography>
-            <Typography>Hi! We are Xiongkai and Xiao Ao.<br/>and we are Team XtraOrdinary Kaleidoscope.</Typography>
+            <Typography>
+              Hi! We are Xiongkai and Xiao Ao from Team XtraOrdinary
+              Kaleidoscope.
+              <br />
+              <br />
+              As freshmen who are struggling to blend into the new environment in
+              NUS,
+              <br />
+              we believe that having efficient channels to connect people within
+              <br />
+              the new environment is very important, so we created NUSMate!
+              <br />
+              <br />
+              A social platform that provides freshmen and foreign exchange
+              students
+              <br />
+              with extra opportunities to connect with people and make new
+              friends!
+              <br />
+            </Typography>
           </Box>
         </MainContent>
         <MainContent id="contact">
@@ -235,7 +275,16 @@ function LandingPage() {
             <Typography variant="h4" gutterBottom>
               Contact Us
             </Typography>
-            <Typography>If you have any query about our project.<br />Feel free to reach out to us!<br />We value all feedback and review about us<br /> that are helpful for our future improvement!</Typography>
+            <Typography>
+              If you have any query about our project, feel free to reach out to
+              us!
+              <br />
+              We value all feedbacks and reviews that are helpful for our
+              future improvement!
+              <br />
+              Please stay tunned for our wonderful new features in the future,
+              thank you!
+            </Typography>
           </Box>
         </MainContent>
       </main>
@@ -261,7 +310,7 @@ function HomePage(prop) {
 }
 
 export default function Main(prop) {
-  console.log(prop.loggedIn)
+  console.log(prop.loggedIn);
   return (
     <>{prop.loggedIn ? <HomePage profile={prop.profile} /> : <LandingPage />}</>
   );

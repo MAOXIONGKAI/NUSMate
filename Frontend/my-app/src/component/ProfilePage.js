@@ -43,6 +43,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CustomizedSnackbar from "./CustomizedSnackbar";
 import Alert from "@mui/material/Alert";
+import ColorNameAvatar from "./ColorNameAvatar";
 
 export default function ProfilePage(prop) {
   const [isEditMode, setIsEditMode] = React.useState(false);
@@ -75,6 +76,8 @@ export default function ProfilePage(prop) {
   const [invalidBirthday, setInvalidBirthday] = React.useState(false);
   const [openSuccess, setOpenSuccess] = React.useState(false);
   const [openFail, setOpenFail] = React.useState(false);
+
+  
 
   function addInterest() {
     const newInterest = interest.trim();
@@ -188,12 +191,7 @@ export default function ProfilePage(prop) {
             flexDirection="column"
             fullHeight
           >
-            <Avatar
-              sx={{ width: 120, height: 120, mb: 2 }}
-              //TODO: replace with user's own uploaded avatar
-              src=""
-              alt="User Avatar"
-            />
+            <ColorNameAvatar username={username} />
             <Box
               sx={{
                 display: "flex",
