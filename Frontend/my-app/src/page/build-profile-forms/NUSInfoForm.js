@@ -203,6 +203,7 @@ export default function NUSInfoForm(prop) {
           value={prop.formData.second_major}
           onChange={prop.handleChange}
         >
+          <MenuItem value="">Not Applicable</MenuItem>
           <ListSubheader
             sx={{
               fontWeight: "1000",
