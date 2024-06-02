@@ -28,7 +28,7 @@ export default function PersonalityTest(prop) {
             marginBottom: "20px"
           }}
         >
-            Feature to be completed in feature Milestones<br/>However, you can still finish set up your profile<br/> by clicking the submit button below!<br/>Thank you!
+            Feature to be completed in future Milestones<br/>However, you can still finish set up your profile<br/> by clicking the submit button below!<br/>Thank you!
         </Typography>
         </>
     );
