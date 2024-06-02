@@ -59,7 +59,7 @@ export default function Login(prop) {
   // Fetch database profile data through axios
   // Takes the login info filled by user and send http request to Backend API
   const getData = async () => {
-    const backendURL = process.env.REACT_APP_BACKEND_URL
+    const backendURL = process.env.REACT_APP_BACKEND_URL;
     // Fetching profile data from database based on user's input
     try {
       const response = await axios.get(
@@ -73,7 +73,7 @@ export default function Login(prop) {
 
       // If response is valid, check if the password match
       if (response.data.password !== formData.password) {
-        setInvalidInfo(true)
+        setInvalidInfo(true);
         return;
       }
 
@@ -134,6 +134,12 @@ export default function Login(prop) {
     window.localStorage.setItem("loginFormData", JSON.stringify(formData));
   }, [formData]);
 
+  // Random Wallpaper Resources
+  const [randomURL, authorName, attribution] = RandomImage();
+  console.log(randomURL);
+  const unsplashURL =
+    "https://unsplash.com/?utm_source=NUSMate&utm_medium=referral";
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
@@ -144,7 +150,7 @@ export default function Login(prop) {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: `url(${RandomImage()})`, //Line disable to prevent too frequent request to unsplash API
+            backgroundImage: `url(${randomURL})`, //Line disable to prevent too frequent request to unsplash API
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -152,8 +158,22 @@ export default function Login(prop) {
                 : t.palette.grey[900],
             backgroundSize: "cover",
             backgroundPosition: "center",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
           }}
-        />
+        >
+          <Typography variant="body2" sx={{ marginTop: "auto", backgroundColor: "rgba(100, 100, 100, 0.7)", color: "white", width:"100%", textAlign: "center"}}>
+            Photo by&nbsp;
+            <Link href={attribution} variant="body2" sx={{color: "#ADD8E6"}}>
+              {authorName}
+            </Link>
+            &nbsp;on&nbsp;
+            <Link href={unsplashURL} variant="body2" sx={{color: "#ADD8E6"}}>
+              Unsplash
+            </Link>
+          </Typography>
+        </Grid>
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Typography
             component="h1"
