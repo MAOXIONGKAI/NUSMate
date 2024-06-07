@@ -15,6 +15,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.2",
+    "cross-env": "^7.0.3",
     "dayjs": "^1.11.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -24,8 +25,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "cross-env REACT_APP_ENV=prod react-scripts start",
+    "build": "cross-env REACT_APP_ENV=prod react-scripts build",
+    "dev": "cross-env REACT_APP=local react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
