@@ -38,7 +38,7 @@ const MONGO_URI = process.env.MONGO_URI;
 
 // Database & Server Connection
 mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(MONGO_URI)
   .then(() => {
     console.log("Connected to database!");
     app.listen(3000, () => {
