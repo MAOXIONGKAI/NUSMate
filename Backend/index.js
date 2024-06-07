@@ -21,7 +21,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://nusmate.onrender.com"], // Allow requests from this origin
+    origin: ["http://localhost:3000", "https://nusmate.onrender.com", "https://nusmate-development.onrender.com"], // Allow requests from this origin
     methods: "GET,POST,PUT,DELETE", // Allowed methods
     allowedHeaders: "Content-Type,Authorization", // Allowed headers
   })
