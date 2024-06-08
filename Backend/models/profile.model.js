@@ -58,6 +58,10 @@ const ProfileSchema = mongoose.Schema(
       required: false,
       default: "",
     },
+    personality: {
+      type: String,
+      require: [true, "Personality is required"]
+    }
   },
   {
     timestamps: true,
