@@ -26,6 +26,24 @@ app.use(
   })
 );
 
+app.use(
+  "/api/personalitypolice/get_result",
+  createProxyMiddleware({
+    target: "https://api.personalitypolice.com/v1/check_test",
+    changeOrigin: true,
+    pathRewrite: {
+      "^/api/personalitypolice": "",
+    },
+    onProxyRes: (proxyRes, req, res) => {
+      res.headers["Access-Control-Allow-Origin"] = "*";
+      res.headers["Access-Control-Allow-Methods"] =
+        "GET, POST, PUT, DELETE, OPTIONS";
+      res.headers["Access-Contril-Allow-Headers"] =
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization";
+    },
+  })
+);
+
 app.listen(3001, () => {
   console.log("Proxy server is running on port 3001");
 });

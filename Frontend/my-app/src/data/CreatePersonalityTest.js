@@ -3,6 +3,7 @@ import axios from "axios";
 
 const CreatePersonalityTest = (username) => {
   const [testURL, setTestURL] = useState("");
+  const [testID, setTestID] = useState("");
 
   const frontendURL = process.env.REACT_APP_FRONTEND_URL;
   const accessKey = process.env.REACT_APP_PERSONALITY_TEST_API_KEY;
@@ -27,6 +28,7 @@ const CreatePersonalityTest = (username) => {
         );
         console.log(JSON.stringify(response.data));
         setTestURL(response.data.data.test_url);
+        setTestID(response.data.data.test_id);
       } catch (error) {
         console.error("Error when creating new personality test:" + error);
       }
@@ -35,7 +37,7 @@ const CreatePersonalityTest = (username) => {
     newTest();
   }, []);
 
-  return testURL;
+  return [testURL, testID];
 };
 
 export default CreatePersonalityTest;

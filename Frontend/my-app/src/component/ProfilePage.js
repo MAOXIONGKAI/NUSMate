@@ -60,6 +60,7 @@ export default function ProfilePage(prop) {
     location,
     interests,
     description,
+    personality
   } = prop.profile;
 
   const year_th =
@@ -894,7 +895,7 @@ export default function ProfilePage(prop) {
                         Personality:
                       </TableCell>
                       <TableCell style={{ fontWeight: "lighter" }}>
-                        Feature Coming Soon...
+                        {personality}
                       </TableCell>
                     </TableRow>
                   </TableBody>
