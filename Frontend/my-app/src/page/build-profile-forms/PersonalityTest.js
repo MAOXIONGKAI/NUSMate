@@ -1,35 +1,185 @@
-import React from 'react'
-import { Typography } from '@mui/material';
+import React from "react";
+import StyledButton from "../../component/StyledButton";
+import { Typography, Box } from "@mui/material";
+import CreatePersonalityTest from "../../data/CreatePersonalityTest";
+import GetTestResult from "../../data/GetTestResult";
+
+import ENFJ from "../../image/Personality/ENFJ.jpg";
+import ENFP from "../../image/Personality/ENFP.jpg";
+import ENTJ from "../../image/Personality/ENTJ.jpg";
+import ENTP from "../../image/Personality/ENTP.jpg";
+import ESFJ from "../../image/Personality/ESFJ.jpg";
+import ESFP from "../../image/Personality/ESFP.jpg";
+import ESTJ from "../../image/Personality/ESTJ.jpg";
+import ESTP from "../../image/Personality/ESTP.jpg";
+import INFJ from "../../image/Personality/INFJ.jpg";
+import INFP from "../../image/Personality/INFP.jpg";
+import INTJ from "../../image/Personality/INTJ.jpg";
+import INTP from "../../image/Personality/INTP.jpg";
+import ISFJ from "../../image/Personality/ISFJ.jpg";
+import ISFP from "../../image/Personality/ISFP.jpg";
+import ISTJ from "../../image/Personality/ISTJ.jpg";
+import ISTP from "../../image/Personality/ISTP.jpg";
 
 export default function PersonalityTest(prop) {
-    return (
+  // Retrieve the saved generated testID before user enter the test
+  const savedID = window.localStorage.getItem("testID");
+
+  // Generate the next set of test for new users
+  // Or if the current user wants to retake again
+  const response = CreatePersonalityTest(prop.formData.username);
+  const testURL = response[0];
+
+  // Get test result after user finish the test and redirect back to this page
+  // If the user is taking test for the first time, do not generate any result
+  const [testID, setTestID] = React.useState(savedID ? savedID : "");
+
+  // Evaluate whether the user has completed based on the content of the result
+  const result = GetTestResult(testID);
+  const complete = result !== undefined;
+
+  if (complete) {
+    prop.setFormData((prev) => ({
+      ...prev,
+      personality: result.prediction,
+    }));
+  }
+
+  React.useEffect(() => {
+    window.localStorage.setItem("testID", testID);
+  }, [testID]);
+
+  const handleClick = () => {
+    // Remember the current test ID before directing to the external test URL
+    setTestID(response[1]);
+    window.location.href = testURL;
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {complete ? (
         <>
-        <Typography
-          component="h1"
-          variant="h5"
-          align="center"
-          style={{
-            fontFamily: "Handlee, sans-serif",
-            fontWeight: "600",
-            marginTop: "20px",
-            marginBottom: "20px"
-          }}
-        >
-            You are almost there!<br />Now just help us fill up a personality test form<br />to help us understand you better!
-        </Typography>
-        <Typography
-          component="h1"
-          variant="h5"
-          align="center"
-          style={{
-            fontFamily: "Handlee, sans-serif",
-            fontWeight: "600",
-            marginTop: "20px",
-            marginBottom: "20px"
-          }}
-        >
-            Feature to be completed in future Milestones<br/>However, you can still finish set up your profile<br/> by clicking the submit button below!<br/>Thank you!
-        </Typography>
+          <Typography
+            component="h1"
+            variant="h5"
+            align="center"
+            style={{
+              fontFamily: "Handlee, sans-serif",
+              fontWeight: "600",
+              marginTop: "20px",
+              marginBottom: "30px",
+            }}
+          >
+            Thank you for filling up the form!
+            <br />
+            Your personality is
+          </Typography>
+          <img
+            src={
+              result.prediction === "ENFJ"
+                ? ENFJ
+                : result.prediction === "ENFP"
+                ? ENFP
+                : result.prediction === "ENTJ"
+                ? ENTJ
+                : result.prediction === "ENTP"
+                ? ENTP
+                : result.prediction === "ESFJ"
+                ? ESFJ
+                : result.prediction === "ESFP"
+                ? ESFP
+                : result.prediction === "ESTJ"
+                ? ESTJ
+                : result.prediction === "ESTP"
+                ? ESTP
+                : result.prediction === "INFJ"
+                ? INFJ
+                : result.prediction === "INFP"
+                ? INFP
+                : result.prediction === "INTJ"
+                ? INTJ
+                : result.prediction === "INTP"
+                ? INTP
+                : result.prediction === "ISFJ"
+                ? ISFJ
+                : result.prediction === "ISFP"
+                ? ISFP
+                : result.prediction === "ISTJ"
+                ? ISTJ
+                : ISTP
+            }
+            width="25%"
+            alt=""
+          />
+          <Typography
+            component="h1"
+            variant="h5"
+            align="center"
+            style={{
+              fontFamily: "Handlee, sans-serif",
+              fontWeight: "600",
+              marginTop: "20px",
+              marginBottom: "20px",
+            }}
+          >
+            If you are unsatisfied with the result,
+            <br />
+            feel free to retake the test once again!
+          </Typography>
         </>
-    );
+      ) : (
+        <>
+          <Typography
+            component="h1"
+            variant="h5"
+            align="center"
+            style={{
+              fontFamily: "Handlee, sans-serif",
+              fontWeight: "600",
+              marginTop: "20px",
+              marginBottom: "20px",
+            }}
+          >
+            You are almost there!
+            <br />
+            Now just help us fill up a personality test form
+            <br />
+            to help us understand you better!
+          </Typography>
+          <Typography
+            component="h1"
+            variant="h5"
+            align="center"
+            style={{
+              fontFamily: "Handlee, sans-serif",
+              fontSize: "20px",
+              fontWeight: "500",
+              color: "rgb(240, 0, 0)",
+              marginTop: "20px",
+              marginBottom: "20px",
+            }}
+          >
+            Please take note this quiz takes around 20 mins to finish.
+            <br />
+            For accuracy of test result, please fill up majority of the
+            questions.
+            <br />
+            Too many missing field may cause the test result to be voided.
+          </Typography>
+        </>
+      )}
+      <StyledButton
+        text={complete ? "Retake the test" : "Start the test"}
+        style={{ color: "white" }}
+        onClick={handleClick}
+      />
+    </Box>
+  );
 }
