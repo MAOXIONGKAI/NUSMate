@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
-require("dotenv").config()
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`
+})
 
 // Import models
 const Profile = require("./models/profile.model");
@@ -19,9 +21,9 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://nusmate.onrender.com"], // Allow requests from this origin
+    origin: ["http://localhost:3000", "https://nusmate.onrender.com", "https://nusmate-development.onrender.com"], // Allow requests from this origin
     methods: "GET,POST,PUT,DELETE", // Allowed methods
-    allowedHeaders: "Content-Type,Authorization", // Allowed headers
+    allowedHeaders: "Content-Type, Authorization", // Allowed headers
   })
 );
 
@@ -30,7 +32,7 @@ app.use("/api/profiles", profileRoute);
 
 // Testing Code
 app.get("/", (req, res) => {
-  res.send("Hello from Node API again and again");
+  res.send("NodeAPI running on " + process.env.NODE_ENV + " environment");
 });
 
 // Get MONGO_URI
@@ -38,11 +40,11 @@ const MONGO_URI = process.env.MONGO_URI;
 
 // Database & Server Connection
 mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(MONGO_URI)
   .then(() => {
     console.log("Connected to database!");
-    app.listen(3000, () => {
-      console.log("Server is running on port 3000");
+    app.listen(5000, () => {
+      console.log("Server is running on port 5000");
     });
   })
   .catch((error) => {
