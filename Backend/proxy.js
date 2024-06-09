@@ -44,6 +44,12 @@ app.use(
   })
 );
 
+// Set the proxy server to run on port 3000
 app.listen(3001, () => {
   console.log("Proxy server is running on port 3001");
 });
+
+// Testing code
+app.get('/', (req, res) => {
+  res.send("Proxy server is running on " + process.env.NODE_ENV + " environment")
+})
