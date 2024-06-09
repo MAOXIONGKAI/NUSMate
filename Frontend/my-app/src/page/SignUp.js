@@ -421,8 +421,6 @@ export default function SignUp(prop) {
       validBirthday &&
       finishTest
     ) {
-      //Testing code
-      console.log(formData);
 
       // Check if email or username has already been registered, if yes then do not
       // create account in the database

@@ -1,6 +1,7 @@
 import React from "react";
 import StyledButton from "../../component/StyledButton";
 import { Typography, Box } from "@mui/material";
+import CircularIndeterminate from "../../component/CircularIndeterminate";
 import CreatePersonalityTest from "../../data/CreatePersonalityTest";
 import GetTestResult from "../../data/GetTestResult";
 
@@ -34,6 +35,9 @@ export default function PersonalityTest(prop) {
   // If the user is taking test for the first time, do not generate any result
   const [testID, setTestID] = React.useState(savedID ? savedID : "");
 
+  // Keep track of whether the page is loading the personality test
+  const [isLoading, setIsLoading] = React.useState(false)
+
   // Evaluate whether the user has completed based on the content of the result
   const result = GetTestResult(testID);
   const complete = result !== undefined;
@@ -51,6 +55,7 @@ export default function PersonalityTest(prop) {
 
   const handleClick = () => {
     // Remember the current test ID before directing to the external test URL
+    setIsLoading(true);
     setTestID(response[1]);
     window.location.href = testURL;
   };
@@ -64,6 +69,7 @@ export default function PersonalityTest(prop) {
         alignItems: "center",
       }}
     >
+      {isLoading && <CircularIndeterminate />}
       {complete ? (
         <>
           <Typography
