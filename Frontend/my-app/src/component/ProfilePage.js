@@ -83,6 +83,7 @@ export default function ProfilePage(prop) {
   const [openFail, setOpenFail] = React.useState(false);
   const [openChange, setOpenChange] = React.useState(false);
   const [openNoChange, setOpenNoChange] = React.useState(false);
+  const [openChangeFail, setOpenChangeFail] = React.useState(false);
   const [openDialog, setOpenDialog] = React.useState(false);
 
   function addInterest() {
@@ -147,7 +148,7 @@ export default function ProfilePage(prop) {
                 response.status
             );
           } catch (error) {
-            setOpenFail(true);
+            setOpenChangeFail(true);
             console.log(
               "Update personality failed due to unknown server error: " + error
             );
@@ -243,6 +244,12 @@ export default function ProfilePage(prop) {
         text="Test Result Generated: Your personality remains the same"
         open={openNoChange}
         setOpen={setOpenNoChange}
+      />
+      <CustomizedSnackbar
+        severity="error"
+        text="Error when fetching test results from the API Server"
+        open={openChangeFail}
+        setOpen={setOpenChangeFail}
       />
       <Card
         sx={{
