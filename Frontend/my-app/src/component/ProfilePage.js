@@ -18,6 +18,7 @@ import {
 } from "../data/FormOptions";
 
 import {
+  Avatar,
   Box,
   Card,
   CardContent,
@@ -43,11 +44,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CustomizedSnackbar from "./CustomizedSnackbar";
 import Alert from "@mui/material/Alert";
 import ColorNameAvatar from "./ColorNameAvatar";
-import AlertDialogSlide from "./AlertDialogSlide";
-import CreatePersonalityTest from "../data/CreatePersonalityTest";
-import GetTestResult from "../data/GetTestResult";
-
-const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export default function ProfilePage(prop) {
   const [isEditMode, setIsEditMode] = React.useState(false);
@@ -64,7 +60,6 @@ export default function ProfilePage(prop) {
     location,
     interests,
     description,
-    personality,
   } = prop.profile;
 
   const year_th =
@@ -81,10 +76,8 @@ export default function ProfilePage(prop) {
   const [invalidBirthday, setInvalidBirthday] = React.useState(false);
   const [openSuccess, setOpenSuccess] = React.useState(false);
   const [openFail, setOpenFail] = React.useState(false);
-  const [openChange, setOpenChange] = React.useState(false);
-  const [openNoChange, setOpenNoChange] = React.useState(false);
-  const [openChangeFail, setOpenChangeFail] = React.useState(false);
-  const [openDialog, setOpenDialog] = React.useState(false);
+
+  
 
   function addInterest() {
     const newInterest = interest.trim();
@@ -118,52 +111,6 @@ export default function ProfilePage(prop) {
     setEditedProfile((prev) => ({ ...prev, [name]: value }));
   };
 
-  const savedProfileTestID = window.localStorage.getItem("profile_testID");
-  const previousTestResult = GetTestResult(savedProfileTestID);
-
-  React.useEffect(() => {
-    if (previousTestResult) {
-      if (previousTestResult.prediction === personality) {
-        setOpenNoChange(true);
-      } else {
-        prop.setProfile((prev) => ({
-          ...prev,
-          personality: previousTestResult.prediction,
-        }));
-
-        const updatePersonality = async () => {
-          try {
-            const response = await axios.put(
-              `${backendURL}/api/profiles/email/${editedProfile.email}`,
-              { personality: previousTestResult.prediction },
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-            setOpenChange(true);
-            console.log(
-              "Personality Updated Successfully with response status: " +
-                response.status
-            );
-          } catch (error) {
-            setOpenChangeFail(true);
-            console.log(
-              "Update personality failed due to unknown server error: " + error
-            );
-          }
-        };
-        updatePersonality();
-      }
-    }
-  }, [previousTestResult]);
-
-  const [testURL, testID] = CreatePersonalityTest(username, "profile");
-  const handleRetake = () => {
-    setOpenDialog(true);
-  };
-
   const handleSave = (event) => {
     // Tidying up of info + input validation
     if (editedProfile.username.trim() === "") {
@@ -187,6 +134,7 @@ export default function ProfilePage(prop) {
     editedProfile.description = editedProfile.description.trim();
 
     prop.setProfile(editedProfile);
+    const backendURL = process.env.REACT_APP_BACKEND_URL
     const updateData = async () => {
       try {
         const response = await axios.put(
@@ -198,10 +146,7 @@ export default function ProfilePage(prop) {
             },
           }
         );
-        console.log(
-          "Profile successfully updated with response status: " +
-            response.status
-        );
+        console.log("Profile successfully updated");
         setOpenSuccess(true);
       } catch (error) {
         setOpenFail(true);
@@ -233,23 +178,6 @@ export default function ProfilePage(prop) {
         text="Profiled Updated Failed due to Unknown Server Error"
         open={openFail}
         setOpen={setOpenFail}
-      />
-      <CustomizedSnackbar
-        text= {`Test Result Generated: Your new personality is ${personality}`}
-        open={openChange}
-        setOpen={setOpenChange}
-      />
-      <CustomizedSnackbar
-        severity="info"
-        text="Test Result Generated: Your personality remains the same"
-        open={openNoChange}
-        setOpen={setOpenNoChange}
-      />
-      <CustomizedSnackbar
-        severity="error"
-        text="Error when fetching test results from the API Server"
-        open={openChangeFail}
-        setOpen={setOpenChangeFail}
       />
       <Card
         sx={{
@@ -966,38 +894,7 @@ export default function ProfilePage(prop) {
                         Personality:
                       </TableCell>
                       <TableCell style={{ fontWeight: "lighter" }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "50px",
-                          }}
-                        >
-                          <AlertDialogSlide
-                            open={openDialog}
-                            setOpen={setOpenDialog}
-                            dialogTitle="Confirm Proceed to Retake the Test?"
-                            dialogContent="Please save all the changes before proceeding to prevent unnecessary data loss. Note that the personality field will be instantly updated once the test is finised, but if you are not satfisfied with the result, you can always retake the test again."
-                            positive="Confirm"
-                            negative="Cancel"
-                            handlePositive={() => {
-                              // Save the current Test ID, and proceed to the test
-                              window.localStorage.setItem(
-                                "profile_testID",
-                                testID
-                              );
-                              window.location.href = testURL;
-                            }}
-                          />
-                          {personality}
-                          {isEditMode && (
-                            <StyledButton
-                              text="Retake Test"
-                              style={{ color: "white", margin: "0px" }}
-                              onClick={handleRetake}
-                            />
-                          )}
-                        </Box>
+                        Feature Coming Soon...
                       </TableCell>
                     </TableRow>
                   </TableBody>
