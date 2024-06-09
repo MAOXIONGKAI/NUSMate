@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const CreatePersonalityTest = (username) => {
+const CreatePersonalityTest = (username, redirect) => {
   const [testURL, setTestURL] = useState("");
   const [testID, setTestID] = useState("");
 
@@ -23,7 +23,9 @@ const CreatePersonalityTest = (username) => {
               completed_message:
                 "You will soon be redirected back to NUSMate to complete the rest of the sign up process.",
               notify_url: `${frontendURL}/sign-up`,
-              return_url: `${frontendURL}/sign-up`,
+              return_url: `${frontendURL}/${
+                redirect === undefined ? "sign-up" : redirect
+              }`,
             },
           }
         );
