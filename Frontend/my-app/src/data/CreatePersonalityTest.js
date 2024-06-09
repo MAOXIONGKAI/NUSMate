@@ -6,13 +6,14 @@ const CreatePersonalityTest = (username) => {
   const [testID, setTestID] = useState("");
 
   const frontendURL = process.env.REACT_APP_FRONTEND_URL;
+  const proxyURL = process.env.REACT_APP_PROXY_URL;
   const accessKey = process.env.REACT_APP_PERSONALITY_TEST_API_KEY;
 
   useEffect(() => {
     const newTest = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3001/api/personalitypolice/new_test",
+          `${proxyURL}/api/personalitypolice/new_test`,
           {
             params: {
               api_key: accessKey,
