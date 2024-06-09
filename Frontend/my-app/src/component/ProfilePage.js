@@ -81,6 +81,8 @@ export default function ProfilePage(prop) {
   const [invalidBirthday, setInvalidBirthday] = React.useState(false);
   const [openSuccess, setOpenSuccess] = React.useState(false);
   const [openFail, setOpenFail] = React.useState(false);
+  const [openChange, setOpenChange] = React.useState(false);
+  const [openNoChange, setOpenNoChange] = React.useState(false);
   const [openDialog, setOpenDialog] = React.useState(false);
 
   function addInterest() {
@@ -118,38 +120,43 @@ export default function ProfilePage(prop) {
   const savedProfileTestID = window.localStorage.getItem("profile_testID");
   const previousTestResult = GetTestResult(savedProfileTestID);
 
-  if (previousTestResult && previousTestResult.prediction !== personality) {
-    prop.setProfile((prev) => ({
-      ...prev,
-      personality: previousTestResult.prediction,
-    }));
-    
-    const updatePersonality = async () => {
-      try {
-        const response = await axios.put(
-          `${backendURL}/api/profiles/email/${editedProfile.email}`,
-          { personality: previousTestResult.prediction },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
+  React.useEffect(() => {
+    if (previousTestResult) {
+      if (previousTestResult.prediction === personality) {
+        setOpenNoChange(true);
+      } else {
+        prop.setProfile((prev) => ({
+          ...prev,
+          personality: previousTestResult.prediction,
+        }));
+
+        const updatePersonality = async () => {
+          try {
+            const response = await axios.put(
+              `${backendURL}/api/profiles/email/${editedProfile.email}`,
+              { personality: previousTestResult.prediction },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            setOpenChange(true);
+            console.log(
+              "Personality Updated Successfully with response status: " +
+                response.status
+            );
+          } catch (error) {
+            setOpenFail(true);
+            console.log(
+              "Update personality failed due to unknown server error: " + error
+            );
           }
-        );
-        window.localStorage.removeItem("profile_testID");
-        setOpenSuccess(true);
-        console.log(
-          "Personality Updated Successfully with response status: " +
-            response.status
-        );
-      } catch (error) {
-        setOpenFail(true);
-        console.log(
-          "Update personality failed due to unknown server error: " + error
-        );
+        };
+        updatePersonality();
       }
-    };
-    updatePersonality();
-  }
+    }
+  }, [previousTestResult]);
 
   const [testURL, testID] = CreatePersonalityTest(username, "profile");
   const handleRetake = () => {
@@ -225,6 +232,17 @@ export default function ProfilePage(prop) {
         text="Profiled Updated Failed due to Unknown Server Error"
         open={openFail}
         setOpen={setOpenFail}
+      />
+      <CustomizedSnackbar
+        text= {`Test Result Generated: Your new personality is ${personality}`}
+        open={openChange}
+        setOpen={setOpenChange}
+      />
+      <CustomizedSnackbar
+        severity="info"
+        text="Test Result Generated: Your personality remains the same"
+        open={openNoChange}
+        setOpen={setOpenNoChange}
       />
       <Card
         sx={{
