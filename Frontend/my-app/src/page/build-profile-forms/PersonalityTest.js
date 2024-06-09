@@ -53,7 +53,8 @@ export default function PersonalityTest(prop) {
     window.localStorage.setItem("testID", testID);
   }, [testID]);
 
-  const handleClick = () => {
+  const handleClick = (event) => {
+    event.preventDefault();
     // Remember the current test ID before directing to the external test URL
     setIsLoading(true);
     setTestID(response[1]);

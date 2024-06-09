@@ -44,6 +44,7 @@ import CustomizedSnackbar from "./CustomizedSnackbar";
 import Alert from "@mui/material/Alert";
 import ColorNameAvatar from "./ColorNameAvatar";
 import AlertDialogSlide from "./AlertDialogSlide";
+import CircularIndeterminate from "./CircularIndeterminate";
 import CreatePersonalityTest from "../data/CreatePersonalityTest";
 import GetTestResult from "../data/GetTestResult";
 
@@ -51,6 +52,7 @@ const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export default function ProfilePage(prop) {
   const [isEditMode, setIsEditMode] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [editedProfile, setEditedProfile] = React.useState(prop.profile);
   const {
     username,
@@ -213,6 +215,7 @@ export default function ProfilePage(prop) {
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
+      {isLoading && <CircularIndeterminate />}
       {invalidUsername && (
         <Alert sx={{ marginBottom: "20px" }} severity="error">
           Invalid Username: Username cannot be empty string
@@ -980,7 +983,9 @@ export default function ProfilePage(prop) {
                             dialogContent="Please save all the changes before proceeding to prevent unnecessary data loss. Note that the personality field will be instantly updated once the test is finised, but if you are not satfisfied with the result, you can always retake the test again."
                             positive="Confirm"
                             negative="Cancel"
-                            handlePositive={() => {
+                            handlePositive={(event) => {
+                              event.preventDefault();
+                              setIsLoading(true);
                               // Save the current Test ID, and proceed to the test
                               window.localStorage.setItem(
                                 "profile_testID",
