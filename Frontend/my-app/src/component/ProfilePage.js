@@ -119,7 +119,11 @@ export default function ProfilePage(prop) {
   const previousTestResult = GetTestResult(savedProfileTestID);
 
   if (previousTestResult && previousTestResult.prediction !== personality) {
-    prop.profile.personality = previousTestResult.prediction;
+    prop.setProfile((prev) => ({
+      ...prev,
+      personality: previousTestResult.prediction,
+    }));
+    
     const updatePersonality = async () => {
       try {
         const response = await axios.put(
