@@ -34,6 +34,7 @@ function App() {
           location: "",
           interests: [],
           description: "",
+          personality: "",
         }
   );
 
