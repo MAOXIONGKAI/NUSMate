@@ -1,7 +1,5 @@
 #dependencies
 /node_modules
 /.env
-/.env.local 
-/.env.prod
 dist/
 build/

@@ -2,7 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://api.personalitypolice.com",
+  "proxy": "https://nusmate.onrender.com",
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.11.4",
@@ -15,7 +15,6 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.2",
-    "cross-env": "^7.0.3",
     "dayjs": "^1.11.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -25,10 +24,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "cross-env REACT_APP_ENV=prod react-scripts start",
-    "build": "cross-env REACT_APP_ENV=prod react-scripts build",
-    "build:dev": "cross-env REACT_APP_ENV=local react-scripts build",
-    "dev": "cross-env REACT_APP=local react-scripts start",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

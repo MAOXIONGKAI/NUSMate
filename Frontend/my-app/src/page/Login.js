@@ -119,7 +119,11 @@ export default function Login(prop) {
 
     //If remember me option not checked, erase local stored form data when submit
     if (!formData.remember) {
-      window.localStorage.removeItem("loginFormData");
+      window.localStorage.setItem("loginFormData", {
+        email: "",
+        password: "",
+        remember: false,
+      });
     }
 
     const profileData = await getData();

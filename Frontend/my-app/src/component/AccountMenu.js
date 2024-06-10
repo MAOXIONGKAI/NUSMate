@@ -79,28 +79,7 @@ export default function AccountMenu(prop) {
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          <Button
-            component={Link}
-            to={"/"}
-            onClick={() => {
-              try {
-                const loginForm = JSON.parse(
-                  window.localStorage.getItem("loginFormData")
-                );
-                window.localStorage.clear();
-                if (loginForm && loginForm.remember) {
-                  window.localStorage.setItem(
-                    "loginFormData",
-                    JSON.stringify(loginForm)
-                  );
-                }
-              } catch (error) {
-                console.log("loginFormData is empty")
-              } finally {
-                prop.setLoggedIn(false);
-              }
-            }}
-          >
+          <Button component={Link} to={"/"} onClick={() => prop.setLoggedIn(false)}>
             Logout
           </Button>
         </MenuItem>

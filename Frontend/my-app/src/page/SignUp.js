@@ -59,7 +59,6 @@ export default function SignUp(prop) {
     location: "",
     interests: [],
     description: "",
-    personality: "",
   };
 
   // React States
@@ -118,7 +117,7 @@ export default function SignUp(prop) {
   //React Effect
   // Update user's profile data when sign up form is submitted successfully
   const sendData = () => {
-    const backendURL = process.env.REACT_APP_BACKEND_URL;
+    const backendURL = process.env.REACT_APP_BACKEND_URL
     const send = async () => {
       try {
         const response = await axios.post(
@@ -136,7 +135,6 @@ export default function SignUp(prop) {
         window.localStorage.removeItem("signUpFormData");
         window.localStorage.removeItem("completeStatus");
         window.localStorage.removeItem("activeStep");
-        window.localStorage.removeItem("testID");
         return response.data;
       } catch (error) {
         console.log("Error when sending form data to database");
@@ -207,9 +205,6 @@ export default function SignUp(prop) {
     setError((prev) => ({ ...prev, birthday: !validBirthday }));
   }, [validBirthday]);
 
-  // Keep track of whether user has finished the personality test
-  const [finishTest, setFinishTest] = React.useState(true);
-
   // Form handling (Validation & Submission)
   // Validating whether each step is completed with valid data
   const validateStep = (step) => {
@@ -235,8 +230,6 @@ export default function SignUp(prop) {
           formData.birthday !== null &&
           formData.location !== ""
         );
-      case 3:
-        return formData.personality !== "";
       default:
         return true;
     }
@@ -301,7 +294,7 @@ export default function SignUp(prop) {
 
   // Check if the sign up form email is already registered
   async function emailRegistered() {
-    const backendURL = process.env.REACT_APP_BACKEND_URL;
+    const backendURL = process.env.REACT_APP_BACKEND_URL
     try {
       const response = await axios.get(
         `${backendURL}/api/profiles/email/${formData.email}`,
@@ -319,7 +312,7 @@ export default function SignUp(prop) {
 
   // Check if the sign up form username is already registered
   async function usernameRegistered() {
-    const backendURL = process.env.REACT_APP_BACKEND_URL;
+    const backendURL = process.env.REACT_APP_BACKEND_URL
     try {
       const response = await axios.get(
         `${backendURL}/api/profiles/username/${formData.username}`,
@@ -412,14 +405,12 @@ export default function SignUp(prop) {
     ];
 
     const firstInvalidField = requiredFields.find((field) => !field.condition);
-    setFinishTest(formData.personality !== "");
 
     if (
       !firstInvalidField &&
       passwordMatch &&
       validEmailFormat &&
-      validBirthday &&
-      finishTest
+      validBirthday
     ) {
 
       // Check if email or username has already been registered, if yes then do not
@@ -437,8 +428,8 @@ export default function SignUp(prop) {
 
       //If everything is clear, attempt to send data to database
       //First tidy up the text input for some of the fields
-      formData.username = formData.username.trim();
-      formData.description = formData.description.trim();
+      formData.username = formData.username.trim()
+      formData.description = formData.description.trim()
 
       //Then proceeds to send data to database
       if (sendData()) {
@@ -545,11 +536,6 @@ export default function SignUp(prop) {
               <Alert severity="error">
                 The field {submissionStatus.invalidField} in step{" "}
                 {submissionStatus.invalidStep} is required but is not filled.
-              </Alert>
-            )}
-            {!finishTest && (
-              <Alert severity="error">
-                The personality test is required but not finished.
               </Alert>
             )}
             {usernameTaken && (
