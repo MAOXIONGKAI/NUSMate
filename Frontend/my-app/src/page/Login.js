@@ -19,6 +19,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import RandomImage from "../data/RandomImage";
 import StyledButton from "../component/StyledButton";
 import Alert from "@mui/material/Alert";
+import CircularIndeterminate from "../component/CircularIndeterminate";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 // ^Note that this code is from template, the comment is not written by me.
@@ -55,6 +56,7 @@ export default function Login(prop) {
 
   const [invalidInfo, setInvalidInfo] = React.useState(false);
   const [serverError, setServerError] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   // Fetch database profile data through axios
   // Takes the login info filled by user and send http request to Backend API
@@ -85,6 +87,8 @@ export default function Login(prop) {
       } else {
         setServerError(true);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -109,6 +113,9 @@ export default function Login(prop) {
 
     if (formData.email === "" || formData.password === "") return;
     //Prevent the page from refresh when user click submit
+
+    // Start the loading animation
+    setIsLoading(true);
 
     //If remember me option not checked, erase local stored form data when submit
     if (!formData.remember) {
@@ -142,6 +149,7 @@ export default function Login(prop) {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      { isLoading && <CircularIndeterminate />}
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid
