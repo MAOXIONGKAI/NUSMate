@@ -22,13 +22,15 @@ export default function ColorNameAvatar(prop) {
 
   function stringAvatar(name) {
     return {
-      sx: {
-        bgcolor: stringToColor(name),
-        height: "120px",
-        width: "120px",
-        fontSize: "36px",
-        marginBottom: "20px",
-      },
+      sx: prop.sx
+        ? { ...prop.sx, bgcolor: stringToColor(name) }
+        : {
+            bgcolor: stringToColor(name),
+            height: "120px",
+            width: "120px",
+            fontSize: "36px",
+            marginBottom: "20px",
+          },
       children: name
         .split(" ")
         .map((part) => part.toUpperCase()[0])
@@ -37,7 +39,11 @@ export default function ColorNameAvatar(prop) {
   }
   return (
     <Avatar
-      sx={{ width: 120, height: 120, mb: 2 }}
+      sx={{
+        width: 120,
+        height: 120,
+        mb: 2,
+      }}
       //TODO: replace with user's own uploaded avatar
       {...stringAvatar(prop.username)}
       src=""

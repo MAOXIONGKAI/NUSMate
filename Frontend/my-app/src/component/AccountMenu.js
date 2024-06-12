@@ -10,6 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 import { Link } from "react-router-dom";
+import ColorNameAvatar from "./ColorNameAvatar";
 
 export default function AccountMenu(prop) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -32,7 +33,10 @@ export default function AccountMenu(prop) {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <ColorNameAvatar
+              username={prop.profile.username}
+              sx={{width: "32px", height: "32px", fontSize: "14px", margin: "0px"}}
+            />
           </IconButton>
         </Tooltip>
       </Box>
@@ -95,7 +99,7 @@ export default function AccountMenu(prop) {
                   );
                 }
               } catch (error) {
-                console.log("loginFormData is empty")
+                console.log("loginFormData is empty");
               } finally {
                 prop.setLoggedIn(false);
               }
