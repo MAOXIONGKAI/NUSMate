@@ -363,69 +363,85 @@ export const FASSMajor = [
 ];
 
 //School of Business Majors
-export const SOBMajor = [
-    "Management",
-    "Real Estate Finance"
-]
-
+export const SOBMajor = ["Management", "Real Estate Finance"];
 
 //School of Computing Majors
 export const SOCMajor = [
   "Business Analytics",
   "Computer Science",
   "Information System",
-  "Information Security "
+  "Information Security ",
 ];
 
 //College of Design & Engineering Majors
 export const CDEMajor = [
-    "Architecture",
-    "Biomedical Engineering",
-    "Chemical Engineering",
-    "Civil Engineering",
-    "Computing (Design and Engineering)",
-    "Computer Engineering",
-    "Electrical Engineering",
-    "Engineering Science",
-    "Industrial Design",
-    "Industrial & System Engineering",
-    "Infrastructure & Project Management",
-    "Material Science & Engineering", 
-    "Mechanical Engineering"
-]
+  "Architecture",
+  "Biomedical Engineering",
+  "Chemical Engineering",
+  "Civil Engineering",
+  "Computing (Design and Engineering)",
+  "Computer Engineering",
+  "Electrical Engineering",
+  "Engineering Science",
+  "Industrial Design",
+  "Industrial & System Engineering",
+  "Infrastructure & Project Management",
+  "Material Science & Engineering",
+  "Mechanical Engineering",
+];
 
 //Yong Loo Lin School of Medicine Majors
-export const YLLSOMMajor = ["Medicine"]
+export const YLLSOMMajor = ["Medicine"];
 
 //Yong Siew Toh Conservatory of Music Majors
 export const YSTCMMajor = [
-    "Audio Arts & Sciences",
-    "Brass",
-    "Composition",
-    "Music & Society / Music, Collaboration & Production",
-    "Percussion",
-    "Piano",
-    "String & Harp",
-    "Voice",
-    "Woodwinds"
-]
+  "Audio Arts & Sciences",
+  "Brass",
+  "Composition",
+  "Music & Society / Music, Collaboration & Production",
+  "Percussion",
+  "Piano",
+  "String & Harp",
+  "Voice",
+  "Woodwinds",
+];
 
 //Saw Swee Hock School of Public Health
 //Only for second major
-export const SSHSOPHMajors = ["Public Health"]
+export const SSHSOPHMajors = ["Public Health"];
 
 //Faculty of Science Majors
 export const FOSMajor = [
-    "Chemistry",
-    "Data Science & Analytics",
-    "Data Science & Economics",
-    "Environmental Study",
-    "Food Science & Technology",
-    "Life Science",
-    "Mathematics",
-    "Pharmaceutical Science",
-    "Pharmacy",
-    "Physics",
-    "Quantitative Finance",
-    "Statistics"
-]
+  "Chemistry",
+  "Data Science & Analytics",
+  "Data Science & Economics",
+  "Environmental Study",
+  "Food Science & Technology",
+  "Life Science",
+  "Mathematics",
+  "Pharmaceutical Science",
+  "Pharmacy",
+  "Physics",
+  "Quantitative Finance",
+  "Statistics",
+];
+
+//MBTI Personality
+export const MBTI = [
+  "ISTJ",
+  "ISFJ",
+  "INFJ",
+  "INTJ",
+  "ISTP",
+  "ISFP",
+  "INFP",
+  "INTP",
+  "ESTP",
+  "ESFP",
+  "ENFP",
+  "ENTP",
+  "ESTJ",
+  "ESFJ",
+  "ENFJ",
+  "ENTJ",
+];
