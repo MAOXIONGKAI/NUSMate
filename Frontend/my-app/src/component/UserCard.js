@@ -6,12 +6,12 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import ColorNameAvatar from "./ColorNameAvatar";
 import { Tooltip } from "@mui/material";
-import { educationStatus } from "../data/FormOptions";
 
 export default function UserCard(prop) {
   const {
@@ -24,7 +24,16 @@ export default function UserCard(prop) {
   } = prop.profile;
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card
+      sx={{
+        ...prop.sx,
+        borderRadius: "30px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minWidth: "340px"
+      }}
+    >
       <CardHeader
         avatar={
           <ColorNameAvatar
@@ -34,6 +43,7 @@ export default function UserCard(prop) {
         }
         sx={{
           textAlign: "center",
+          backgroundColor: "#DFF1FF",
           "& .MuiCardHeader-subheader": {
             fontSize: "14px",
           },
@@ -41,9 +51,9 @@ export default function UserCard(prop) {
         title={`${username} (${
           education_status === "Undergraduate"
             ? "BA"
-            : educationStatus === "Master"
+            : education_status === "Master"
             ? "MA"
-            : educationStatus === "Doctorate"
+            : education_status === "Doctorate"
             ? "PhD"
             : "Alum"
         })`}
@@ -82,10 +92,13 @@ export default function UserCard(prop) {
           </Table>
         )}
       </CardContent>
-      <CardActions disableSpacing>
+      <CardActions
+        disableSpacing
+        sx={{ marginTop: "auto", backgroundColor: "#EFF9FF" }}
+      >
         <Tooltip title="Add to favorites">
           <IconButton aria-label="add to favorites">
-            <FavoriteIcon />
+            <FavoriteBorderIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title={`Message ${username}`}>

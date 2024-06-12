@@ -1,5 +1,6 @@
 import React from "react";
 import "../index.css";
+import { Container, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UserCard from "../component/UserCard";
 import DiscoverNoResult from "../image/DiscoverNoResult.png";
@@ -15,6 +16,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
+import CustomizedSnackbar from "../component/CustomizedSnackbar";
 
 import {
   educationStatus,
@@ -32,6 +34,8 @@ import {
   SSHSOPHMajors,
   FOSMajor,
 } from "../data/FormOptions";
+import GetSearchResult from "../data/GetSearchResult";
+import RandomArrayElement from "../data/RandomArrayElement";
 
 export default function Discover(prop) {
   const DiscoverOption = styled((prop) => (
@@ -64,7 +68,7 @@ export default function Discover(prop) {
     personality: "",
   });
 
-  const [searchResult, setSearchRresult] = React.useState([]);
+  const [searchResult, setSearchResult] = React.useState([]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -74,8 +78,121 @@ export default function Discover(prop) {
     }));
   };
 
+  const [openSuccess, setOpenSuccess] = React.useState(false);
+  const [openNoResult, setOpenNoResult] = React.useState(false);
+  const [openFail, setOpenFail] = React.useState(false);
+  const [openEmpty, setOpenEmpty] = React.useState(false);
+
+  const validateTags = (tags) => {
+    for (const tag in tags) {
+      if (tags[tag]) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCustomizedSearch = async () => {
+    if (!validateTags(searchTags)) {
+      setOpenEmpty(true);
+      return;
+    }
+
+    const result = await GetSearchResult(searchTags);
+    setSearchResult(result);
+    if (!result) {
+      setOpenFail(true);
+    } else if (result.length === 0) {
+      setOpenNoResult(true);
+    } else {
+      setOpenSuccess(true);
+    }
+  };
+
+  const handleInstantMatch = async () => {
+    const {
+      first_major,
+      second_major,
+      education_status,
+      nationality,
+      location,
+      personality,
+    } = prop.profile;
+
+    const tags = {
+      first_major: first_major,
+      second_major: second_major,
+      education_status: education_status,
+      nationality: nationality,
+      location: location,
+      personality: personality,
+    };
+
+    const result = await GetSearchResult(tags);
+    setSearchResult(result);
+    if (!result) {
+      setOpenFail(true);
+    } else if (result.length === 0) {
+      setOpenNoResult(true);
+    } else {
+      setOpenSuccess(true);
+    }
+  };
+
+  const handleRandomFriend = async () => {
+    const majors = [
+      ...FASSMajor,
+      ...SOBMajor,
+      ...SOCMajor,
+      ...CDEMajor,
+      ...YLLSOMMajor,
+      ...YSTCMMajor,
+      ...SSHSOPHMajors,
+      ...FOSMajor,
+    ];
+
+    let result = [];
+    while (result.length === 0) {
+      const tags = {
+        first_major: RandomArrayElement(majors),
+        second_major: RandomArrayElement(majors),
+        education_status: RandomArrayElement(educationStatus),
+        nationalities: RandomArrayElement(educationStatus),
+        location: RandomArrayElement(educationStatus),
+        personality: RandomArrayElement(educationStatus),
+      };
+
+      result = await GetSearchResult(tags);
+    }
+    setSearchResult(result);
+    setOpenSuccess(true);
+  };
+
   return (
     <div>
+      <CustomizedSnackbar
+        text="Profile Match Successfully: Found matching profile!"
+        open={openSuccess}
+        setOpen={setOpenSuccess}
+      />
+      <CustomizedSnackbar
+        severity="warning"
+        text="Oops, seems like there's no result matching your preference..."
+        open={openNoResult}
+        setOpen={setOpenNoResult}
+      />
+      <CustomizedSnackbar
+        severity="warning"
+        text="Invalid Input: Please provide some search tags"
+        open={openEmpty}
+        setOpen={setOpenEmpty}
+      />
+      <CustomizedSnackbar
+        severity="error"
+        text="Profile Match Failed: Unknown server error"
+        open={openFail}
+        setOpen={setOpenFail}
+      />
       <Box
         sx={{
           marginTop: "20px",
@@ -449,7 +566,7 @@ export default function Discover(prop) {
           ))}
         </DiscoverOption>
         <Tooltip title="Customized Search">
-          <IconButton>
+          <IconButton onClick={handleCustomizedSearch}>
             <SearchIcon
               sx={{
                 color: "white",
@@ -461,7 +578,7 @@ export default function Discover(prop) {
           </IconButton>
         </Tooltip>
         <Tooltip title="Instant Match">
-          <IconButton>
+          <IconButton onClick={handleInstantMatch}>
             <PersonSearchIcon
               sx={{
                 color: "white",
@@ -473,7 +590,7 @@ export default function Discover(prop) {
           </IconButton>
         </Tooltip>
         <Tooltip title="Random Friend">
-          <IconButton>
+          <IconButton onClick={handleRandomFriend}>
             <ShuffleIcon
               sx={{
                 color: "white",
@@ -496,7 +613,7 @@ export default function Discover(prop) {
         }}
       >
         {" "}
-        {searchResult.length !== 0 ? (
+        {!searchResult || searchResult.length === 0 ? (
           <>
             <Typography
               variant="h5"
@@ -514,7 +631,33 @@ export default function Discover(prop) {
             />
           </>
         ) : (
-          <UserCard profile={prop.profile}/>
+          <Box p={3} width="100%">
+            <Container width="100%">
+              <Grid container spacing={3} rowSpacing={5} sx={{ width: "100%" }}>
+                {searchResult.map((profile, index) => (
+                  <Grid
+                    item
+                    key={index}
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    lg={4}
+                    sx={{ width: "100%" }}
+                  >
+                    <Box
+                      sx={{
+                        height: "100%",
+                        display: "flex",
+                        width: "100%",
+                      }}
+                    >
+                      <UserCard profile={profile} sx={{ flexGrow: 1 }} />
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </Container>
+          </Box>
         )}
       </Box>
     </div>

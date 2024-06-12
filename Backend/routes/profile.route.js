@@ -7,6 +7,7 @@ const {
   readByID,
   readByEmail,
   readByUsername,
+  readByTags,
   updateByID,
   updateByEmail,
   updateByUsername,
@@ -22,6 +23,10 @@ router.get("/:id", readByID);
 router.get("/email/:email", readByEmail);
 
 router.get("/username/:username", readByUsername);
+
+// Using post request to get around URL length limitation when the 
+// query body is too long
+router.post("/query", readByTags);
 
 router.put("/:id", updateByID);
 
