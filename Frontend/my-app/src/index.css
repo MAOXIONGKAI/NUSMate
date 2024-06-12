@@ -89,6 +89,10 @@ code {
   margin-right: 40px;
 }
 
+.discover-options {
+  width: 10%;
+}
+
 .tobeCompleted {
   text-align: center;
   justify-content: center;

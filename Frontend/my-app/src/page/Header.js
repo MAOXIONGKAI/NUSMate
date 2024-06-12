@@ -43,6 +43,7 @@ function LoggedInHeader(prop) {
             <li>
               <AccountMenu
                 setLoggedIn={prop.setLoggedIn}
+                profile={prop.profile}
               />
             </li>
           </ul>
@@ -84,6 +85,7 @@ export default function Header(prop) {
       {prop.loggedIn ? (
         <LoggedInHeader
           setLoggedIn={prop.setLoggedIn}
+          profile={prop.profile}
         />
       ) : (
         <LandingHeader

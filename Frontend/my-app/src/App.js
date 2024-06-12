@@ -50,7 +50,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+        <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} profile={profile}/>
         <Routes>
           <Route
             path="/"
