@@ -1,6 +1,7 @@
 import React from "react";
 import "../index.css";
 import { styled } from "@mui/material/styles";
+import UserCard from "../component/UserCard";
 import DiscoverNoResult from "../image/DiscoverNoResult.png";
 import {
   Box,
@@ -34,7 +35,14 @@ import {
 
 export default function Discover(prop) {
   const DiscoverOption = styled((prop) => (
-    <TextField hiddenLabel select size="small" variant="filled" {...prop} />
+    <TextField
+      hiddenLabel
+      select
+      size="small"
+      variant="filled"
+      onChange={handleChange}
+      {...prop}
+    />
   ))(({ theme }) => ({
     fontSize: "14px",
     width: "10%",
@@ -47,6 +55,25 @@ export default function Discover(prop) {
     },
   }));
 
+  const [searchTags, setSearchTags] = React.useState({
+    first_major: "",
+    second_major: "",
+    education_status: "",
+    nationality: "",
+    location: "",
+    personality: "",
+  });
+
+  const [searchResult, setSearchRresult] = React.useState([]);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setSearchTags((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <div>
       <Box
@@ -56,10 +83,14 @@ export default function Discover(prop) {
           gap: "20px",
           alignItems: "center",
           justifyContent: "center",
-          //border: "red solid 5px",
         }}
       >
-        <DiscoverOption label="First Major">
+        <DiscoverOption
+          label="First Major"
+          name="first_major"
+          value={searchTags.first_major}
+        >
+          <MenuItem value="">--- Remove Selection ---</MenuItem>
           <ListSubheader
             sx={{
               fontWeight: "1000",
@@ -200,8 +231,12 @@ export default function Discover(prop) {
             </MenuItem>
           ))}
         </DiscoverOption>
-        <DiscoverOption label="Second Major">
-          <MenuItem value="">Not Applicable</MenuItem>
+        <DiscoverOption
+          label="Second Major"
+          name="second_major"
+          value={searchTags.second_major}
+        >
+          <MenuItem value="">--- Remove Selection ---</MenuItem>
           <ListSubheader
             sx={{
               fontWeight: "1000",
@@ -362,29 +397,51 @@ export default function Discover(prop) {
             </MenuItem>
           ))}
         </DiscoverOption>
-        <DiscoverOption label="Education Status">
+        <DiscoverOption
+          label="Education Status"
+          name="education_status"
+          value={searchTags.education_status}
+        >
+          <MenuItem value="">--- Remove Selection ---</MenuItem>
           {educationStatus.map((status) => (
             <MenuItem key={status} value={status}>
               {status}
             </MenuItem>
           ))}
         </DiscoverOption>
-        <DiscoverOption label="Nationality">
+        <DiscoverOption
+          label="Nationality"
+          name="nationality"
+          value={searchTags.nationality}
+        >
+          <MenuItem value="">--- Remove Selection ---</MenuItem>
           {nationalities.map((nationality) => (
             <MenuItem key={nationality} value={nationality}>
               {nationality}
             </MenuItem>
           ))}
         </DiscoverOption>
-        <DiscoverOption label="Location">
+        <DiscoverOption
+          label="Location"
+          name="location"
+          value={searchTags.location}
+        >
+          <MenuItem value="">--- Remove Selection ---</MenuItem>
           {singaporeLocations.map((location) => (
             <MenuItem key={location} value={location}>
               {location}
             </MenuItem>
           ))}
         </DiscoverOption>
-        <DiscoverOption label="Interest"></DiscoverOption>
-        <DiscoverOption label="Personality">
+        <DiscoverOption label="Interest" name="interest">
+          <MenuItem disabled>To be Completed</MenuItem>
+        </DiscoverOption>
+        <DiscoverOption
+          label="Personality"
+          name="personality"
+          value={searchTags.personality}
+        >
+          <MenuItem value="">--- Remove Selection ---</MenuItem>
           {MBTI.map((personality) => (
             <MenuItem key={personality} value={personality}>
               {personality}
@@ -430,22 +487,35 @@ export default function Discover(prop) {
       </Box>
       <Box
         sx={{
-          marginTop: "30px",
+          marginTop: "40px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
-        <Typography variant="h5" sx={{ fontFamily: "Handlee, sans-serif", fontWeight: 600}}>
-          No results shown at the moment,<br />start searching or try to adjust your tags to improve search result
-        </Typography>
-        <img
-          src={DiscoverNoResult}
-          alt="Discover page background when no result is shown"
-          width="60%"
-        />
+        {" "}
+        {searchResult.length !== 0 ? (
+          <>
+            <Typography
+              variant="h5"
+              sx={{ fontFamily: "Handlee, sans-serif", fontWeight: 600 }}
+            >
+              No results shown at the moment,
+              <br />
+              start searching or try to adjust your tags to improve search
+              result
+            </Typography>
+            <img
+              src={DiscoverNoResult}
+              alt="Discover page background when no result is shown"
+              width="60%"
+            />
+          </>
+        ) : (
+          <UserCard profile={prop.profile}/>
+        )}
       </Box>
     </div>
   );
