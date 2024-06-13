@@ -1,6 +1,12 @@
 import React from "react";
 import "../index.css";
-import { Container, Grid } from "@mui/material";
+import {
+  Autocomplete,
+  Chip,
+  Container,
+  Grid,
+  InputAdornment,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UserCard from "../component/UserCard";
 import DiscoverNoResult from "../image/DiscoverNoResult.png";
@@ -17,6 +23,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
 import CustomizedSnackbar from "../component/CustomizedSnackbar";
+import InterestsIcon from "@mui/icons-material/Interests";
+import BadgeIcon from "@mui/icons-material/Badge";
+import AddIcon from "@mui/icons-material/Add";
 
 import {
   educationStatus,
@@ -36,6 +45,7 @@ import {
 } from "../data/FormOptions";
 import GetSearchResult from "../data/GetSearchResult";
 import RandomArrayElement from "../data/RandomArrayElement";
+import ChipsArray from "../component/ChipsArray";
 
 export default function Discover(prop) {
   const DiscoverOption = styled((prop) => (
@@ -49,7 +59,7 @@ export default function Discover(prop) {
     />
   ))(({ theme }) => ({
     fontSize: "14px",
-    width: "10%",
+    width: "13%",
     size: "small",
     "& .MuiInputLabel-root": {
       fontSize: "0.55rem",
@@ -66,7 +76,11 @@ export default function Discover(prop) {
     nationality: "",
     location: "",
     personality: "",
+    username: "",
   });
+
+  const [interestInput, setInterestInput] = React.useState("");
+  const [interests, setInterests] = React.useState(["Building Website"]);
 
   const [searchResult, setSearchResult] = React.useState([]);
 
@@ -76,12 +90,27 @@ export default function Discover(prop) {
       ...prev,
       [name]: value,
     }));
+    console.log(searchTags);
+  };
+
+  const handleChangeInterest = (event) => {
+    const input = event.target.value;
+    setInterestInput(input);
   };
 
   const [openSuccess, setOpenSuccess] = React.useState(false);
   const [openNoResult, setOpenNoResult] = React.useState(false);
   const [openFail, setOpenFail] = React.useState(false);
   const [openEmpty, setOpenEmpty] = React.useState(false);
+
+  const handleAddInterest = () => {
+    const newInterest = interestInput;
+    setInterestInput("");
+    if (newInterest.trim() === "") {
+      return;
+    }
+    setInterests((prev) => [...prev, newInterest]);
+  };
 
   const validateTags = (tags) => {
     for (const tag in tags) {
@@ -197,414 +226,477 @@ export default function Discover(prop) {
         sx={{
           marginTop: "20px",
           display: "flex",
-          gap: "20px",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <DiscoverOption
-          label="First Major"
-          name="first_major"
-          value={searchTags.first_major}
-        >
-          <MenuItem value="">--- Remove Selection ---</MenuItem>
-          <ListSubheader
+        <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+          <Box
             sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
+              display: "flex",
+              flexGrow: 5,
+              gap: "20px",
+              marginBottom: "15px",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
             }}
           >
-            Faculty of Arts & Social Science
-          </ListSubheader>
-          {FASSMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
+            <DiscoverOption
+              label="First Major"
+              name="first_major"
+              value={searchTags.first_major}
             >
-              {major}
-            </MenuItem>
-          ))}
+              <MenuItem value="">--- Remove Selection ---</MenuItem>
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                Faculty of Arts & Social Science
+              </ListSubheader>
+              {FASSMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            School of Business
-          </ListSubheader>
-          {SOBMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                School of Business
+              </ListSubheader>
+              {SOBMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            School of Computing
-          </ListSubheader>
-          {SOCMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                School of Computing
+              </ListSubheader>
+              {SOCMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            College of Design & Engineering
-          </ListSubheader>
-          {CDEMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                College of Design & Engineering
+              </ListSubheader>
+              {CDEMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            Yong Loo Lin School of Medicine
-          </ListSubheader>
-          {YLLSOMMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                Yong Loo Lin School of Medicine
+              </ListSubheader>
+              {YLLSOMMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            Yong Siew Toh Conservatory of Music
-          </ListSubheader>
-          {YSTCMMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                Yong Siew Toh Conservatory of Music
+              </ListSubheader>
+              {YSTCMMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            Faculty of Science
-          </ListSubheader>
-          {FOSMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                Faculty of Science
+              </ListSubheader>
+              {FOSMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
+            </DiscoverOption>
+            <DiscoverOption
+              label="Second Major"
+              name="second_major"
+              value={searchTags.second_major}
             >
-              {major}
-            </MenuItem>
-          ))}
-        </DiscoverOption>
-        <DiscoverOption
-          label="Second Major"
-          name="second_major"
-          value={searchTags.second_major}
-        >
-          <MenuItem value="">--- Remove Selection ---</MenuItem>
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            Faculty of Arts & Social Science
-          </ListSubheader>
-          {FASSMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <MenuItem value="">--- Remove Selection ---</MenuItem>
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                Faculty of Arts & Social Science
+              </ListSubheader>
+              {FASSMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            School of Business
-          </ListSubheader>
-          {SOBMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                School of Business
+              </ListSubheader>
+              {SOBMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            School of Computing
-          </ListSubheader>
-          {SOCMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                School of Computing
+              </ListSubheader>
+              {SOCMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            College of Design & Engineering
-          </ListSubheader>
-          {CDEMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                College of Design & Engineering
+              </ListSubheader>
+              {CDEMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            Yong Loo Lin School of Medicine
-          </ListSubheader>
-          {YLLSOMMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                Yong Loo Lin School of Medicine
+              </ListSubheader>
+              {YLLSOMMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            Yong Siew Toh Conservatory of Music
-          </ListSubheader>
-          {YSTCMMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                Yong Siew Toh Conservatory of Music
+              </ListSubheader>
+              {YSTCMMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
-            sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
-            }}
-          >
-            Saw Swee Hock School of Public Health
-          </ListSubheader>
-          {SSHSOPHMajors.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                Saw Swee Hock School of Public Health
+              </ListSubheader>
+              {SSHSOPHMajors.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
 
-          <ListSubheader
+              <ListSubheader
+                sx={{
+                  fontWeight: "1000",
+                  color: "Black",
+                  fontSize: "22px",
+                  textDecoration: "underline",
+                }}
+              >
+                Faculty of Science
+              </ListSubheader>
+              {FOSMajor.map((major) => (
+                <MenuItem
+                  key={major}
+                  value={major}
+                  sx={{ color: "dimgray", fontWeight: "400" }}
+                >
+                  {major}
+                </MenuItem>
+              ))}
+            </DiscoverOption>
+            <DiscoverOption
+              label="Education Status"
+              name="education_status"
+              value={searchTags.education_status}
+            >
+              <MenuItem value="">--- Remove Selection ---</MenuItem>
+              {educationStatus.map((status) => (
+                <MenuItem key={status} value={status}>
+                  {status}
+                </MenuItem>
+              ))}
+            </DiscoverOption>
+            <DiscoverOption
+              label="Nationality"
+              name="nationality"
+              value={searchTags.nationality}
+            >
+              <MenuItem value="">--- Remove Selection ---</MenuItem>
+              {nationalities.map((nationality) => (
+                <MenuItem key={nationality} value={nationality}>
+                  {nationality}
+                </MenuItem>
+              ))}
+            </DiscoverOption>
+            <DiscoverOption
+              label="Location"
+              name="location"
+              value={searchTags.location}
+            >
+              <MenuItem value="">--- Remove Selection ---</MenuItem>
+              {singaporeLocations.map((location) => (
+                <MenuItem key={location} value={location}>
+                  {location}
+                </MenuItem>
+              ))}
+            </DiscoverOption>
+            <DiscoverOption
+              label="Personality"
+              name="personality"
+              value={searchTags.personality}
+            >
+              <MenuItem value="">--- Remove Selection ---</MenuItem>
+              {MBTI.map((personality) => (
+                <MenuItem key={personality} value={personality}>
+                  {personality}
+                </MenuItem>
+              ))}
+            </DiscoverOption>
+          </Box>
+          <Box
             sx={{
-              fontWeight: "1000",
-              color: "Black",
-              fontSize: "22px",
-              textDecoration: "underline",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "20px",
             }}
           >
-            Faculty of Science
-          </ListSubheader>
-          {FOSMajor.map((major) => (
-            <MenuItem
-              key={major}
-              value={major}
-              sx={{ color: "dimgray", fontWeight: "400" }}
-            >
-              {major}
-            </MenuItem>
-          ))}
-        </DiscoverOption>
-        <DiscoverOption
-          label="Education Status"
-          name="education_status"
-          value={searchTags.education_status}
-        >
-          <MenuItem value="">--- Remove Selection ---</MenuItem>
-          {educationStatus.map((status) => (
-            <MenuItem key={status} value={status}>
-              {status}
-            </MenuItem>
-          ))}
-        </DiscoverOption>
-        <DiscoverOption
-          label="Nationality"
-          name="nationality"
-          value={searchTags.nationality}
-        >
-          <MenuItem value="">--- Remove Selection ---</MenuItem>
-          {nationalities.map((nationality) => (
-            <MenuItem key={nationality} value={nationality}>
-              {nationality}
-            </MenuItem>
-          ))}
-        </DiscoverOption>
-        <DiscoverOption
-          label="Location"
-          name="location"
-          value={searchTags.location}
-        >
-          <MenuItem value="">--- Remove Selection ---</MenuItem>
-          {singaporeLocations.map((location) => (
-            <MenuItem key={location} value={location}>
-              {location}
-            </MenuItem>
-          ))}
-        </DiscoverOption>
-        <DiscoverOption label="Interest" name="interest">
-          <MenuItem disabled>To be Completed</MenuItem>
-        </DiscoverOption>
-        <DiscoverOption
-          label="Personality"
-          name="personality"
-          value={searchTags.personality}
-        >
-          <MenuItem value="">--- Remove Selection ---</MenuItem>
-          {MBTI.map((personality) => (
-            <MenuItem key={personality} value={personality}>
-              {personality}
-            </MenuItem>
-          ))}
-        </DiscoverOption>
-        <Tooltip title="Customized Search">
-          <IconButton onClick={handleCustomizedSearch}>
-            <SearchIcon
-              sx={{
-                color: "white",
-                background:
-                  "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
-                borderRadius: "5px",
-              }}
+            <Autocomplete
+            clearIcon={false}
+              sx={{ width: "43%" }}
+              size="small"
+              options={[]}
+              freeSolo
+              multiple
+              renderTags={(value, props) =>
+                value.map((interest, index) => (
+                  <Chip key={index} label={interest} />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Search by Interests..."
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <InterestsIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
             />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Instant Match">
-          <IconButton onClick={handleInstantMatch}>
-            <PersonSearchIcon
-              sx={{
-                color: "white",
-                background:
-                  "linear-gradient(90deg, rgba(255,18,93,1) 0%, rgba(156,0,123,1) 100%)",
-                borderRadius: "5px",
+            <TextField
+              sx={{ width: "43%" }}
+              placeholder="Search by Username..."
+              size="small"
+              name="username"
+              value={searchTags.username}
+              onChange={handleChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <BadgeIcon />
+                  </InputAdornment>
+                ),
               }}
-            />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Random Friend">
-          <IconButton onClick={handleRandomFriend}>
-            <ShuffleIcon
-              sx={{
-                color: "white",
-                background:
-                  "linear-gradient(90deg, rgba(90,255,149,1) 0%, rgba(49,176,93,1) 100%)",
-                borderRadius: "5px",
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+            ></TextField>
+          </Box>
+        </Box>
+        <Box sx={{ display: "flex", width: "20%" }}>
+          <Tooltip title="Customized Search">
+            <IconButton onClick={handleCustomizedSearch}>
+              <SearchIcon
+                sx={{
+                  color: "white",
+                  background:
+                    "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+                  borderRadius: "5px",
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Instant Match">
+            <IconButton onClick={handleInstantMatch}>
+              <PersonSearchIcon
+                sx={{
+                  color: "white",
+                  background:
+                    "linear-gradient(90deg, rgba(255,18,93,1) 0%, rgba(156,0,123,1) 100%)",
+                  borderRadius: "5px",
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Random Friend">
+            <IconButton onClick={handleRandomFriend}>
+              <ShuffleIcon
+                sx={{
+                  color: "white",
+                  background:
+                    "linear-gradient(90deg, rgba(90,255,149,1) 0%, rgba(49,176,93,1) 100%)",
+                  borderRadius: "5px",
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+        </Box>
       </Box>
       <Box
         sx={{
-          marginTop: "40px",
+          marginTop: "30px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
