@@ -45,7 +45,6 @@ import {
 } from "../data/FormOptions";
 import GetSearchResult from "../data/GetSearchResult";
 import RandomArrayElement from "../data/RandomArrayElement";
-import ChipsArray from "../component/ChipsArray";
 
 export default function Discover(prop) {
   const DiscoverOption = styled((prop) => (
@@ -70,6 +69,7 @@ export default function Discover(prop) {
   }));
 
   const [searchTags, setSearchTags] = React.useState({
+    _id: prop.profile._id,
     first_major: "",
     second_major: "",
     education_status: "",
@@ -80,9 +80,13 @@ export default function Discover(prop) {
   });
 
   const [interestInput, setInterestInput] = React.useState("");
-  const [interests, setInterests] = React.useState(["Building Website"]);
+  const [interests, setInterests] = React.useState([]);
 
   const [searchResult, setSearchResult] = React.useState([]);
+  const [refresh, setRefresh] = React.useState(false);
+  const refreshAutoComplete = () => {
+    setRefresh((prev) => !prev);
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -103,17 +107,28 @@ export default function Discover(prop) {
   const [openFail, setOpenFail] = React.useState(false);
   const [openEmpty, setOpenEmpty] = React.useState(false);
 
-  const handleAddInterest = () => {
-    const newInterest = interestInput;
-    setInterestInput("");
-    if (newInterest.trim() === "") {
-      return;
+  const handleAddInterest = (event) => {
+    if (event.key === "Enter") {
+      const newInterest = interestInput;
+      refreshAutoComplete();
+      setInterestInput("");
+      if (newInterest.trim() === "") {
+        return;
+      }
+      setInterests((prev) => [...prev, newInterest]);
     }
-    setInterests((prev) => [...prev, newInterest]);
+  };
+
+  const handleDeleteInterest = (index) => () => {
+    setInterests((prev) => {
+      return [...prev.slice(0, index), ...prev.slice(index + 1)];
+    });
   };
 
   const validateTags = (tags) => {
     for (const tag in tags) {
+      if ((Array.isArray(tags[tag]) && tags[tag].length === 0) || tag === "_id")
+        continue;
       if (tags[tag]) {
         return true;
       }
@@ -122,12 +137,13 @@ export default function Discover(prop) {
   };
 
   const handleCustomizedSearch = async () => {
-    if (!validateTags(searchTags)) {
+    const finalTags = { ...searchTags, interests: interests };
+    if (!validateTags(finalTags)) {
       setOpenEmpty(true);
       return;
     }
 
-    const result = await GetSearchResult(searchTags);
+    const result = await GetSearchResult(finalTags);
     setSearchResult(result);
     if (!result) {
       setOpenFail(true);
@@ -140,20 +156,24 @@ export default function Discover(prop) {
 
   const handleInstantMatch = async () => {
     const {
+      _id,
       first_major,
       second_major,
       education_status,
       nationality,
       location,
+      interests,
       personality,
     } = prop.profile;
 
     const tags = {
+      _id: _id,
       first_major: first_major,
       second_major: second_major,
       education_status: education_status,
       nationality: nationality,
       location: location,
+      interests: interests,
       personality: personality,
     };
 
@@ -183,6 +203,7 @@ export default function Discover(prop) {
     let result = [];
     while (result.length === 0) {
       const tags = {
+        _id: prop.profile._id,
         first_major: RandomArrayElement(majors),
         second_major: RandomArrayElement(majors),
         education_status: RandomArrayElement(educationStatus),
@@ -606,33 +627,48 @@ export default function Discover(prop) {
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
+              alignItems: "top",
               justifyContent: "center",
               gap: "20px",
             }}
           >
             <Autocomplete
-            clearIcon={false}
+              clearIcon={false}
+              forcePopupIcon={false}
+              disableClearable
               sx={{ width: "43%" }}
               size="small"
+              key={refresh}
               options={[]}
               freeSolo
               multiple
-              renderTags={(value, props) =>
-                value.map((interest, index) => (
-                  <Chip key={index} label={interest} />
-                ))
-              }
+              renderTags={() => null}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  placeholder="Search by Interests..."
+                  multiline
+                  placeholder={
+                    interests.length === 0 ? "Search by Interests..." : ""
+                  }
+                  helperText="Type and press enter to create interest tags"
+                  value={interestInput}
+                  onChange={handleChangeInterest}
+                  onKeyDown={handleAddInterest}
+                  inputProps={{ ...params.inputProps, maxLength: 30 }}
                   InputProps={{
                     ...params.InputProps,
                     startAdornment: (
-                      <InputAdornment position="start">
+                      <>
                         <InterestsIcon />
-                      </InputAdornment>
+                        {interests.map((interest, index) => (
+                          <Chip
+                            key={index}
+                            label={interest}
+                            onDelete={handleDeleteInterest(index)}
+                            sx={{ margin: "4px 4px" }}
+                          />
+                        ))}
+                      </>
                     ),
                   }}
                 />
@@ -645,6 +681,7 @@ export default function Discover(prop) {
               name="username"
               value={searchTags.username}
               onChange={handleChange}
+              inputProps={{ maxLength: 30 }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
