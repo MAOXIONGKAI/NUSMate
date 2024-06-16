@@ -50,6 +50,7 @@ export default function CardDetail(prop) {
     birthday,
     location,
     interests,
+    personality,
     description,
   } = profile;
 
@@ -205,14 +206,25 @@ export default function CardDetail(prop) {
                       </TableCell>
                     </TableRow>
                     <TableRow>
+                    <TableCell
+                        sx={{ textAlign: "center", fontWeight: "bold" }}
+                      >
+                        Personality:
+                      </TableCell>
                       <TableCell
-                        colSpan={2}
+                        sx={{
+                          fontWeight: "lighter",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {personality}
+                      </TableCell>
+                      <TableCell
                         sx={{ textAlign: "center", fontWeight: "bold" }}
                       >
                         Interests:
                       </TableCell>
                       <TableCell
-                        colSpan={2}
                         sx={{
                           fontWeight: "lighter",
                           justifyContent: "center",
