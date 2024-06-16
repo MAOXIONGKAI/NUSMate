@@ -34,6 +34,9 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+  "& .MuiDialog-paper": {
+    borderRadius: "30px"
+  }
 }));
 
 export default function CardDetail(prop) {
@@ -206,7 +209,7 @@ export default function CardDetail(prop) {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                    <TableCell
+                      <TableCell
                         sx={{ textAlign: "center", fontWeight: "bold" }}
                       >
                         Personality:
