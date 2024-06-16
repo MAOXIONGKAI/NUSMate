@@ -215,14 +215,14 @@ export default function CardDetail(prop) {
                         colSpan={2}
                         sx={{
                           fontWeight: "lighter",
-                          justifyContent: "space-between",
+                          justifyContent: "center",
                         }}
                       >
                         <ul
                           style={{
                             listStyleType: "disc",
                             margin: 0,
-                            textAlign: "left"
+                            textAlign: "left",
                           }}
                         >
                           {interests.map((interest, index) => (
