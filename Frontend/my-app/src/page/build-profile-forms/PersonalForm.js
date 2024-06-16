@@ -109,7 +109,7 @@ export default function PersonalForm(prop) {
               id="birthday"
               label="Birthday"
               slotProps={{ textField: { variant: 'outlined', error: prop.error["birthday"] } }}
-              inputFormat="MM/dd/yyyy"
+              inputFormat="dd/MM/yyyy"
               name="birthday"
               value={dayjs(prop.formData.birthday)}
               onChange={(date) =>
