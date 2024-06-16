@@ -25,7 +25,6 @@ import ShuffleIcon from "@mui/icons-material/Shuffle";
 import CustomizedSnackbar from "../component/CustomizedSnackbar";
 import InterestsIcon from "@mui/icons-material/Interests";
 import BadgeIcon from "@mui/icons-material/Badge";
-import AddIcon from "@mui/icons-material/Add";
 
 import {
   educationStatus,
@@ -69,7 +68,7 @@ export default function Discover(prop) {
   }));
 
   const [searchTags, setSearchTags] = React.useState({
-    _id: prop.profile._id,
+    searcherID: prop.profile._id,
     first_major: "",
     second_major: "",
     education_status: "",
@@ -94,7 +93,6 @@ export default function Discover(prop) {
       ...prev,
       [name]: value,
     }));
-    console.log(searchTags);
   };
 
   const handleChangeInterest = (event) => {
@@ -127,7 +125,7 @@ export default function Discover(prop) {
 
   const validateTags = (tags) => {
     for (const tag in tags) {
-      if ((Array.isArray(tags[tag]) && tags[tag].length === 0) || tag === "_id")
+      if ((Array.isArray(tags[tag]) && tags[tag].length === 0) || tag === "searcherID")
         continue;
       if (tags[tag]) {
         return true;
@@ -167,7 +165,7 @@ export default function Discover(prop) {
     } = prop.profile;
 
     const tags = {
-      _id: _id,
+      searcherID: _id,
       first_major: first_major,
       second_major: second_major,
       education_status: education_status,
@@ -200,18 +198,18 @@ export default function Discover(prop) {
       ...FOSMajor,
     ];
 
-    let result = [];
-    while (result.length === 0) {
+    let result;
+    while (!result || result.length === 0) {
       const tags = {
-        _id: prop.profile._id,
+        searcherID: prop.profile._id,
         first_major: RandomArrayElement(majors),
         second_major: RandomArrayElement(majors),
         education_status: RandomArrayElement(educationStatus),
-        nationalities: RandomArrayElement(educationStatus),
-        location: RandomArrayElement(educationStatus),
-        personality: RandomArrayElement(educationStatus),
+        nationality: RandomArrayElement(nationalities),
+        location: RandomArrayElement(singaporeLocations),
+        interests: [],
+        personality: RandomArrayElement(MBTI),
       };
-
       result = await GetSearchResult(tags);
     }
     setSearchResult(result);

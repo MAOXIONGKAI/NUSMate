@@ -68,7 +68,7 @@ const readByUsername = async (req, res) => {
 const readByTags = async (req, res) => {
   try {
     const query = buildQuery(req.body);
-    const profiles = await Profile.find(query);
+    const profiles = await Profile.aggregate(query);
     res.status(200).json(profiles);
   } catch (error) {
     res.status(500).json({ message: error.message });
