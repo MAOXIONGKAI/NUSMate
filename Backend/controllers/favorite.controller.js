@@ -38,6 +38,21 @@ const readByUserID = async (req, res) => {
   }
 };
 
+const readFavoriteStatus = async (req, res) => {
+  try {
+    const relationship = await Favorite.find(req.body);
+
+    if (!relationship) {
+      return res
+        .status(404)
+        .json({ message: "No such relationship in database" });
+    }
+    res.status(200).json(relationship);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const deleteFavorite = async (req, res) => {
   try {
     const relationship = await Favorite.findOneAndDelete(req.body);
@@ -52,4 +67,10 @@ const deleteFavorite = async (req, res) => {
   }
 };
 
-module.exports = { createFavorite, readAll, readByUserID, deleteFavorite };
+module.exports = {
+  createFavorite,
+  readAll,
+  readByUserID,
+  readFavoriteStatus,
+  deleteFavorite,
+};

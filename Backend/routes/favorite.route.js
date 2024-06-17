@@ -6,6 +6,7 @@ const {
   createFavorite,
   readAll,
   readByUserID,
+  readFavoriteStatus,
   deleteFavorite
 } = require("../controllers/favorite.controller");
 
@@ -15,6 +16,8 @@ const {
 router.get("/", readAll);
 
 router.get("/:userID", readByUserID);
+
+router.post("/check_relationship", readFavoriteStatus)
 
 router.post("/", createFavorite);
 

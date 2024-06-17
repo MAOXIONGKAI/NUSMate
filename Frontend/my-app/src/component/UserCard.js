@@ -6,7 +6,6 @@ import {
   TableRow,
   TableCell,
   CardActionArea,
-  Paper,
   Box,
 } from "@mui/material/";
 import CardHeader from "@mui/material/CardHeader";
@@ -43,6 +42,31 @@ export default function UserCard(prop) {
   const [openCard, setOpenCard] = React.useState(false);
   const [isFavorite, setIsFavorite] = React.useState(false);
 
+  React.useEffect(() => {
+    const getFavStatus = async () => {
+      try {
+        const response = await axios.post(
+          `${backendURL}/api/favorites/check_relationship`,
+          {
+            userID: userID,
+            favoriteUserID: _id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setIsFavorite(response.data.length !== 0);
+      } catch (error) {
+        console.log(
+          `Error when getting favorite status of ${username}: ` + error
+        );
+      }
+    };
+    getFavStatus();
+  }, []);
+
   const handleCheckProfile = () => {
     setOpenCard(true);
   };
@@ -61,7 +85,10 @@ export default function UserCard(prop) {
           },
         }
       );
-      console.log("Favorite successfully added: " + response.data);
+      console.log(
+        `${username} successfully added to favorite: ` +
+          JSON.stringify(response.data)
+      );
     } catch (error) {
       console.log("Error when setting user profile as favorite: " + error);
     }
@@ -72,8 +99,10 @@ export default function UserCard(prop) {
       const response = await axios.delete(
         `${backendURL}/api/favorites`,
         {
-          userID: userID,
-          favoriteUserID: _id,
+          data: {
+            userID: userID,
+            favoriteUserID: _id,
+          },
         },
         {
           headers: {
@@ -82,7 +111,8 @@ export default function UserCard(prop) {
         }
       );
       console.log(
-        "User successfully removed from your favorite: " + response.data
+        `${username} successfully removed from your favorite: ` +
+          JSON.stringify(response.data)
       );
     } catch (error) {
       console.log(
