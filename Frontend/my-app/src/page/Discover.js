@@ -6,6 +6,7 @@ import {
   Container,
   Grid,
   InputAdornment,
+  Pagination,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UserCard from "../component/UserCard";
@@ -125,7 +126,10 @@ export default function Discover(prop) {
 
   const validateTags = (tags) => {
     for (const tag in tags) {
-      if ((Array.isArray(tags[tag]) && tags[tag].length === 0) || tag === "searcherID")
+      if (
+        (Array.isArray(tags[tag]) && tags[tag].length === 0) ||
+        tag === "searcherID"
+      )
         continue;
       if (tags[tag]) {
         return true;
@@ -143,6 +147,7 @@ export default function Discover(prop) {
 
     const result = await GetSearchResult(finalTags);
     setSearchResult(result);
+    resetPaginationSetting();
     if (!result) {
       setOpenFail(true);
     } else if (result.length === 0) {
@@ -177,6 +182,7 @@ export default function Discover(prop) {
 
     const result = await GetSearchResult(tags);
     setSearchResult(result);
+    resetPaginationSetting();
     if (!result) {
       setOpenFail(true);
     } else if (result.length === 0) {
@@ -213,7 +219,26 @@ export default function Discover(prop) {
       result = await GetSearchResult(tags);
     }
     setSearchResult(result);
+    resetPaginationSetting();
     setOpenSuccess(true);
+  };
+
+  // Settings for pagination
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const profilesPerPage = 9;
+  const totalPages = Math.ceil(searchResult.length / profilesPerPage);
+  const startIndex = (currentPage - 1) * profilesPerPage;
+  const endIndex = startIndex + profilesPerPage;
+  const currentProfiles = searchResult.slice(startIndex, endIndex);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  // Reset pagination setting when user starts another search
+  // to prevent messing up of pagination display
+  const resetPaginationSetting = () => {
+    setCurrentPage(1);
   };
 
   return (
@@ -758,10 +783,19 @@ export default function Discover(prop) {
             />
           </>
         ) : (
-          <Box p={3} width="100%">
+          <Box
+            p={3}
+            width="100%"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Container width="100%">
               <Grid container spacing={3} rowSpacing={5} sx={{ width: "100%" }}>
-                {searchResult.map((profile, index) => (
+                {currentProfiles.map((profile, index) => (
                   <Grid
                     item
                     key={index}
@@ -784,6 +818,15 @@ export default function Discover(prop) {
                 ))}
               </Grid>
             </Container>
+            <Pagination
+              showFirstButton
+              showLastButton
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+              sx={{ marginTop: "50px", marginBottom: "20px" }}
+            />
           </Box>
         )}
       </Box>
