@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import Card from "@mui/material/Card";
 import {
   Table,
@@ -6,7 +7,7 @@ import {
   TableCell,
   CardActionArea,
   Paper,
-  Box
+  Box,
 } from "@mui/material/";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
@@ -21,8 +22,12 @@ import ColorNameAvatar from "./ColorNameAvatar";
 import { Tooltip } from "@mui/material";
 import CardDetail from "./CardDetail";
 
+const backendURL = process.env.REACT_APP_BACKEND_URL;
+
 export default function UserCard(prop) {
+  // Unpack Card Information
   const {
+    _id,
     username,
     first_major,
     second_major,
@@ -31,10 +36,69 @@ export default function UserCard(prop) {
     description,
   } = prop.profile;
 
+  // Get the view user's profile ID
+  const userID = prop.userID;
+
+  // React States
   const [openCard, setOpenCard] = React.useState(false);
+  const [isFavorite, setIsFavorite] = React.useState(false);
 
   const handleCheckProfile = () => {
     setOpenCard(true);
+  };
+
+  const createFavorite = async () => {
+    try {
+      const response = await axios.post(
+        `${backendURL}/api/favorites`,
+        {
+          userID: userID,
+          favoriteUserID: _id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Favorite successfully added: " + response.data);
+    } catch (error) {
+      console.log("Error when setting user profile as favorite: " + error);
+    }
+  };
+
+  const deleteFavorite = async () => {
+    try {
+      const response = await axios.delete(
+        `${backendURL}/api/favorites`,
+        {
+          userID: userID,
+          favoriteUserID: _id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(
+        "User successfully removed from your favorite: " + response.data
+      );
+    } catch (error) {
+      console.log(
+        "Error when deleting favorite from user collection: " + error
+      );
+    }
+  };
+
+  const handleAddFavorite = () => {
+    setIsFavorite(true);
+    createFavorite();
+  };
+
+  const handleDeleteFavorite = () => {
+    setIsFavorite(false);
+    deleteFavorite();
   };
 
   return (
@@ -43,6 +107,9 @@ export default function UserCard(prop) {
         profile={prop.profile}
         open={openCard}
         setOpen={setOpenCard}
+        isFavorite={isFavorite}
+        handleAddFavorite={handleAddFavorite}
+        handleDeleteFavorite={handleDeleteFavorite}
       />
       <Card
         sx={{
@@ -123,12 +190,26 @@ export default function UserCard(prop) {
           disableSpacing
           sx={{ marginTop: "auto", backgroundColor: "#EFF9FF" }}
         >
-          <Box sx={{ display: "flex", marginLeft: "auto"}}>
-            <Tooltip title="Add to favorites">
-              <IconButton aria-label="add to favorites">
-                <FavoriteBorderIcon />
-              </IconButton>
-            </Tooltip>
+          <Box sx={{ display: "flex", marginLeft: "auto" }}>
+            {isFavorite ? (
+              <Tooltip title={`Remove ${username} from favorites`}>
+                <IconButton
+                  aria-label="remove from favorites"
+                  onClick={handleDeleteFavorite}
+                >
+                  <FavoriteIcon sx={{ color: "red" }} />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title={`Add ${username} to favorites`}>
+                <IconButton
+                  aria-label="add to favorites"
+                  onClick={handleAddFavorite}
+                >
+                  <FavoriteBorderIcon />
+                </IconButton>
+              </Tooltip>
+            )}
             <Tooltip title={`Message ${username}`}>
               <IconButton>
                 <MailOutlineIcon aria-label="Message user" />

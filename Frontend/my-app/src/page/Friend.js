@@ -1,5 +1,6 @@
 import { Typography, Box } from "@mui/material";
 import React from "react";
+import axios from "axios";
 import ToggleMenu from "../component/ToggleMenu";
 import {Container, Grid, Pagination} from "@mui/material";
 import UserCard from "../component/UserCard";
@@ -12,6 +13,27 @@ export default function Friend(prop) {
     { value: "Favorite" },
   ];
   const [currentGroup, setCurrentGroup] = React.useState("Favorite");
+  const [currentResult, setCurrentResult] = React.useState([]);
+
+  const userID = prop.profile._id;
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
+
+  const getFavorite = async () => {
+    try {
+        const response = await axios.get(`${backendURL}/api/favorites/${userID}`, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        setCurrentResult(response.data);
+    } catch (error) {
+        console.log("Error when fetching favorite user collection from database: " + error);
+    }
+  } 
+
+  React.useEffect(() => {
+    getFavorite();
+  }, [currentGroup]); 
 
   const totalPages = 1;
   const currentPage = 1;
@@ -47,7 +69,7 @@ export default function Friend(prop) {
           >
             <Container width="100%">
               <Grid container spacing={3} rowSpacing={5} sx={{ width: "100%" }}>
-                {[prop.profile].map((profile, index) => (
+                {currentResult.map((profile, index) => (
                   <Grid
                     item
                     key={index}
@@ -64,7 +86,7 @@ export default function Friend(prop) {
                         width: "100%",
                       }}
                     >
-                      <UserCard profile={profile} sx={{ flexGrow: 1 }} />
+                      <UserCard profile={profile} userID={userID} sx={{ flexGrow: 1 }} />
                     </Box>
                   </Grid>
                 ))}

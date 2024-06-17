@@ -68,6 +68,8 @@ export default function Discover(prop) {
     },
   }));
 
+  const userID = prop.profile._id;
+
   const [searchTags, setSearchTags] = React.useState({
     searcherID: prop.profile._id,
     first_major: "",
@@ -812,7 +814,7 @@ export default function Discover(prop) {
                         width: "100%",
                       }}
                     >
-                      <UserCard profile={profile} sx={{ flexGrow: 1 }} />
+                      <UserCard profile={profile} userID={userID} sx={{ flexGrow: 1 }} />
                     </Box>
                   </Grid>
                 ))}
