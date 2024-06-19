@@ -799,8 +799,8 @@ export default function Discover(prop) {
               <Grid container spacing={3} rowSpacing={5} sx={{ width: "100%" }}>
                 {currentProfiles.map((profile, index) => (
                   <Grid
+                    key={startIndex + index}
                     item
-                    key={index}
                     xs={12}
                     sm={6}
                     md={4}
