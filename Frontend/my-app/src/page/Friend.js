@@ -148,7 +148,7 @@ export default function Friend(prop) {
                 {profileSection.map((profile, index) => (
                   <Grid
                     item
-                    key={startIndex + index}
+                    key={profile._id}
                     xs={12}
                     sm={6}
                     md={4}
