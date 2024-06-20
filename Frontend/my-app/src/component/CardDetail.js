@@ -18,6 +18,7 @@ import {
   DialogActions,
 } from "@mui/material";
 
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import ShareIcon from "@mui/icons-material/Share";
@@ -35,12 +36,19 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     justifyContent: "center",
   },
   "& .MuiDialog-paper": {
-    borderRadius: "30px"
-  }
+    borderRadius: "30px",
+  },
 }));
 
 export default function CardDetail(prop) {
-  const { open, setOpen, profile } = prop;
+  const {
+    open,
+    setOpen,
+    profile,
+    isFavorite,
+    handleAddFavorite,
+    handleDeleteFavorite,
+  } = prop;
 
   const {
     username,
@@ -262,11 +270,25 @@ export default function CardDetail(prop) {
             backgroundColor: "#EFF9FF",
           }}
         >
-          <Tooltip title="Add to favorites">
-            <IconButton aria-label="add to favorites">
-              <FavoriteBorderIcon />
-            </IconButton>
-          </Tooltip>
+          {isFavorite ? (
+            <Tooltip title={`Remove ${username} from favorites`}>
+              <IconButton
+                aria-label="remove from favorites"
+                onClick={handleDeleteFavorite}
+              >
+                <FavoriteIcon sx={{ color: "red" }} />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Tooltip title={`Add ${username} to favorites`}>
+              <IconButton
+                aria-label="add to favorites"
+                onClick={handleAddFavorite}
+              >
+                <FavoriteBorderIcon />
+              </IconButton>
+            </Tooltip>
+          )}
           <Tooltip title={`Message ${username}`}>
             <IconButton>
               <MailOutlineIcon aria-label="Message user" />

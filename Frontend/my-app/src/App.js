@@ -3,6 +3,7 @@ import "./App.css";
 import Header from "./page/Header";
 import Main from "./page/Main";
 import Discover from "./page/Discover";
+import Friend from "./page/Friend";
 import Profile from "./page/Profile";
 import Login from "./page/Login";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -70,6 +71,10 @@ function App() {
           <Route
             path="/profile"
             element={<Profile profile={profile} setProfile={setProfile} />}
+          />
+          <Route
+            path="/friend"
+            element={<Friend profile={profile} setProfile={setProfile} />}
           />
           <Route
             path="/activity"
