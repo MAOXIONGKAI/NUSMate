@@ -2,118 +2,90 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import AccountForm from "../page/build-profile-forms/AccountForm";
 
-test("Username Textfield should correct record user's change", async () => {
-  const formData = { username: "" };
-  const error = { username: false };
-  const mockSetFormData = jest.fn();
-  const mockHandleChange = jest.fn((event) => {
-    formData.username += event.target.value;
-    mockSetFormData(formData);
+describe("Account Menu", () => {
+  // Mock Data to test in the test environment
+  let formData;
+  let error;
+  let mockSetFormData;
+  let mockHandleChange;
+  let mockHandleSubmit;
+
+  // Reset States of data before each test
+  beforeEach(() => {
+    formData = {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    };
+    error = {
+      username: false,
+      email: false,
+      password: false,
+      confirmPassword: false,
+    };
+    mockSetFormData = jest.fn();
+    mockHandleChange = jest.fn((event) => {
+      const { name, value } = event.target;
+      formData = { ...formData, [name]: formData[name] + value };
+      mockSetFormData(formData);
+    });
+    mockHandleSubmit = jest.fn();
   });
-  const mockHandleSubmit = jest.fn();
 
-  render(
-    <AccountForm
-      formData={formData}
-      error={error}
-      setFormData={mockSetFormData}
-      handleChange={mockHandleChange}
-      handleSubmit={mockHandleSubmit}
-    />
-  );
+  const renderComponent = () => {
+    render(
+      <AccountForm
+        formData={formData}
+        error={error}
+        setFormData={mockSetFormData}
+        handleChange={mockHandleChange}
+        handleSubmit={mockHandleSubmit}
+      />
+    );
+  };
 
-  const inputElement = await screen.findByLabelText(/Username/i);
-  expect(inputElement.value).toBe("");
+  it("correctly updates changes in Username Field", async () => {
+    renderComponent();
 
-  await userEvent.type(inputElement, "RandomUsername1");
+    const inputElement = screen.getByLabelText(/Username/i);
 
-  expect(mockHandleChange).toHaveBeenCalledTimes(15);
-  expect(formData.username).toBe("RandomUsername1");
-});
+    await userEvent.type(inputElement, "RandomUser1");
 
-test("Email Textfield should correct record user's change", async () => {
-  const formData = { email: "" };
-  const error = { email: false };
-  const mockSetFormData = jest.fn();
-  const mockHandleChange = jest.fn((event) => {
-    formData.email += event.target.value;
-    mockSetFormData(formData);
+    expect(mockHandleChange).toHaveBeenCalledTimes(11);
+    expect(formData.username).toBe("RandomUser1");
   });
-  const mockHandleSubmit = jest.fn();
 
-  render(
-    <AccountForm
-      formData={formData}
-      error={error}
-      setFormData={mockSetFormData}
-      handleChange={mockHandleChange}
-      handleSubmit={mockHandleSubmit}
-    />
-  );
+  it("correctly updates changes in Email Field", async () => {
+    renderComponent();
 
-  const inputElement = await screen.findByLabelText(/Email Address/i);
-  expect(inputElement.value).toBe("");
+    const inputElement = screen.getByLabelText(/Email Address/i);
 
-  await userEvent.type(inputElement, "RandomEmail@gmail.com");
+    await userEvent.type(inputElement, "RandomAccount@gmail.com");
 
-  expect(mockHandleChange).toHaveBeenCalledTimes(21);
-  expect(formData.email).toBe("RandomEmail@gmail.com");
-});
-
-test("Password Textfield should correct record user's change", async () => {
-  const formData = { password: "" };
-  const error = { password: false };
-  const mockSetFormData = jest.fn();
-  const mockHandleChange = jest.fn((event) => {
-    formData.password += event.target.value;
-    mockSetFormData(formData);
+    expect(mockHandleChange).toHaveBeenCalledTimes(23);
+    expect(formData.email).toBe("RandomAccount@gmail.com");
   });
-  const mockHandleSubmit = jest.fn();
 
-  render(
-    <AccountForm
-      formData={formData}
-      error={error}
-      setFormData={mockSetFormData}
-      handleChange={mockHandleChange}
-      handleSubmit={mockHandleSubmit}
-    />
-  );
+  it("correctly updates changes in Password Field", async () => {
+    renderComponent();
 
-  const inputElement = await screen.findByLabelText(/^Password.*\*/i);
-  expect(inputElement.value).toBe("");
+    const inputElement = screen.getByLabelText(/^Password.*\*$/i);
 
-  await userEvent.type(inputElement, "123456@654321!");
+    await userEvent.type(inputElement, "123456ABCDEF!@#$%^");
 
-  expect(mockHandleChange).toHaveBeenCalledTimes(14);
-  expect(formData.password).toBe("123456@654321!");
-});
-
-test("Confirm Password Textfield should correct record user's change", async () => {
-  const formData = { confirmPassword: "" };
-  const error = { confirmPassword: false };
-  const mockSetFormData = jest.fn();
-  const mockHandleChange = jest.fn((event) => {
-    formData.confirmPassword += event.target.value;
-    mockSetFormData(formData);
+    expect(mockHandleChange).toHaveBeenCalledTimes(18);
+    expect(formData.password).toBe("123456ABCDEF!@#$%^");
   });
-  const mockHandleSubmit = jest.fn();
 
-  render(
-    <AccountForm
-      formData={formData}
-      error={error}
-      setFormData={mockSetFormData}
-      handleChange={mockHandleChange}
-      handleSubmit={mockHandleSubmit}
-    />
-  );
+  it("correctly updates changes in Confirm Password Field", async () => {
+    renderComponent();
 
-  const inputElement = await screen.findByLabelText(/Confirm Password/i);
-  expect(inputElement.value).toBe("");
+    const inputElement = screen.getByLabelText(/Confirm Password/i);
 
-  await userEvent.type(inputElement, "123456@654321!");
+    await userEvent.type(inputElement, "!@#$%^ABCDEF123456");
 
-  expect(mockHandleChange).toHaveBeenCalledTimes(14);
-  expect(formData.confirmPassword).toBe("123456@654321!");
+    expect(mockHandleChange).toHaveBeenCalledTimes(18);
+    expect(formData.confirmPassword).toBe("!@#$%^ABCDEF123456");
+  });
 });
