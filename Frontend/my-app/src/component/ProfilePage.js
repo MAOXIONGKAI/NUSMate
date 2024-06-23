@@ -265,7 +265,6 @@ export default function ProfilePage(prop) {
             justifyContent="center"
             alignItems="center"
             flexDirection="column"
-            fullHeight
           >
             <ColorNameAvatar username={username} />
             <Box
@@ -982,7 +981,7 @@ export default function ProfilePage(prop) {
                             dialogTitle="Confirm Proceed to Retake the Test?"
                             dialogContent="Please save all the changes before proceeding to prevent unnecessary data loss. Note that the personality field will be instantly updated once the test is finised, but if you are not satfisfied with the result, you can always retake the test again."
                             positive="Confirm"
-                            negative="Cancel"
+                            negative="Return"
                             handlePositive={(event) => {
                               event.preventDefault();
                               setIsLoading(true);

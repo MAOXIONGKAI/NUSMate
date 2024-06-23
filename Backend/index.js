@@ -1,14 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV}`
-})
+  path: `.env.${process.env.NODE_ENV}`,
+});
 
 // Import models
 const Profile = require("./models/profile.model");
 
 // Import route
 const profileRoute = require("./routes/profile.route.js");
+const favoriteRoute = require("./routes/favorite.route.js");
 
 // Set up cors
 const cors = require("cors");
@@ -21,7 +22,11 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://nusmate.onrender.com", "https://nusmate-development.onrender.com"], // Allow requests from this origin
+    origin: [
+      "http://localhost:3000",
+      "https://nusmate.onrender.com",
+      "https://nusmate-development.onrender.com",
+    ], // Allow requests from this origin
     methods: "GET,POST,PUT,DELETE", // Allowed methods
     allowedHeaders: "Content-Type, Authorization", // Allowed headers
   })
@@ -29,6 +34,7 @@ app.use(
 
 // Use routes
 app.use("/api/profiles", profileRoute);
+app.use("/api/favorites", favoriteRoute);
 
 // Testing Code
 app.get("/", (req, res) => {

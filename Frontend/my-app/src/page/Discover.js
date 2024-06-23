@@ -68,6 +68,8 @@ export default function Discover(prop) {
     },
   }));
 
+  const userID = prop.profile._id;
+
   const [searchTags, setSearchTags] = React.useState({
     searcherID: prop.profile._id,
     first_major: "",
@@ -670,6 +672,7 @@ export default function Discover(prop) {
                 <TextField
                   {...params}
                   multiline
+                  data-testid="interest-input"
                   placeholder={
                     interests.length === 0 ? "Search by Interests..." : ""
                   }
@@ -797,8 +800,8 @@ export default function Discover(prop) {
               <Grid container spacing={3} rowSpacing={5} sx={{ width: "100%" }}>
                 {currentProfiles.map((profile, index) => (
                   <Grid
+                    key={profile._id}
                     item
-                    key={index}
                     xs={12}
                     sm={6}
                     md={4}
@@ -812,7 +815,7 @@ export default function Discover(prop) {
                         width: "100%",
                       }}
                     >
-                      <UserCard profile={profile} sx={{ flexGrow: 1 }} />
+                      <UserCard profile={profile} userID={userID} sx={{ flexGrow: 1 }} />
                     </Box>
                   </Grid>
                 ))}

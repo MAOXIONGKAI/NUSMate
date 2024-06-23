@@ -79,6 +79,7 @@ export default function AccountForm(prop) {
                   fullWidth
                   error={prop.error["password"]}
                   label="Password"
+                  data-testid="Password"
                   type="password"
                   id="password"
                   name="password"
