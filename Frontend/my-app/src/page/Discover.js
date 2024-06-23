@@ -672,6 +672,7 @@ export default function Discover(prop) {
                 <TextField
                   {...params}
                   multiline
+                  data-testid="interest-input"
                   placeholder={
                     interests.length === 0 ? "Search by Interests..." : ""
                   }

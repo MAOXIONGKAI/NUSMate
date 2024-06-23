@@ -153,7 +153,7 @@ export default function PersonalForm(prop) {
                 setInterest(event.target.value);
               }}
             />
-            <Button sx={{ marginLeft: "auto" }} onClick={addInterest}>
+            <Button data-testid="AddInterestButton" sx={{ marginLeft: "auto" }} onClick={addInterest}>
               <AddIcon />
             </Button>
           </Box>
@@ -174,7 +174,7 @@ export default function PersonalForm(prop) {
                   <TableCell align="left">{index + 1}</TableCell>
                   <TableCell align="center">{interest}</TableCell>
                   <TableCell align="right">
-                    <Button>
+                    <Button data-testid="DeleteInterestButton">
                       <DeleteIcon onClick={() => deleteInterest(index)} />
                     </Button>
                   </TableCell>
