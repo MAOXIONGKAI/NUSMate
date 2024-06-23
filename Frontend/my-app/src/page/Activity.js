@@ -1,7 +1,9 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography, alpha } from "@mui/material";
 import ToggleMenu from "../component/ToggleMenu";
 import NoActivityPage from "../image/NoActivityPage.jpg";
+import AddIcon from "@mui/icons-material/Add";
+import FormDialog from "../component/FormDialog";
 
 export default function Activity(prop) {
   const groupOptions = [
@@ -10,6 +12,7 @@ export default function Activity(prop) {
   ];
   const [currentGroup, setCurrentGroup] = React.useState("All Activities");
   const [currentResult, setCurrentResult] = React.useState([]);
+  const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
 
   return (
     <Box
@@ -20,8 +23,35 @@ export default function Activity(prop) {
         justifyContent: "center",
         alignItems: "center",
         margin: "30px 0px",
+        position: "relative",
       }}
     >
+      <FormDialog
+        open={openCreateDialog}
+        setOpen={setOpenCreateDialog}
+        title="Create New Activity"
+        content="Create your new activity over here!"
+      />
+      <Tooltip title="Add new activity">
+        <IconButton
+          onClick={() => {
+            setOpenCreateDialog(true);
+          }}
+          sx={{
+            position: "fixed",
+            left: "90%",
+            top: "80%",
+            background:
+              "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+            "&:hover": {
+              background:
+                "linear-gradient(90deg, rgba(83,207,255,0.8) 0%, rgba(100,85,240,0.8) 100%)",
+            },
+          }}
+        >
+          <AddIcon sx={{ color: "white" }} />
+        </IconButton>
+      </Tooltip>
       <ToggleMenu
         size="small"
         value={currentGroup}
