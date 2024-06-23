@@ -17,9 +17,11 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        working-directory: ./Frontend/my-app
 
       - name: Run Unit Test
         run: npm test
+        working-directory: ./Frontend/my-app
 
         env: 
           DEFAULT_BRANCH: main
