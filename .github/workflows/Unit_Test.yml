@@ -19,10 +19,10 @@ jobs:
           node-version: 'latest'
 
       - name: Install Dependencies
-        uses: npm install
+        run: npm install
 
       - name: Run Unit Test
-        uses: npm test
+        run: npm test
 
         env: 
           DEFAULT_BRANCH: main
