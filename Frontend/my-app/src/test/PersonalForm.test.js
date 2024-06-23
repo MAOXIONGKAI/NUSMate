@@ -64,11 +64,8 @@ describe("PersonalForm", () => {
 
   it("correctly updates Birthday Field", async () => {
     renderComponent();
-    const chooseDate = await screen.findByRole("button", {name: /Choose Date/i});
-    fireEvent.mouseDown(chooseDate);
-    const dateInput = await screen.findByLabelText("Birthday");
-    fireEvent.change(dateInput, "01/01/2024");
-    expect(dateInput).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Birthday"), {target: {value: "06/22/2024"}});
+    expect(screen.getByLabelText("Birthday")).toBeInTheDocument();
 })
 
   it("correctly updates Location Field", () => {

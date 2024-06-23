@@ -123,7 +123,7 @@ export default function PersonalityTest(prop) {
                 : ISTP
             }
             width="25%"
-            alt=""
+            alt="Personality Test Outcome"
           />
           <Typography
             component="h1"

@@ -279,7 +279,6 @@ export default function SignUp(prop) {
       ...prev,
       [name]: value,
     }));
-    console.log(formData);
 
     // If user fill up any missing field, instantly change the
     // error state of that field and subission status to make

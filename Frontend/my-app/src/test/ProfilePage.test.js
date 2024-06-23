@@ -147,8 +147,10 @@ describe("Profile Page", () => {
     await fireEvent.click(screen.getByText("Edit Profile"));
     await fireEvent.click(screen.getByText("Retake Test"));
 
-    expect(screen.getByText("Confirm Proceed to Retake the Test?")).toBeInTheDocument();
-    expect(screen.getByRole("button", {name: "Confirm"})).toBeInTheDocument();
+    expect(
+      screen.getByText("Confirm Proceed to Retake the Test?")
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeInTheDocument();
     expect(screen.getByText("Return")).toBeInTheDocument();
   });
 });
