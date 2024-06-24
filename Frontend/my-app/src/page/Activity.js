@@ -4,6 +4,7 @@ import ToggleMenu from "../component/ToggleMenu";
 import NoActivityPage from "../image/NoActivityPage.jpg";
 import AddIcon from "@mui/icons-material/Add";
 import FormDialog from "../component/FormDialog";
+import { createActivityFields } from "../data/CreateActivityForm";
 
 export default function Activity(prop) {
   const groupOptions = [
@@ -30,8 +31,10 @@ export default function Activity(prop) {
         open={openCreateDialog}
         setOpen={setOpenCreateDialog}
         title="Create New Activity"
-        content="Create your new activity over here!"
+        content="Fill up information for your proposed event for others to join!"
+        fields={createActivityFields}
       />
+      
       <Tooltip title="Add new activity">
         <IconButton
           onClick={() => {
