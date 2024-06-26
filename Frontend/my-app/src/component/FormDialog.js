@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, FormHelperText } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -12,17 +12,25 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export default function FormDialog(prop) {
-  const { open, setOpen, fields } = prop;
+  const { open, setOpen } = prop;
 
   const handleClose = () => {
     setOpen(false);
   };
 
   return (
-    <React.Fragment>
+    <Box
+      sx={{
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+      }}
+    >
       <Dialog
         open={open}
         onClose={handleClose}
+        maxWidth="md"
+        fullWidth
         PaperProps={{
           component: "form",
           onSubmit: (event) => {
@@ -38,44 +46,119 @@ export default function FormDialog(prop) {
           textAlign: "center",
         }}
       >
-        <DialogTitle>{prop.title}</DialogTitle>
+        <DialogTitle
+          sx={{
+            background:
+              "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+            color: "white",
+            marginBottom: "20px",
+          }}
+        >
+          {prop.title}
+        </DialogTitle>
+        <DialogContentText>{prop.content}</DialogContentText>
         <DialogContent
           sx={{
             display: "flex",
             flexDirection: "column",
-            width: "75%",
+            width: "90%",
             justifyContent: "center",
             alignItems: "center",
+            margin: "0 auto",
           }}
         >
-          <DialogContentText>{prop.content}</DialogContentText>
-          {fields.map((field) => (
+          <Box sx={{ display: "flex", gap: "20px", alignItems: "center" }}>
             <TextField
               required
-              margin="dense"
-              id={field.id}
-              name={field.name}
-              label={field.label}
-              type={field.type}
-              fullWidth
+              margin="0px"
+              name="activity-name"
+              label="Activity Name"
+              type="text"
               variant="standard"
             />
-          ))}
-          <Box sx={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+            <TextField
+              required
+              margin="0px"
+              size="small"
+              name="pax"
+              label="Number of Participants"
+              type="number"
+              fullWidth
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+              marginTop: "20px",
+              width: "100%",
+            }}
+          >
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateTimePicker />
+              <DateTimePicker
+                label="Start Date"
+                name="startDate"
+                slotProps={{
+                  textField: { size: "small", required: true },
+                }}
+              />
             </LocalizationProvider>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateTimePicker />
+              <DateTimePicker
+                label="End Date"
+                name="endDate"
+                slotProps={{ textField: { size: "small", required: true } }}
+              />
             </LocalizationProvider>
           </Box>
+          <FormHelperText sx={{ marginRight: "auto" }}>
+            Activity Duration
+          </FormHelperText>
+          <TextField
+            required
+            margin="dense"
+            name="location"
+            label="Location"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+          <TextField
+            required
+            margin="dense"
+            name="description"
+            label="Description"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
         </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Create</Button>
+        <DialogActions
+          sx={{
+            background:
+              "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+          }}
+        >
+          <Button
+            onClick={handleClose}
+            sx={{
+              color: "white",
+              "&:hover": { background: "rgba(50,50,50, 0.1)" },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            sx={{
+              color: "white",
+              "&:hover": { background: "rgba(50,50,50, 0.1)" },
+            }}
+          >
+            Create
+          </Button>
         </DialogActions>
       </Dialog>
-    </React.Fragment>
+    </Box>
   );
 }
