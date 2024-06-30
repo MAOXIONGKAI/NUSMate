@@ -10,6 +10,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 export default function FormDialog(prop) {
   const { open, setOpen } = prop;
@@ -18,12 +19,60 @@ export default function FormDialog(prop) {
     setOpen(false);
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries(formData.entries());
+    const isValid = validateForm(formJson);
+    if (isValid) {
+      console.log(JSON.stringify(formJson));
+      handleClose();
+    }
+  };
+
+  const validateForm = (formJson) => {
+    const fieldsToValidate = [
+      'activity-name',
+      'pax',
+      'startDate',
+      'endDate',
+      'location',
+      'description'
+    ];
+
+    let isValid = true;
+
+    fieldsToValidate.forEach((field) => {
+      const input = document.querySelector(`[name="${field}"]`);
+      const value = formJson[field]?.trim();
+
+      if (input && !value) {
+        input.setCustomValidity("Please fill up this field");
+        input.reportValidity();
+        isValid = false;
+      } else if (input) {
+        input.setCustomValidity("");
+        input.reportValidity();
+      }
+    });
+
+    if (dayjs(formJson.startDate).isAfter(dayjs(formJson.endDate))) {
+      const input = document.querySelector(`[name="startDate"]`);
+      input.setCustomValidity("Start Date should be before the End Date");
+      input.reportValidity();
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   return (
     <Box
       sx={{
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
+        width: "100%",
       }}
     >
       <Dialog
@@ -33,14 +82,7 @@ export default function FormDialog(prop) {
         fullWidth
         PaperProps={{
           component: "form",
-          onSubmit: (event) => {
-            event.preventDefault();
-            const formData = new FormData(event.currentTarget);
-            const formJson = Object.fromEntries(formData.entries());
-            const email = formJson.email;
-            console.log(email);
-            handleClose();
-          },
+          onSubmit: handleSubmit,
         }}
         sx={{
           textAlign: "center",
@@ -67,7 +109,7 @@ export default function FormDialog(prop) {
             margin: "0 auto",
           }}
         >
-          <Box sx={{ display: "flex", gap: "20px", alignItems: "center" }}>
+          <Box sx={{ display: "flex", gap: "20px", alignItems: "center", width: "100%" }}>
             <TextField
               required
               margin="0px"
@@ -75,6 +117,8 @@ export default function FormDialog(prop) {
               label="Activity Name"
               type="text"
               variant="standard"
+              sx={{ flex: 2 }}
+              inputProps={{maxLength: 140}}
             />
             <TextField
               required
@@ -83,7 +127,8 @@ export default function FormDialog(prop) {
               name="pax"
               label="Number of Participants"
               type="number"
-              fullWidth
+              sx={{ flex: 1 }}
+              inputProps={{ min: 1, max: 999 }}
             />
           </Box>
           <Box
@@ -99,20 +144,22 @@ export default function FormDialog(prop) {
                 label="Start Date"
                 name="startDate"
                 slotProps={{
-                  textField: { size: "small", required: true },
+                  textField: { size: "small", required: true, fullWidth: true },
                 }}
+                sx={{ flex: 1 }}
               />
             </LocalizationProvider>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
                 label="End Date"
                 name="endDate"
-                slotProps={{ textField: { size: "small", required: true } }}
+                slotProps={{ textField: { size: "small", required: true, fullWidth: true } }}
+                sx={{ flex: 1 }}
               />
             </LocalizationProvider>
           </Box>
-          <FormHelperText sx={{ marginRight: "auto" }}>
-            Activity Duration
+          <FormHelperText sx={{ margin: "0px", marginRight: "auto"}}>
+            Specify the start and end date of the activity
           </FormHelperText>
           <TextField
             required
@@ -122,6 +169,8 @@ export default function FormDialog(prop) {
             type="text"
             fullWidth
             variant="standard"
+            sx={{ marginTop: "20px" }}
+            inputProps={{maxLength: 140}}
           />
           <TextField
             required
@@ -129,8 +178,12 @@ export default function FormDialog(prop) {
             name="description"
             label="Description"
             type="text"
+            multiline
+            maxRows={2}
             fullWidth
             variant="standard"
+            sx={{ marginTop: "20px" }}
+            inputProps={{maxLength: 300}}
           />
         </DialogContent>
         <DialogActions
