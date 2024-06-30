@@ -150,6 +150,7 @@ export default function Login(prop) {
         <CssBaseline />
         <Grid
           item
+          data-testid="RandomWallpaper"
           xs={false}
           sm={4}
           md={7}

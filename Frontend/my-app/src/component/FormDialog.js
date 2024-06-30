@@ -9,6 +9,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { Divider } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -51,6 +52,21 @@ export default function FormDialog(prop) {
       input.setCustomValidity("Start Date should be before the End Date");
       input.reportValidity();
       isValid = false;
+    } else {
+      const input = document.querySelector(`[name="startDate"]`);
+      input.setCustomValidity("");
+      input.reportValidity();
+    }
+
+    if (dayjs(formJson.endDate).isBefore(dayjs())) {
+      const input = document.querySelector(`[name="endDate"]`);
+      input.setCustomValidity("End Date should not be in the past");
+      input.reportValidity();
+      isValid = false;
+    } else {
+      const input = document.querySelector(`[name="endDate"]`);
+      input.setCustomValidity("");
+      input.reportValidity();
     }
 
     return isValid;
@@ -166,6 +182,12 @@ export default function FormDialog(prop) {
                 sx={{ flex: 1 }}
               />
             </LocalizationProvider>
+            <Divider
+              flexItem
+              sx={{ mx: 1, justifyContent: "center", alignItems: "center" }}
+            >
+              -
+            </Divider>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
                 label="End Date"
