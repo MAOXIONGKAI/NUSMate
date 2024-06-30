@@ -16,7 +16,9 @@ export default function ToggleMenu(prop) {
       aria-label="platform"
     >
       {options.map((option) => (
-        <ToggleButton value={option.value}>{option.value}</ToggleButton>
+        <ToggleButton key={option.value} value={option.value}>
+          {option.value}
+        </ToggleButton>
       ))}
     </ToggleButtonGroup>
   );

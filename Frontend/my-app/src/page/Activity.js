@@ -1,9 +1,13 @@
 import React from "react";
-import { Box, IconButton, Tooltip, Typography, alpha } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import Pagination from "@mui/material/Pagination";
 import ToggleMenu from "../component/ToggleMenu";
 import NoActivityPage from "../image/NoActivityPage.jpg";
 import AddIcon from "@mui/icons-material/Add";
 import FormDialog from "../component/FormDialog";
+import CustomizedSnackbar from "../component/CustomizedSnackbar";
+import GetActivities from "../data/GetActivities";
+import ActivityCard from "../component/ActivityCard";
 
 export default function Activity(prop) {
   const groupOptions = [
@@ -13,6 +17,35 @@ export default function Activity(prop) {
   const [currentGroup, setCurrentGroup] = React.useState("All Activities");
   const [currentResult, setCurrentResult] = React.useState([]);
   const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
+  const [openSuccess, setOpenSuccess] = React.useState(false);
+  const [openFail, setOpenFail] = React.useState(false);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      if (currentGroup === "All Activities") {
+        setCurrentResult(await GetActivities());
+      } else {
+        setCurrentResult(
+          (await GetActivities()).filter(
+            (activity) => activity.hostID === prop.profile._id
+          )
+        );
+      }
+    };
+    getData();
+  }, [currentGroup]);
+
+  // Settings for pagination
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const activitiesPerPage = 10;
+  const totalPages = Math.ceil(currentResult.length / activitiesPerPage);
+  const startIndex = (currentPage - 1) * activitiesPerPage;
+  const endIndex = startIndex + activitiesPerPage;
+  const activitySection = currentResult.slice(startIndex, endIndex);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
   return (
     <Box
@@ -26,11 +59,24 @@ export default function Activity(prop) {
         position: "relative",
       }}
     >
+      <CustomizedSnackbar
+        text="Successfully added new activity"
+        open={openSuccess}
+        setOpen={setOpenSuccess}
+      />
+      <CustomizedSnackbar
+        text="Added new activity failed: Unknown Server Error"
+        open={openFail}
+        setOpen={setOpenFail}
+      />
       <FormDialog
         open={openCreateDialog}
         setOpen={setOpenCreateDialog}
+        setOpenSuccess={setOpenSuccess}
+        setOpenFail={setOpenFail}
+        profile={prop.profile}
         title="Create New Activity"
-        content="Create your new activity over here!"
+        content="Fill up information about your proposed event for others to join!"
       />
       <Tooltip title="Add new activity">
         <IconButton
@@ -80,7 +126,40 @@ export default function Activity(prop) {
             />
           </Box>
         ) : (
-          <></>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Box
+              sx={{
+                marginTop: "30px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "50px",
+              }}
+            >
+              {activitySection.map((activity) => (
+                <ActivityCard
+                  key={activity._id}
+                  activity={activity}
+                  profile={prop.profile}
+                />
+              ))}
+            </Box>
+            <Pagination
+              showFirstButton
+              showLastButton
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+              sx={{ marginTop: "50px", marginBottom: "20px" }}
+            />
+          </Box>
         )}
       </Box>
     </Box>
