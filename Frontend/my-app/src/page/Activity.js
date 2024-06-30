@@ -4,6 +4,7 @@ import ToggleMenu from "../component/ToggleMenu";
 import NoActivityPage from "../image/NoActivityPage.jpg";
 import AddIcon from "@mui/icons-material/Add";
 import FormDialog from "../component/FormDialog";
+import CustomizedSnackbar from "../component/CustomizedSnackbar";
 
 export default function Activity(prop) {
   const groupOptions = [
@@ -13,6 +14,8 @@ export default function Activity(prop) {
   const [currentGroup, setCurrentGroup] = React.useState("All Activities");
   const [currentResult, setCurrentResult] = React.useState([]);
   const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
+  const [openSuccess, setOpenSuccess] = React.useState(false);
+  const [openFail, setOpenFail] = React.useState(false);
 
   return (
     <Box
@@ -26,9 +29,22 @@ export default function Activity(prop) {
         position: "relative",
       }}
     >
+      <CustomizedSnackbar
+        text="Successfully added new activity"
+        open={openSuccess}
+        setOpen={setOpenSuccess}
+      />
+      <CustomizedSnackbar
+        text="Added new activity failed: Unknown Server Error"
+        open={openFail}
+        setOpen={setOpenFail}
+      />
       <FormDialog
         open={openCreateDialog}
         setOpen={setOpenCreateDialog}
+        setOpenSuccess={setOpenSuccess}
+        setOpenFail={setOpenFail}
+        profile={prop.profile}
         title="Create New Activity"
         content="Fill up information about your proposed event for others to join!"
       />

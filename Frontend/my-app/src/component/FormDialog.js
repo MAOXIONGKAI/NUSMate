@@ -1,4 +1,6 @@
 import React from "react";
+import dayjs from "dayjs";
+import CreateActivity from "../data/CreateActivity";
 import { Box, FormHelperText } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -10,7 +12,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 
 export default function FormDialog(prop) {
   const { open, setOpen } = prop;
@@ -19,25 +20,14 @@ export default function FormDialog(prop) {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formJson = Object.fromEntries(formData.entries());
-    const isValid = validateForm(formJson);
-    if (isValid) {
-      console.log(JSON.stringify(formJson));
-      handleClose();
-    }
-  };
-
   const validateForm = (formJson) => {
     const fieldsToValidate = [
-      'activity-name',
-      'pax',
-      'startDate',
-      'endDate',
-      'location',
-      'description'
+      "activity-name",
+      "pax",
+      "startDate",
+      "endDate",
+      "location",
+      "description",
     ];
 
     let isValid = true;
@@ -64,6 +54,26 @@ export default function FormDialog(prop) {
     }
 
     return isValid;
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = {
+      hostID: prop.profile._id,
+      hostName: prop.profile.username,
+      ...Object.fromEntries(formData.entries()),
+    };
+    const isValid = validateForm(formJson);
+    if (isValid) {
+      console.log(JSON.stringify(formJson));
+      if (CreateActivity(formJson)) {
+        prop.setOpenSuccess(true);
+        handleClose();
+      } else {
+        prop.setOpenFail(true);
+      }
+    }
   };
 
   return (
@@ -109,20 +119,27 @@ export default function FormDialog(prop) {
             margin: "0 auto",
           }}
         >
-          <Box sx={{ display: "flex", gap: "20px", alignItems: "center", width: "100%" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
             <TextField
               required
-              margin="0px"
-              name="activity-name"
+              margin="none"
+              name="activityName"
               label="Activity Name"
               type="text"
               variant="standard"
               sx={{ flex: 2 }}
-              inputProps={{maxLength: 140}}
+              inputProps={{ maxLength: 140 }}
             />
             <TextField
               required
-              margin="0px"
+              margin="none"
               size="small"
               name="pax"
               label="Number of Participants"
@@ -153,12 +170,14 @@ export default function FormDialog(prop) {
               <DateTimePicker
                 label="End Date"
                 name="endDate"
-                slotProps={{ textField: { size: "small", required: true, fullWidth: true } }}
+                slotProps={{
+                  textField: { size: "small", required: true, fullWidth: true },
+                }}
                 sx={{ flex: 1 }}
               />
             </LocalizationProvider>
           </Box>
-          <FormHelperText sx={{ margin: "0px", marginRight: "auto"}}>
+          <FormHelperText sx={{ margin: "none", marginRight: "auto" }}>
             Specify the start and end date of the activity
           </FormHelperText>
           <TextField
@@ -170,7 +189,7 @@ export default function FormDialog(prop) {
             fullWidth
             variant="standard"
             sx={{ marginTop: "20px" }}
-            inputProps={{maxLength: 140}}
+            inputProps={{ maxLength: 140 }}
           />
           <TextField
             required
@@ -183,7 +202,7 @@ export default function FormDialog(prop) {
             fullWidth
             variant="standard"
             sx={{ marginTop: "20px" }}
-            inputProps={{maxLength: 300}}
+            inputProps={{ maxLength: 300 }}
           />
         </DialogContent>
         <DialogActions
