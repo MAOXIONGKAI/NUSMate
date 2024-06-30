@@ -71,7 +71,7 @@ export default function AccountMenu() {
           <Typography>
             To be completed
             <br />
-            by Milestone 2
+            by Milestone 3
           </Typography>
         </MenuItem>
         </Menu>
