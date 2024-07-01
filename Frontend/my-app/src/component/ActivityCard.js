@@ -32,8 +32,8 @@ export default function ActivityCard(prop) {
     description,
   } = activity;
 
-  startDate = dayjs(startDate).format("MMM DD YYYY");
-  endDate = dayjs(endDate).format("MMM DD YYYY");
+  startDate = dayjs(startDate).format("MMM DD YYYY HH:MM A");
+  endDate = dayjs(endDate).format("MMM DD YYYY HH:MM A");
 
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
