@@ -1,5 +1,4 @@
 import React from "react";
-import dayjs from "dayjs";
 import CreateActivity from "../data/CreateActivity";
 import { Box, FormHelperText } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -46,28 +45,6 @@ export default function FormDialog(prop) {
         input.reportValidity();
       }
     });
-
-    if (dayjs(formJson.startDate).isAfter(dayjs(formJson.endDate))) {
-      const input = document.querySelector(`[name="startDate"]`);
-      input.setCustomValidity("Start Date should be before the End Date");
-      input.reportValidity();
-      isValid = false;
-    } else {
-      const input = document.querySelector(`[name="startDate"]`);
-      input.setCustomValidity("");
-      input.reportValidity();
-    }
-
-    if (dayjs(formJson.endDate).isBefore(dayjs())) {
-      const input = document.querySelector(`[name="endDate"]`);
-      input.setCustomValidity("End Date should not be in the past");
-      input.reportValidity();
-      isValid = false;
-    } else {
-      const input = document.querySelector(`[name="endDate"]`);
-      input.setCustomValidity("");
-      input.reportValidity();
-    }
 
     return isValid;
   };
