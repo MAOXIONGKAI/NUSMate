@@ -6,6 +6,7 @@ import NoActivityPage from "../image/NoActivityPage.jpg";
 import AddIcon from "@mui/icons-material/Add";
 import FormDialog from "../component/FormDialog";
 import CustomizedSnackbar from "../component/CustomizedSnackbar";
+import GetUserProfile from "../data/GetUserProfile";
 import GetActivities from "../data/GetActivities";
 import ActivityCard from "../component/ActivityCard";
 
@@ -19,6 +20,10 @@ export default function Activity(prop) {
   const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
   const [openSuccess, setOpenSuccess] = React.useState(false);
   const [openFail, setOpenFail] = React.useState(false);
+
+  React.useEffect(() => {
+    GetUserProfile(prop.profile, prop.setProfile);
+  }, []);
 
   React.useEffect(() => {
     const getData = async () => {
