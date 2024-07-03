@@ -15,6 +15,7 @@ import ColorNameAvatar from "../component/ColorNameAvatar";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import ShareIcon from "@mui/icons-material/Share";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteActivity from "../data/DeleteActivity";
 import CustomizedSnackbar from "./CustomizedSnackbar";
@@ -61,29 +62,28 @@ export default function ActivityCard(prop) {
           boxShadow: 6,
         }}
       >
-        <CardHeader
-          avatar={
-            <ColorNameAvatar
-              username={hostName}
-              sx={{ width: "36px", height: "36px", fontSize: "14px" }}
-            />
-          }
-          title={
-            <Typography variant="caption" sx={{ fontSize: "12px" }}>
-              {hostName}
-            </Typography>
-          }
+        <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
             textAlign: "center",
             backgroundColor: "#DFF1FF",
             marginRight: "auto",
-            width: "120px",
+            width: "8%",
+            minWidth: "120px",
             padding: "10% 0px",
           }}
-        />
+        >
+          <ColorNameAvatar
+            username={hostName}
+            sx={{ width: "36px", height: "36px", fontSize: "14px" }}
+          />
+          <Typography variant="caption" sx={{ fontSize: "12px" }}>
+            {hostName}
+          </Typography>
+        </Box>
         <CardContent
           sx={{
             display: "flex",
@@ -163,10 +163,11 @@ export default function ActivityCard(prop) {
           </Typography>
         </CardContent>
         <CardActions
-        disableSpacing
+          disableSpacing
           sx={{
             display: "flex",
-            width: "10%",
+            width: "12%",
+            minWidth: "120px",
             padding: "10.6% 0px",
             justifyContent: "center",
             alignItems: "center",
@@ -174,18 +175,29 @@ export default function ActivityCard(prop) {
           }}
         >
           {prop.profile._id === hostID ? (
-            <Tooltip title="Delete this activity">
-              <IconButton
-                onClick={() => {
-                  if (DeleteActivity(activity._id)) {
-                    setOpenDeleteSuccess(true);
-                  } else {
-                  }
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
+            <>
+              <Tooltip title="Edit this activity">
+                <IconButton
+                  onClick={() => {
+                    console.log("Editing: " + activityName);
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete this activity">
+                <IconButton
+                  onClick={() => {
+                    if (DeleteActivity(activity._id)) {
+                      setOpenDeleteSuccess(true);
+                    } else {
+                    }
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </>
           ) : (
             <Tooltip title="Request to join this activity">
               <IconButton>
