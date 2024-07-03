@@ -88,6 +88,7 @@ export default function ActivityCard(prop) {
           sx={{
             display: "flex",
             flexDirection: "column",
+            width: "80%",
             alignItems: "center",
             justifyContent: "top",
             padding: "16px",
@@ -95,10 +96,17 @@ export default function ActivityCard(prop) {
             marginRight: "auto",
           }}
         >
-          <Box sx={{ margin: "0px", marginBottom: "auto" }}>
+          <Box
+            sx={{
+              margin: "0px",
+              marginBottom: "auto",
+              width: "100%",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
+                width: "100%",
                 alignItems: "center",
                 justifyContent: "center",
                 marginBottom: "auto",
@@ -108,19 +116,29 @@ export default function ActivityCard(prop) {
               <Box
                 sx={{
                   display: "flex",
+                  flexWrap: "wrap",
+                  width: "100%",
+                  gap: "0px 10px",
                   justifyContent: "center",
                   alignItems: "center",
-                  gap: "10px"
                 }}
               >
-                <Typography variant="h6">{activityName}</Typography>
-                <Typography sx={{ color: "dimgray" }}>@{location}</Typography>
+                <Typography variant="h6" sx={{ lineHeight: "32px" }}>
+                  {activityName}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ color: "dimgray", lineHeight: "32px" }}
+                >
+                  @{location}
+                </Typography>
               </Box>
               <Box
                 sx={{
                   display: "flex",
                   color: "green",
                   margin: "0px",
+                  marginLeft: "auto",
                   padding: "0px",
                 }}
               >
@@ -135,7 +153,12 @@ export default function ActivityCard(prop) {
               {startDate} - {endDate}
             </Typography>
           </Box>
-          <Typography sx={{marginBottom: "auto"}} variant="body2" color="textSecondary">
+          <Typography
+            sx={{ marginBottom: "auto" }}
+            variant="body2"
+            color="textSecondary"
+            width="90%"
+          >
             {description}
           </Typography>
         </CardContent>
