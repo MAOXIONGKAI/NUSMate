@@ -128,7 +128,7 @@ export default function FormDialog(prop) {
               type="text"
               variant="standard"
               sx={{ flex: 2 }}
-              inputProps={{ maxLength: 140 }}
+              inputProps={{ maxLength: 60 }}
             />
             <TextField
               required
