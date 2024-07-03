@@ -20,9 +20,27 @@ export default function FormDialog(prop) {
     setOpen(false);
   };
 
-  const validateForm = (formJson) => {
+  const [formData, setFormData] = React.useState({
+    hostID: prop.profile._id,
+    hostName: prop.profile.username,
+    activityName: "",
+    pax: "",
+    startDate: null,
+    endDate: null,
+    location: "",
+    description: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    const input = document.querySelector(`[name="${name}"]`);
+    input.setCustomValidity("");
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = (formData) => {
     const fieldsToValidate = [
-      "activity-name",
+      "activityName",
       "pax",
       "startDate",
       "endDate",
@@ -34,7 +52,9 @@ export default function FormDialog(prop) {
 
     fieldsToValidate.forEach((field) => {
       const input = document.querySelector(`[name="${field}"]`);
-      const value = formJson[field]?.trim();
+      const value = field === "startDate" || field === "endDate"
+      ? formData[field]
+      : formData[field]?.trim();
 
       if (input && !value) {
         input.setCustomValidity("Please fill up this field");
@@ -51,16 +71,9 @@ export default function FormDialog(prop) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formJson = {
-      hostID: prop.profile._id,
-      hostName: prop.profile.username,
-      ...Object.fromEntries(formData.entries()),
-    };
-    const isValid = validateForm(formJson);
+    const isValid = validateForm(formData);
     if (isValid) {
-      console.log(JSON.stringify(formJson));
-      if (CreateActivity(formJson)) {
+      if (CreateActivity(formData)) {
         prop.setOpenSuccess(true);
         handleClose();
       } else {
@@ -125,6 +138,8 @@ export default function FormDialog(prop) {
               margin="none"
               name="activityName"
               label="Activity Name"
+              value={formData.activityName}
+              onChange={handleChange}
               type="text"
               variant="standard"
               sx={{ flex: 2 }}
@@ -136,6 +151,8 @@ export default function FormDialog(prop) {
               size="small"
               name="pax"
               label="Number of Participants"
+              value={formData.pax}
+              onChange={handleChange}
               type="number"
               sx={{ flex: 1 }}
               inputProps={{ min: 1, max: 999 }}
@@ -153,6 +170,10 @@ export default function FormDialog(prop) {
               <DateTimePicker
                 label="Start Date"
                 name="startDate"
+                value={formData.startDate}
+                onChange={(date) => {
+                  setFormData((prev) => ({ ...prev, startDate: date }));
+                }}
                 slotProps={{
                   textField: { size: "small", required: true, fullWidth: true },
                 }}
@@ -169,6 +190,10 @@ export default function FormDialog(prop) {
               <DateTimePicker
                 label="End Date"
                 name="endDate"
+                value={formData.endDate}
+                onChange={(date) => {
+                  setFormData((prev) => ({ ...prev, endDate: date }));
+                }}
                 slotProps={{
                   textField: { size: "small", required: true, fullWidth: true },
                 }}
@@ -184,6 +209,8 @@ export default function FormDialog(prop) {
             margin="dense"
             name="location"
             label="Location"
+            value={formData.location}
+            onChange={handleChange}
             type="text"
             fullWidth
             variant="standard"
@@ -195,6 +222,8 @@ export default function FormDialog(prop) {
             margin="dense"
             name="description"
             label="Description"
+            value={formData.description}
+            onChange={handleChange}
             type="text"
             multiline
             maxRows={2}
