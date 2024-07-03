@@ -163,6 +163,7 @@ export default function ActivityCard(prop) {
           </Typography>
         </CardContent>
         <CardActions
+        disableSpacing
           sx={{
             display: "flex",
             width: "10%",
