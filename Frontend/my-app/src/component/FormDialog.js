@@ -1,4 +1,5 @@
 import React from "react";
+import dayjs from "dayjs";
 import CreateActivity from "../data/CreateActivity";
 import { Box, FormHelperText } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -50,11 +51,21 @@ export default function FormDialog(prop) {
 
     let isValid = true;
 
+    if (
+      formData.startDate &&
+      formData.endDate &&
+      (dayjs(formData.startDate).isAfter(dayjs(formData.endDate)) ||
+        dayjs(formData.endDate).isBefore(dayjs()))
+    ) {
+      isValid = false;
+    }
+
     fieldsToValidate.forEach((field) => {
       const input = document.querySelector(`[name="${field}"]`);
-      const value = field === "startDate" || field === "endDate"
-      ? formData[field]
-      : formData[field]?.trim();
+      const value =
+        field === "startDate" || field === "endDate"
+          ? formData[field]
+          : formData[field]?.trim();
 
       if (input && !value) {
         input.setCustomValidity("Please fill up this field");
@@ -129,39 +140,6 @@ export default function FormDialog(prop) {
             sx={{
               display: "flex",
               gap: "20px",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <TextField
-              required
-              margin="none"
-              name="activityName"
-              label="Activity Name"
-              value={formData.activityName}
-              onChange={handleChange}
-              type="text"
-              variant="standard"
-              sx={{ flex: 2 }}
-              inputProps={{ maxLength: 60 }}
-            />
-            <TextField
-              required
-              margin="none"
-              size="small"
-              name="pax"
-              label="Number of Participants"
-              value={formData.pax}
-              onChange={handleChange}
-              type="number"
-              sx={{ flex: 1 }}
-              inputProps={{ min: 1, max: 999 }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              gap: "20px",
               marginTop: "20px",
               width: "100%",
             }}
@@ -201,9 +179,62 @@ export default function FormDialog(prop) {
               />
             </LocalizationProvider>
           </Box>
-          <FormHelperText sx={{ margin: "none", marginRight: "auto" }}>
-            Specify the start and end date of the activity
-          </FormHelperText>
+          {formData.startDate && formData.endDate ? (
+            dayjs(formData.startDate).isAfter(dayjs(formData.endDate)) ? (
+              <FormHelperText
+                sx={{ margin: "none", marginRight: "auto", color: "red" }}
+              >
+                Start Date should not be behind End Date
+              </FormHelperText>
+            ) : dayjs(formData.endDate).isBefore(dayjs()) ? (
+              <FormHelperText
+                sx={{ margin: "none", marginRight: "auto", color: "red" }}
+              >
+                End Date should not be in the past
+              </FormHelperText>
+            ) : (
+              <FormHelperText sx={{ margin: "none", marginRight: "auto" }}>
+                Specify the start and end date of the activity
+              </FormHelperText>
+            )
+          ) : (
+            <FormHelperText sx={{ margin: "none", marginRight: "auto" }}>
+              Specify the start and end date of the activity
+            </FormHelperText>
+          )}
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <TextField
+              required
+              margin="none"
+              name="activityName"
+              label="Activity Name"
+              value={formData.activityName}
+              onChange={handleChange}
+              type="text"
+              variant="standard"
+              sx={{ flex: 2 }}
+              inputProps={{ maxLength: 60 }}
+            />
+            <TextField
+              required
+              margin="none"
+              size="small"
+              name="pax"
+              label="Number of Participants"
+              value={formData.pax}
+              onChange={handleChange}
+              type="number"
+              sx={{ flex: 1 }}
+              inputProps={{ min: 1, max: 999 }}
+            />
+          </Box>
           <TextField
             required
             margin="dense"
