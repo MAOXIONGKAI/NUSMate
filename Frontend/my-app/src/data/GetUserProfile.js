@@ -13,7 +13,7 @@ export default async function GetUserProfile(profile, setProfile) {
       setProfile(response.data);
     } catch (error) {
       console.log(
-        "Error when refreshing user profile info: " + error.response.data
+        "Error when refreshing user profile info: " + (error.response?.data || error.message)
       );
     }
   };
