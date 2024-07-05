@@ -38,6 +38,7 @@ export default function Activity(prop) {
       }
     };
     getData();
+    resetPaginationSetting();
   }, [currentGroup]);
 
   // Settings for pagination
@@ -51,6 +52,10 @@ export default function Activity(prop) {
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
+
+  const resetPaginationSetting = () => {
+    setCurrentPage(1);
+  }
 
   return (
     <Box
