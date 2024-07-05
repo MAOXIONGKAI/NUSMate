@@ -800,7 +800,7 @@ export default function Discover(prop) {
               <Grid container spacing={3} rowSpacing={5} sx={{ width: "100%" }}>
                 {currentProfiles.map((profile, index) => (
                   <Grid
-                    key={profile._id}
+                    key={userID + profile._id}
                     item
                     xs={12}
                     sm={6}
@@ -815,7 +815,11 @@ export default function Discover(prop) {
                         width: "100%",
                       }}
                     >
-                      <UserCard profile={profile} userID={userID} sx={{ flexGrow: 1 }} />
+                      <UserCard
+                        profile={profile}
+                        userID={userID}
+                        sx={{ flexGrow: 1 }}
+                      />
                     </Box>
                   </Grid>
                 ))}
