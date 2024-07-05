@@ -1,5 +1,6 @@
 import React from "react";
 import "../index.css";
+import GetUserProfile from "../data/GetUserProfile";
 import {
   Autocomplete,
   Chip,
@@ -67,6 +68,10 @@ export default function Discover(prop) {
       fontSize: "0.8rem",
     },
   }));
+
+  React.useEffect(() => {
+    GetUserProfile(prop.profile, prop.setProfile);
+  }, []);
 
   const userID = prop.profile._id;
 
