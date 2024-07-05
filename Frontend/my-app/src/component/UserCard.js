@@ -16,10 +16,13 @@ import Typography from "@mui/material/Typography";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import ColorNameAvatar from "./ColorNameAvatar";
 import { Tooltip } from "@mui/material";
 import CardDetail from "./CardDetail";
+import SendFriendRequest from "../data/SendFriendRequest";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -240,9 +243,9 @@ export default function UserCard(prop) {
                 </IconButton>
               </Tooltip>
             )}
-            <Tooltip title={`Message ${username}`}>
-              <IconButton>
-                <MailOutlineIcon aria-label="Message user" />
+            <Tooltip title={`Send Friend Request to ${username}`}>
+              <IconButton onClick={() => SendFriendRequest(userID, _id)}>
+                <PersonAddAlt1Icon aria-label="Send Friend Request" />
               </IconButton>
             </Tooltip>
             <IconButton aria-label="share">
