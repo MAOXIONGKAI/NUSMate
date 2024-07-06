@@ -2,7 +2,7 @@ import axios from "axios";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
-export default async function GetUserProfile(profile, setProfile) {
+export default async function UpdateLocalUserProfile(profile, setProfile) {
     try {
       const response = await axios.get(
         `${backendURL}/api/profiles/email/${profile.email}`,

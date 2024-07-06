@@ -6,7 +6,7 @@ import NoActivityPage from "../image/NoActivityPage.jpg";
 import AddIcon from "@mui/icons-material/Add";
 import FormDialog from "../component/FormDialog";
 import CustomizedSnackbar from "../component/CustomizedSnackbar";
-import GetUserProfile from "../data/GetUserProfile";
+import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
 import GetActivities from "../data/GetActivities";
 import ActivityCard from "../component/ActivityCard";
 
@@ -22,7 +22,7 @@ export default function Activity(prop) {
   const [openFail, setOpenFail] = React.useState(false);
 
   React.useEffect(() => {
-    GetUserProfile(prop.profile, prop.setProfile);
+    UpdateLocalUserProfile(prop.profile, prop.setProfile);
   }, []);
 
   React.useEffect(() => {

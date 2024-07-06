@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
+import ColorNameAvatar from "../component/ColorNameAvatar";
 import NotificationsNone from "@mui/icons-material/NotificationsNone";
 import { Divider, IconButton, MenuList, Typography } from "@mui/material";
 import GetPendingFriendRequest from "../data/GetPendingFriendRequest";
@@ -89,9 +90,21 @@ export default function NotificationMenu(prop) {
           {messages.map((message) => (
             <>
               <MenuItem key={message.toUserID}>
-                <Typography sx={{color: "dimgray", fontSize: "18px"}}>
-                  {message.fromUserID} has sent you a friend request.
-                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <ColorNameAvatar
+                    username="Test"
+                    sx={{ width: "32px", height: "32px", fontSize: "18px" }}
+                  />
+                  <Typography sx={{ color: "dimgray", fontSize: "14px" }}>
+                    {message.fromUserID} has sent you a friend request.
+                  </Typography>
+                </Box>
               </MenuItem>
               <Divider />
             </>
