@@ -30,7 +30,7 @@ const getPendingFriendRequest = async (req, res) => {
     const { toUserID } = req.params;
     const response = await Friend.find({
       toUserID: toUserID,
-    });
+    }).sort({createdAt: -1});
     if (!response) {
       return res
         .status(404)

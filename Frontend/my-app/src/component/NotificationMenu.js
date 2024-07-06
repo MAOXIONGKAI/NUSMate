@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -6,7 +7,12 @@ import Tooltip from "@mui/material/Tooltip";
 import ColorNameAvatar from "../component/ColorNameAvatar";
 import NotificationsNone from "@mui/icons-material/NotificationsNone";
 import { Divider, IconButton, MenuList, Typography } from "@mui/material";
+import NoNotification from "../image/NoNotification.jpg";
+
 import GetPendingFriendRequest from "../data/GetPendingFriendRequest";
+import CalculateTimesAgo from "../data/CalculateTimesAgo";
+
+const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export default function NotificationMenu(prop) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -19,6 +25,7 @@ export default function NotificationMenu(prop) {
   };
 
   const [messages, setMessages] = React.useState([]);
+  const [notifications, setNotifications] = React.useState([]);
   const { profile } = prop;
 
   React.useEffect(() => {
@@ -26,7 +33,27 @@ export default function NotificationMenu(prop) {
       setMessages(await GetPendingFriendRequest(profile._id));
     };
     getData();
-  }, []);
+  }, [open]);
+
+  React.useEffect(() => {
+    const getRequestInfo = async () => {
+      const requestPromises = messages.map((message) => {
+        return axios.get(`${backendURL}/api/profiles/${message.fromUserID}`, {
+          headers: { "Content-Type": "application/json" },
+        });
+      });
+      const profiles = await Promise.all(requestPromises);
+      const profileData = profiles.map((profile) => profile.data);
+      setNotifications(
+        messages.map((message, index) => ({
+          ...message,
+          ...profileData[index],
+          requestTime: message.createdAt,
+        }))
+      );
+    };
+    getRequestInfo();
+  }, [open]);
 
   return (
     <React.Fragment>
@@ -57,6 +84,7 @@ export default function NotificationMenu(prop) {
             filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
             mt: 1.5,
             maxWidth: "300px",
+            maxHeight: "350px",
             "& .MuiAvatar-root": {
               width: 32,
               height: 32,
@@ -87,28 +115,72 @@ export default function NotificationMenu(prop) {
             },
           }}
         >
-          {messages.map((message) => (
-            <>
-              <MenuItem key={message.toUserID}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <ColorNameAvatar
-                    username="Test"
-                    sx={{ width: "32px", height: "32px", fontSize: "18px" }}
-                  />
-                  <Typography sx={{ color: "dimgray", fontSize: "14px" }}>
-                    {message.fromUserID} has sent you a friend request.
-                  </Typography>
-                </Box>
-              </MenuItem>
-              <Divider />
-            </>
-          ))}
+          {notifications.length === 0 ? (
+            <MenuItem disabled>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  width="80%"
+                  src={NoNotification}
+                  alt="No Notification Background"
+                />
+              </Box>
+            </MenuItem>
+          ) : (
+            notifications.map((notification) => (
+              <>
+                <MenuItem key={notification.fromUserID}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <ColorNameAvatar
+                      username={notification.username}
+                      sx={{ width: "32px", height: "32px", fontSize: "18px" }}
+                    />
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <Typography
+                        sx={{
+                          color: "black",
+                          fontSize: "14px",
+                          lineHeight: "14px",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            display: "inline",
+                            color: "#5b93f8",
+                            fontSize: "14px",
+                          }}
+                        >
+                          {notification.username}
+                        </Typography>{" "}
+                        has sent you a friend request.
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "gray",
+                          fontSize: "12px",
+                        }}
+                      >
+                        {CalculateTimesAgo(notification.requestTime)}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </MenuItem>
+                <Divider />
+              </>
+            ))
+          )}
         </MenuList>
       </Menu>
     </React.Fragment>
