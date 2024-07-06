@@ -4,9 +4,10 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
 import NotificationsNone from "@mui/icons-material/NotificationsNone";
-import { IconButton, Typography } from "@mui/material";
+import { Divider, IconButton, MenuList, Typography } from "@mui/material";
+import GetPendingFriendRequest from "../data/GetPendingFriendRequest";
 
-export default function NotificationMenu() {
+export default function NotificationMenu(prop) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -15,18 +16,28 @@ export default function NotificationMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const [messages, setMessages] = React.useState([]);
+  const { profile } = prop;
+
+  React.useEffect(() => {
+    const getData = async () => {
+      setMessages(await GetPendingFriendRequest(profile._id));
+    };
+    getData();
+  }, []);
+
   return (
     <React.Fragment>
-      <Box sx={{ display: "flex", alignItems: "center", textAlign: "center"}}>
+      <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
         <Tooltip title="Notification">
           <IconButton
             onClick={handleClick}
             size="small"
-            sx={{ ml: 2}}
+            sx={{ ml: 2 }}
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
-            
           >
             <NotificationsNone />
           </IconButton>
@@ -41,9 +52,10 @@ export default function NotificationMenu() {
         PaperProps={{
           elevation: 0,
           sx: {
-            overflow: "visible",
+            overflow: "hiden",
             filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
             mt: 1.5,
+            maxWidth: "300px",
             "& .MuiAvatar-root": {
               width: 32,
               height: 32,
@@ -67,13 +79,24 @@ export default function NotificationMenu() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem disabled>
-          <Typography>
-            To be completed
-            <br />
-            by Milestone 3
-          </Typography>
-        </MenuItem>
+        <MenuList
+          sx={{
+            "& .MuiMenuItem-root": {
+              whiteSpace: "normal",
+            },
+          }}
+        >
+          {messages.map((message) => (
+            <>
+              <MenuItem key={message.toUserID}>
+                <Typography sx={{color: "dimgray", fontSize: "18px"}}>
+                  {message.fromUserID} has sent you a friend request.
+                </Typography>
+              </MenuItem>
+              <Divider />
+            </>
+          ))}
+        </MenuList>
       </Menu>
     </React.Fragment>
   );

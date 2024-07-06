@@ -35,7 +35,7 @@ function LoggedInHeader(prop) {
         <nav className="header-userMenu">
           <ul className="header-menuList">
             <li>
-              <NotificationMenu />
+              <NotificationMenu profile={prop.profile} />
             </li>
             <li>
               <ChatMenu />
