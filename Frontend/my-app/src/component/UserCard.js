@@ -164,6 +164,11 @@ export default function UserCard(prop) {
         open={openCard}
         setOpen={setOpenCard}
         isFavorite={isFavorite}
+        hasSentRequest={hasSentRequest}
+        hasIncomingRequest={hasIncomingRequest}
+        userID={userID}
+        _id={_id}
+        setHasSentRequest={setHasSentRequest}
         handleAddFavorite={handleAddFavorite}
         handleDeleteFavorite={handleDeleteFavorite}
       />
@@ -269,7 +274,7 @@ export default function UserCard(prop) {
             {hasIncomingRequest ? (
               <>
                 <Tooltip title={`Approve Friend Request from ${username}`}>
-                  <IconButton
+                  <IconButton sx={{color: "#32CD32"}}
                     aria-label="Approve friend request"
                     onClick={() => {
                       console.log("Approve request");
@@ -279,7 +284,7 @@ export default function UserCard(prop) {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={`Decline Friend Request from ${username}`}>
-                  <IconButton
+                  <IconButton sx={{color: "red"}}
                     aria-label="Decline friend request"
                     onClick={() => {
                       console.log("Decline Friend Request");

@@ -18,8 +18,15 @@ import {
   DialogActions,
 } from "@mui/material";
 
+import SendFriendRequest from "../data/SendFriendRequest";
+import WithdrawFriendRequest from "../data/WithdrawFriendRequest";
+
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import ShareIcon from "@mui/icons-material/Share";
 import dayjs from "dayjs";
@@ -46,6 +53,11 @@ export default function CardDetail(prop) {
     setOpen,
     profile,
     isFavorite,
+    hasSentRequest,
+    hasIncomingRequest,
+    userID,
+    _id,
+    setHasSentRequest,
     handleAddFavorite,
     handleDeleteFavorite,
   } = prop;
@@ -289,11 +301,56 @@ export default function CardDetail(prop) {
               </IconButton>
             </Tooltip>
           )}
-          <Tooltip title={`Message ${username}`}>
-            <IconButton>
-              <MailOutlineIcon aria-label="Message user" />
-            </IconButton>
-          </Tooltip>
+          {hasIncomingRequest ? (
+              <>
+                <Tooltip title={`Approve Friend Request from ${username}`}>
+                  <IconButton sx={{color: "#32CD32"}}
+                    aria-label="Approve friend request"
+                    onClick={() => {
+                      console.log("Approve request");
+                    }}
+                  >
+                    <CheckCircleOutlineIcon aria-label="Approve Friend Request" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={`Decline Friend Request from ${username}`}>
+                  <IconButton sx={{color: "red"}}
+                    aria-label="Decline friend request"
+                    onClick={() => {
+                      console.log("Decline Friend Request");
+                    }}
+                  >
+                    <CancelOutlinedIcon aria-label="Decline Friend Request" />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : hasSentRequest ? (
+              <Tooltip title={`Withdraw Friend Request to ${username}`}>
+                <IconButton
+                  aria-label="withdraw friend request"
+                  onClick={() => {
+                    if (WithdrawFriendRequest(userID, _id)) {
+                      setHasSentRequest(false);
+                    }
+                  }}
+                >
+                  <HowToRegIcon aria-label="Withdraw Friend Request" />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title={`Send Friend Request to ${username}`}>
+                <IconButton
+                  aria-label="send friend request"
+                  onClick={() => {
+                    if (SendFriendRequest(userID, _id)) {
+                      setHasSentRequest(true);
+                    }
+                  }}
+                >
+                  <PersonAddAlt1Icon aria-label="Send Friend Request" />
+                </IconButton>
+              </Tooltip>
+            )}
           <IconButton aria-label="share">
             <ShareIcon />
           </IconButton>
