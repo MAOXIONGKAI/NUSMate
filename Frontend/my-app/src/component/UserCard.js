@@ -16,13 +16,17 @@ import Typography from "@mui/material/Typography";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
-import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import HowToRegIcon from '@mui/icons-material/HowToReg';
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import ColorNameAvatar from "./ColorNameAvatar";
 import { Tooltip } from "@mui/material";
 import CardDetail from "./CardDetail";
 import SendFriendRequest from "../data/SendFriendRequest";
+import CheckIfPendingRequest from "../data/CheckIfPendingRequest";
+import WithdrawFriendRequest from "../data/WithdrawFriendRequest";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -44,7 +48,10 @@ export default function UserCard(prop) {
   // React States
   const [openCard, setOpenCard] = React.useState(false);
   const [isFavorite, setIsFavorite] = React.useState(false);
+  const [hasSentRequest, setHasSentRequest] = React.useState(false);
+  const [hasIncomingRequest, setHasIncomingRequest] = React.useState(false);
 
+  // Check database to see if the user has been added to favorite
   React.useEffect(() => {
     const getFavStatus = async () => {
       try {
@@ -68,7 +75,23 @@ export default function UserCard(prop) {
       }
     };
     getFavStatus();
-  }, []);
+  }, [userID, _id, username]);
+
+  // Check database to see if there is sent request to the target user
+  React.useEffect(() => {
+    const checkSendRequestStatus = async () => {
+      setHasSentRequest(await CheckIfPendingRequest(userID, _id));
+    };
+    checkSendRequestStatus();
+  }, [userID, _id]);
+
+  // Check database to see if there is incoming request from target user
+  React.useEffect(() => {
+    const checkIncomingRequestStatus = async () => {
+      setHasIncomingRequest(await CheckIfPendingRequest(_id, userID));
+    };
+    checkIncomingRequestStatus();
+  }, [userID, _id]);
 
   const handleCheckProfile = () => {
     setOpenCard(true);
@@ -243,11 +266,56 @@ export default function UserCard(prop) {
                 </IconButton>
               </Tooltip>
             )}
-            <Tooltip title={`Send Friend Request to ${username}`}>
-              <IconButton onClick={() => SendFriendRequest(userID, _id)}>
-                <PersonAddAlt1Icon aria-label="Send Friend Request" />
-              </IconButton>
-            </Tooltip>
+            {hasIncomingRequest ? (
+              <>
+                <Tooltip title={`Approve Friend Request from ${username}`}>
+                  <IconButton
+                    aria-label="Approve friend request"
+                    onClick={() => {
+                      console.log("Approve request");
+                    }}
+                  >
+                    <CheckCircleOutlineIcon aria-label="Approve Friend Request" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={`Decline Friend Request from ${username}`}>
+                  <IconButton
+                    aria-label="Decline friend request"
+                    onClick={() => {
+                      console.log("Decline Friend Request");
+                    }}
+                  >
+                    <CancelOutlinedIcon aria-label="Decline Friend Request" />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : hasSentRequest ? (
+              <Tooltip title={`Withdraw Friend Request to ${username}`}>
+                <IconButton
+                  aria-label="withdraw friend request"
+                  onClick={() => {
+                    if (WithdrawFriendRequest(userID, _id)) {
+                      setHasSentRequest(false);
+                    }
+                  }}
+                >
+                  <HowToRegIcon aria-label="Withdraw Friend Request" />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title={`Send Friend Request to ${username}`}>
+                <IconButton
+                  aria-label="send friend request"
+                  onClick={() => {
+                    if (SendFriendRequest(userID, _id)) {
+                      setHasSentRequest(true);
+                    }
+                  }}
+                >
+                  <PersonAddAlt1Icon aria-label="Send Friend Request" />
+                </IconButton>
+              </Tooltip>
+            )}
             <IconButton aria-label="share">
               <ShareIcon />
             </IconButton>

@@ -7,6 +7,8 @@ const {
   getAllFriendships,
   createFriendship,
   getPendingFriendRequest,
+  checkPendingFriendRequest,
+  withdrawSentRequest,
 } = require("../controllers/friend.controller.js");
 
 router.get("/", getAllFriendships);
@@ -14,5 +16,9 @@ router.get("/", getAllFriendships);
 router.post("/", createFriendship);
 
 router.get("/pending_request/:toUserID", getPendingFriendRequest);
+
+router.post("/check_if_requested/", checkPendingFriendRequest);
+
+router.delete("/withdraw_request", withdrawSentRequest)
 
 module.exports = router;

@@ -11,8 +11,8 @@ export default async function GetPendingFriendRequest(profileID) {
     return response.data;
   } catch (error) {
     console.log(
-      "Error when fetching pending friend request from database: " + 
-      error.response.data
+      "Error when fetching pending friend request from database: " +
+        (JSON.stringify(error.response?.data) || error.message)
     );
   }
 }
