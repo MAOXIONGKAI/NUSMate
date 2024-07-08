@@ -13,6 +13,8 @@ const {
   checkIfFriend,
   declinePendingFriendRequest,
   removeFriend,
+  getSentFriendRequest,
+  getFriends,
 } = require("../controllers/friend.controller.js");
 
 router.get("/", getAllFriendships);
@@ -20,6 +22,10 @@ router.get("/", getAllFriendships);
 router.post("/", createFriendship);
 
 router.get("/pending_request/:toUserID", getPendingFriendRequest);
+
+router.get("/sent_request/:fromUserID", getSentFriendRequest);
+
+router.get("/all_friends/:userID", getFriends);
 
 router.post("/check_if_requested", checkPendingFriendRequest);
 
