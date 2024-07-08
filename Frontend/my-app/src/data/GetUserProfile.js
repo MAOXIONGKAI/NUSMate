@@ -2,18 +2,14 @@ import axios from "axios";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
-export default async function GetUserProfile(profile, setProfile) {
-    try {
-      const response = await axios.get(
-        `${backendURL}/api/profiles/email/${profile.email}`,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      setProfile(response.data);
-    } catch (error) {
-      console.log(
-        "Error when refreshing user profile info: " + (error.response?.data || error.message)
-      );
-    }
-  };
+export default async function GetUserProfile(ID) {
+  try {
+    const response = await axios.get(`${backendURL}/api/friends/${ID}`);
+    return response.data;
+  } catch (error) {
+    console.log(
+      "Error when fetching user profile: " +
+        (JSON.stringify(error.response.data) || error.message)
+    );
+  }
+}

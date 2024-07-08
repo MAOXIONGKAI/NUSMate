@@ -11,6 +11,7 @@ const Profile = require("./models/profile.model");
 const profileRoute = require("./routes/profile.route.js");
 const favoriteRoute = require("./routes/favorite.route.js");
 const activityRoute = require("./routes/activity.route.js");
+const friendRoute = require("./routes/friend.route.js");
 
 // Set up cors
 const cors = require("cors");
@@ -37,6 +38,7 @@ app.use(
 app.use("/api/profiles", profileRoute);
 app.use("/api/favorites", favoriteRoute);
 app.use("/api/activities", activityRoute);
+app.use("/api/friends", friendRoute);
 
 // Testing Code
 app.get("/", (req, res) => {

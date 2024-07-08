@@ -16,10 +16,24 @@ import Typography from "@mui/material/Typography";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import ColorNameAvatar from "./ColorNameAvatar";
 import { Tooltip } from "@mui/material";
 import CardDetail from "./CardDetail";
+import SendFriendRequest from "../data/SendFriendRequest";
+import CheckIfPendingRequest from "../data/CheckIfPendingRequest";
+import WithdrawFriendRequest from "../data/WithdrawFriendRequest";
+import ApproveFriendRequest from "../data/ApproveFriendRequest";
+import GetFriendRequestData from "../data/GetFriendRequestData";
+import CheckIfFriend from "../data/CheckIfFriend";
+import DeclineFriendRequest from "../data/DeclineFriendRequest";
+import GetFriendshipData from "../data/GetFriendshipData";
+import RemoveFriend from "../data/RemoveFriend";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -41,7 +55,11 @@ export default function UserCard(prop) {
   // React States
   const [openCard, setOpenCard] = React.useState(false);
   const [isFavorite, setIsFavorite] = React.useState(false);
+  const [hasSentRequest, setHasSentRequest] = React.useState(false);
+  const [hasIncomingRequest, setHasIncomingRequest] = React.useState(false);
+  const [isFriend, setIsFriend] = React.useState(false);
 
+  // Check database to see if the user has been added to favorite
   React.useEffect(() => {
     const getFavStatus = async () => {
       try {
@@ -65,7 +83,31 @@ export default function UserCard(prop) {
       }
     };
     getFavStatus();
-  }, []);
+  }, [userID, _id, username]);
+
+  // Check database to see if there is sent request to the target user
+  React.useEffect(() => {
+    const checkSendRequestStatus = async () => {
+      setHasSentRequest(await CheckIfPendingRequest(userID, _id));
+    };
+    checkSendRequestStatus();
+  }, [userID, _id]);
+
+  // Check database to see if there is incoming request from target user
+  React.useEffect(() => {
+    const checkIncomingRequestStatus = async () => {
+      setHasIncomingRequest(await CheckIfPendingRequest(_id, userID));
+    };
+    checkIncomingRequestStatus();
+  }, [userID, _id]);
+
+  // Check database to see if the user is a friend
+  React.useEffect(() => {
+    const checkFriendship = async () => {
+      setIsFriend(await CheckIfFriend(userID, _id));
+    };
+    checkFriendship();
+  }, [userID, _id]);
 
   const handleCheckProfile = () => {
     setOpenCard(true);
@@ -131,6 +173,60 @@ export default function UserCard(prop) {
     deleteFavorite();
   };
 
+  const handleSendFriendRequest = () => {
+    const sendFriendRequest = async () => {
+      if (await SendFriendRequest(userID, _id)) {
+        setHasSentRequest(true);
+      }
+    }
+    sendFriendRequest();
+  }
+
+  const handleWithdrawFriendRequest = () => {
+    const sendWithdrawRequest = async () => {
+      const requestData = await GetFriendRequestData(userID, _id);
+      const requestID = await requestData._id;
+      if (await WithdrawFriendRequest(requestID)) {
+        setHasSentRequest(false);
+      }
+    }
+    sendWithdrawRequest();
+  }
+
+  const handleApproveFriendRequest = () => {
+    const sendApproveRequest = async () => {
+      const requestData = await GetFriendRequestData(_id, userID);
+      const requestID = await requestData._id;
+      if (await ApproveFriendRequest(requestID)) {
+        setIsFriend(true);
+        setHasIncomingRequest(false);
+      }
+    };
+    sendApproveRequest();
+  };
+
+  const handleDeclineFriendRequest = () => {
+    const sendDeclineRequest = async () => {
+      const requestData = await GetFriendRequestData(_id, userID);
+      const requestID = await requestData._id;
+      if (await DeclineFriendRequest(requestID)) {
+        setHasIncomingRequest(false);
+      }
+    };
+    sendDeclineRequest();
+  };
+
+  const handleRemoveFriend = () => {
+    const sendRemoveRequest = async () => {
+      const friendshipData = await GetFriendshipData(userID, _id);
+      const friendshipID = await friendshipData._id;
+      if (await RemoveFriend(friendshipID)) {
+        setIsFriend(false);
+      }
+    }
+    sendRemoveRequest();
+  }
+
   return (
     <React.Fragment>
       <CardDetail
@@ -138,8 +234,19 @@ export default function UserCard(prop) {
         open={openCard}
         setOpen={setOpenCard}
         isFavorite={isFavorite}
+        isFriend={isFriend}
+        hasSentRequest={hasSentRequest}
+        hasIncomingRequest={hasIncomingRequest}
+        userID={userID}
+        _id={_id}
+        setHasSentRequest={setHasSentRequest}
         handleAddFavorite={handleAddFavorite}
         handleDeleteFavorite={handleDeleteFavorite}
+        handleSendFriendRequest={handleSendFriendRequest}
+        handleWithdrawFriendRequest={handleWithdrawFriendRequest}
+        handleApproveFriendRequest={handleApproveFriendRequest}
+        handleDeclineFriendRequest={handleDeclineFriendRequest}
+        handleRemoveFriend={handleRemoveFriend}
       />
       <Card
         sx={{
@@ -240,11 +347,65 @@ export default function UserCard(prop) {
                 </IconButton>
               </Tooltip>
             )}
-            <Tooltip title={`Message ${username}`}>
-              <IconButton>
-                <MailOutlineIcon aria-label="Message user" />
-              </IconButton>
-            </Tooltip>
+            {isFriend ? (
+              <>
+                <Tooltip title={`Message ${username}`}>
+                  <IconButton
+                    aria-label="Message user"
+                    onClick={() => console.log("Message " + username)}
+                  >
+                    <MailOutlineIcon aria-label="Message User" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={`Remove friend: ${username}`}>
+                  <IconButton
+                    aria-label="Remove friend"
+                    onClick={handleRemoveFriend}
+                  >
+                    <PersonRemoveIcon aria-label="Remove Friend" />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : hasIncomingRequest ? (
+              <>
+                <Tooltip title={`Approve Friend Request from ${username}`}>
+                  <IconButton
+                    sx={{ color: "#32CD32" }}
+                    aria-label="Approve friend request"
+                    onClick={handleApproveFriendRequest}
+                  >
+                    <CheckCircleOutlineIcon aria-label="Approve Friend Request" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={`Decline Friend Request from ${username}`}>
+                  <IconButton
+                    sx={{ color: "red" }}
+                    aria-label="Decline friend request"
+                    onClick={handleDeclineFriendRequest}
+                  >
+                    <CancelOutlinedIcon aria-label="Decline Friend Request" />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : hasSentRequest ? (
+              <Tooltip title={`Withdraw Friend Request to ${username}`}>
+                <IconButton
+                  aria-label="withdraw friend request"
+                  onClick={handleWithdrawFriendRequest}
+                >
+                  <HowToRegIcon aria-label="Withdraw Friend Request" />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title={`Send Friend Request to ${username}`}>
+                <IconButton
+                  aria-label="send friend request"
+                  onClick={handleSendFriendRequest}
+                >
+                  <PersonAddAlt1Icon aria-label="Send Friend Request" />
+                </IconButton>
+              </Tooltip>
+            )}
             <IconButton aria-label="share">
               <ShareIcon />
             </IconButton>
