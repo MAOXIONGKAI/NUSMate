@@ -30,11 +30,51 @@ const getPendingFriendRequest = async (req, res) => {
     const { toUserID } = req.params;
     const response = await Friend.find({
       toUserID: toUserID,
+      status: "Pending",
     }).sort({ createdAt: -1 });
     if (!response) {
       return res
         .status(404)
         .json({ message: "No Pending Friend Request Found..." });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getSentFriendRequest = async (req, res) => {
+  try {
+    const { fromUserID } = req.params;
+    const response = await Friend.find({
+      fromUserID: fromUserID,
+      status: "Pending",
+    }).sort({ createdAt: -1 });
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No Sent Friend Request Found..." });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getFriends = async (req, res) => {
+  try {
+    const { userID } = req.params;
+    const query = {
+      $or: [
+        { fromUserID: userID, status: "Approved" },
+        { toUserID: userID, status: "Approved" },
+      ],
+    };
+    const response = await Friend.find(query).sort({ createdAt: -1 });
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No Sent Friend Request Found..." });
     }
     res.status(200).json(response);
   } catch (error) {
@@ -142,6 +182,8 @@ module.exports = {
   getAllFriendships,
   createFriendship,
   getPendingFriendRequest,
+  getSentFriendRequest,
+  getFriends,
   checkPendingFriendRequest,
   checkIfFriend,
   withdrawSentRequest,

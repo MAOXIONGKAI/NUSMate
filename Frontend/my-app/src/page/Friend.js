@@ -19,6 +19,25 @@ export default function Friend(prop) {
   const userID = prop.profile._id;
   const backendURL = process.env.REACT_APP_BACKEND_URL;
 
+  const getMyFriends = async () => {
+    try {
+      const response = await axios.get(
+        `${backendURL}/api/friends/all_friends/${userID}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setCurrentResult(response.data);
+    } catch (error) {
+      console.log(
+        "Error when fetching user friends collection from database: " +
+          JSON.stringify(error.response?.data) || error.message
+      );
+    }
+  };
+
   const getFavorite = async () => {
     try {
       const response = await axios.get(
@@ -32,7 +51,141 @@ export default function Friend(prop) {
       setCurrentResult(response.data);
     } catch (error) {
       console.log(
-        "Error when fetching favorite user collection from database: " + error
+        "Error when fetching favorite user collection from database: " +
+          JSON.stringify(error.response?.data) || error.message
+      );
+    }
+  };
+
+  const getMyFriendRequest = async () => {
+    try {
+      const response = await axios.get(
+        `${backendURL}/api/friends/sent_request/${userID}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setCurrentResult(response.data);
+    } catch (error) {
+      console.log(
+        "Error when fetching user's own friend request collection from database: " +
+          JSON.stringify(error.response?.data) || error.message
+      );
+    }
+  };
+
+  const getPendingRequest = async () => {
+    try {
+      const response = await axios.get(
+        `${backendURL}/api/friends/pending_request/${userID}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setCurrentResult(response.data);
+    } catch (error) {
+      console.log(
+        "Error when fetching pending request collection from database: " +
+          JSON.stringify(error.response?.data) || error.message
+      );
+    }
+  };
+
+  const getMyFriendProfiles = async () => {
+    try {
+      const profilePromises = currentResult.map((request) => {
+        const ID = request.fromUserID !== userID
+        ? request.fromUserID
+        : request.toUserID;
+
+        return axios.get(`${backendURL}/api/profiles/${ID}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      });
+      const responses = await Promise.all(profilePromises);
+      const responsesData = responses
+        .filter((response) => response)
+        .map((response) => response.data);
+      setProfiles(responsesData);
+    } catch (error) {
+      console.log(
+        "Error when fetching pending request user profiles: " +
+          JSON.stringify(error.response?.data) || error.message
+      );
+    }
+  };
+
+  const getFavoriteProfiles = async () => {
+    try {
+      const profilePromises = currentResult.map((relationship) => {
+        return axios.get(
+          `${backendURL}/api/profiles/${relationship.favoriteUserID}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      });
+      const responses = await Promise.all(profilePromises);
+      const responsesData = responses
+        .filter((response) => response)
+        .map((response) => response.data);
+      setProfiles(responsesData);
+    } catch (error) {
+      console.log(
+        "Error when fetching favorite user profiles: " +
+          JSON.stringify(error.response?.data) || error.message
+      );
+    }
+  };
+
+  const getPendingRequestProfiles = async () => {
+    try {
+      const profilePromises = currentResult.map((request) => {
+        return axios.get(`${backendURL}/api/profiles/${request.fromUserID}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      });
+      const responses = await Promise.all(profilePromises);
+      const responsesData = responses
+        .filter((response) => response)
+        .map((response) => response.data);
+      setProfiles(responsesData);
+    } catch (error) {
+      console.log(
+        "Error when fetching pending request user profiles: " +
+          JSON.stringify(error.response?.data) || error.message
+      );
+    }
+  };
+
+  const getMyFriendRequestProfiles = async () => {
+    try {
+      const profilePromises = currentResult.map((request) => {
+        return axios.get(`${backendURL}/api/profiles/${request.toUserID}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      });
+      const responses = await Promise.all(profilePromises);
+      const responsesData = responses
+        .filter((response) => response)
+        .map((response) => response.data);
+      setProfiles(responsesData);
+    } catch (error) {
+      console.log(
+        "Error when fetching pending request user profiles: " +
+          JSON.stringify(error.response?.data) || error.message
       );
     }
   };
@@ -40,35 +193,34 @@ export default function Friend(prop) {
   const [profiles, setProfiles] = React.useState([]);
   React.useEffect(() => {
     if (currentResult.length === 0) {
+      setProfiles([]);
       return;
     }
-    const getProfiles = async () => {
-      try {
-        const profilePromises = currentResult.map((relationship) => {
-          return axios.get(
-            `${backendURL}/api/profiles/${relationship.favoriteUserID}`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-        });
-        const responses = await Promise.all(profilePromises);
-        const responsesData = responses
-          .filter((response) => response)
-          .map((response) => response.data);
-        setProfiles(responsesData);
-      } catch (error) {
-        console.log("Error when fetching favorite user profiles: " + error);
-      }
-    };
-    getProfiles();
-  }, [currentResult]);
+
+    if (currentGroup === "Favorite") {
+      getFavoriteProfiles();
+    } else if (currentGroup === "Pending Request") {
+      getPendingRequestProfiles();
+    } else if (currentGroup === "My Friend Request") {
+      getMyFriendRequestProfiles();
+    } else if (currentGroup === "My Friend") {
+      getMyFriendProfiles();
+    }
+  }, [currentResult, currentGroup]);
 
   React.useEffect(() => {
     resetPaginationSetting();
-    getFavorite();
+    if (currentGroup === "Favorite") {
+      getFavorite();
+    } else if (currentGroup === "Pending Request") {
+      getPendingRequest();
+    } else if (currentGroup === "My Friend Request") {
+      getMyFriendRequest();
+    } else if (currentGroup === "My Friend") {
+      getMyFriends();
+    } else {
+      setCurrentResult([]);
+    }
   }, [currentGroup]);
 
   const [currentPage, setCurrentPage] = React.useState(1);
