@@ -2,14 +2,9 @@ import axios from "axios";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
-export default async function WithdrawFriendRequest(profileID, targetID) {
+export default async function WithdrawFriendRequest(requestID) {
   try {
-    const response = await axios.delete(`${backendURL}/api/friends/withdraw_request`,
-      {
-        fromUserID: profileID,
-        toUserID: targetID,
-        status: "Pending",
-      },
+    const response = await axios.delete(`${backendURL}/api/friends/withdraw_request/${requestID}`,
       {
         headers: { "Content-Type": "application/json" },
       }

@@ -173,6 +173,26 @@ export default function UserCard(prop) {
     deleteFavorite();
   };
 
+  const handleSendFriendRequest = () => {
+    const sendFriendRequest = async () => {
+      if (await SendFriendRequest(userID, _id)) {
+        setHasSentRequest(true);
+      }
+    }
+    sendFriendRequest();
+  }
+
+  const handleWithdrawFriendRequest = () => {
+    const sendWithdrawRequest = async () => {
+      const requestData = await GetFriendRequestData(userID, _id);
+      const requestID = await requestData._id;
+      if (await WithdrawFriendRequest(requestID)) {
+        setHasSentRequest(false);
+      }
+    }
+    sendWithdrawRequest();
+  }
+
   const handleApproveFriendRequest = () => {
     const sendApproveRequest = async () => {
       const requestData = await GetFriendRequestData(_id, userID);
@@ -214,6 +234,7 @@ export default function UserCard(prop) {
         open={openCard}
         setOpen={setOpenCard}
         isFavorite={isFavorite}
+        isFriend={isFriend}
         hasSentRequest={hasSentRequest}
         hasIncomingRequest={hasIncomingRequest}
         userID={userID}
@@ -221,6 +242,11 @@ export default function UserCard(prop) {
         setHasSentRequest={setHasSentRequest}
         handleAddFavorite={handleAddFavorite}
         handleDeleteFavorite={handleDeleteFavorite}
+        handleSendFriendRequest={handleSendFriendRequest}
+        handleWithdrawFriendRequest={handleWithdrawFriendRequest}
+        handleApproveFriendRequest={handleApproveFriendRequest}
+        handleDeclineFriendRequest={handleDeclineFriendRequest}
+        handleRemoveFriend={handleRemoveFriend}
       />
       <Card
         sx={{
@@ -365,11 +391,7 @@ export default function UserCard(prop) {
               <Tooltip title={`Withdraw Friend Request to ${username}`}>
                 <IconButton
                   aria-label="withdraw friend request"
-                  onClick={() => {
-                    if (WithdrawFriendRequest(userID, _id)) {
-                      setHasSentRequest(false);
-                    }
-                  }}
+                  onClick={handleWithdrawFriendRequest}
                 >
                   <HowToRegIcon aria-label="Withdraw Friend Request" />
                 </IconButton>
@@ -378,11 +400,7 @@ export default function UserCard(prop) {
               <Tooltip title={`Send Friend Request to ${username}`}>
                 <IconButton
                   aria-label="send friend request"
-                  onClick={() => {
-                    if (SendFriendRequest(userID, _id)) {
-                      setHasSentRequest(true);
-                    }
-                  }}
+                  onClick={handleSendFriendRequest}
                 >
                   <PersonAddAlt1Icon aria-label="Send Friend Request" />
                 </IconButton>

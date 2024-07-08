@@ -58,7 +58,8 @@ const checkPendingFriendRequest = async (req, res) => {
 
 const withdrawSentRequest = async (req, res) => {
   try {
-    const response = await Friend.findOneAndDelete(req.body);
+    const { requestID } = req.params;
+    const response = await Friend.findByIdAndDelete(requestID);
     if (!response) {
       return res
         .status(404)
@@ -124,16 +125,18 @@ const declinePendingFriendRequest = async (req, res) => {
 
 const removeFriend = async (req, res) => {
   try {
-    const {friendshipID} = req.params;
+    const { friendshipID } = req.params;
     const response = await Friend.findByIdAndDelete(friendshipID);
     if (!response) {
-      return res.status(404).json({message: "No friendship found in database for deletion"})
+      return res
+        .status(404)
+        .json({ message: "No friendship found in database for deletion" });
     }
     res.status(200).json(response);
   } catch (error) {
-    res.status(500).json({message: error.message})
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 module.exports = {
   getAllFriendships,

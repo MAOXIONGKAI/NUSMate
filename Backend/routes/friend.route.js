@@ -29,7 +29,7 @@ router.put("/approve_request/:requestID", approvePendingFriendRequest);
 
 router.put("/decline_request/:requestID", declinePendingFriendRequest)
 
-router.delete("/withdraw_request", withdrawSentRequest);
+router.delete("/withdraw_request/:requestID", withdrawSentRequest);
 
 router.delete("/remove_friend/:friendshipID", removeFriend);
 
