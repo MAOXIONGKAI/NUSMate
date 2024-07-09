@@ -15,9 +15,12 @@ const {
   removeFriend,
   getSentFriendRequest,
   getFriends,
+  getUserFriendStatus,
 } = require("../controllers/friend.controller.js");
 
 router.get("/", getAllFriendships);
+
+router.get("/:userID", getUserFriendStatus);
 
 router.post("/", createFriendship);
 

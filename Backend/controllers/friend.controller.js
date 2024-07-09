@@ -16,6 +16,28 @@ const getAllFriendships = async (req, res) => {
   }
 };
 
+const getUserFriendStatus = async (req, res) => {
+  try {
+    const { userID } = req.params;
+    const query = {
+      $or: [
+        { fromUserID: userID, status: "Approved" },
+        { fromUserID: userID, status: "Declined"},
+        { toUserID: userID, status: "Pending" },
+      ],
+    };
+    const response = await Friend.find(query).sort({ updatedAt: -1 });
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No relationship found for user" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const createFriendship = async (req, res) => {
   try {
     const response = await Friend.create(req.body);
@@ -180,6 +202,7 @@ const removeFriend = async (req, res) => {
 
 module.exports = {
   getAllFriendships,
+  getUserFriendStatus,
   createFriendship,
   getPendingFriendRequest,
   getSentFriendRequest,
