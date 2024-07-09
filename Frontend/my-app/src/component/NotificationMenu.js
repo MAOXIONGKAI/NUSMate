@@ -25,7 +25,8 @@ export default function NotificationMenu(prop) {
     setAnchorEl(null);
   };
 
-  const { profile, notifications, setNotifications, messages, setMessages } = prop;
+  const { profile, notifications, setNotifications, messages, setMessages } =
+    prop;
 
   React.useEffect(() => {
     const getData = async () => {
@@ -37,12 +38,16 @@ export default function NotificationMenu(prop) {
   React.useEffect(() => {
     const getRequestInfo = async () => {
       const requestPromises = messages.map((message) => {
-        const requestUserID = message.status === "Approved" || message.status === "Declined"
-        ? message.toUserID
-        : message.fromUserID;
-        return axios.get(`${backendURL}/api/profiles/${requestUserID}`, {
-          headers: { "Content-Type": "application/json" },
-        });
+        return axios.get(
+          `${backendURL}/api/profiles/${
+            message.fromUserID === profile._id
+              ? message.toUserID
+              : message.fromUserID
+          }`,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
       });
       const profiles = await Promise.all(requestPromises);
       const profileData = profiles.map((profile) => profile.data);
