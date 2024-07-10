@@ -19,6 +19,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteActivity from "../data/DeleteActivity";
 import CustomizedSnackbar from "./CustomizedSnackbar";
+import ActivityDetail from "./ActivityDetail";
 
 export default function ActivityCard(prop) {
   const { activity } = prop;
@@ -36,8 +37,13 @@ export default function ActivityCard(prop) {
   startDate = dayjs(startDate).format("ddd, MMM D, YYYY h:mm A");
   endDate = dayjs(endDate).format("ddd, MMM D, YYYY h:mm A");
 
+  const [openDetail, setOpenDetail] = React.useState(false);
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
+
+  const handleOpenDetail = () => {
+    setOpenDetail(true);
+  };
 
   return (
     <React.Fragment>
@@ -51,6 +57,7 @@ export default function ActivityCard(prop) {
         open={openDeleteFail}
         setOpen={setOpenDeleteFail}
       />
+      <ActivityDetail open={openDetail} setOpenDetail={setOpenDetail} />
       <Card
         sx={{
           display: "flex",
@@ -87,80 +94,96 @@ export default function ActivityCard(prop) {
         <CardContent
           sx={{
             display: "flex",
-            flexDirection: "column",
-            width: "80%",
             alignItems: "center",
+            width: "80%",
             justifyContent: "top",
-            padding: "16px",
             margin: "0px",
+            padding: "0px",
             marginRight: "auto",
           }}
         >
-          <Box
+          <CardActionArea
             sx={{
-              margin: "0px",
-              marginBottom: "auto",
+              display: "flex",
+              flexDirection: "column",
+              flexWrap: "wrap",
               width: "100%",
+              alignItems: "center",
+              justifyContent: "top",
+              padding: "0px",
+              margin: "0px",
+              marginRight: "auto",
+              height: "100%",
             }}
+            onClick={handleOpenDetail}
           >
             <Box
               sx={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
+                margin: "0px",
+                padding: "16px",
                 marginBottom: "auto",
-                gap: "20px",
+                width: "100%",
               }}
             >
               <Box
                 sx={{
                   display: "flex",
-                  flexWrap: "wrap",
                   width: "100%",
-                  gap: "0px 10px",
-                  justifyContent: "center",
                   alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: "auto",
+                  gap: "20px",
                 }}
               >
-                <Typography variant="h6" sx={{ lineHeight: "32px" }}>
-                  {activityName}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ color: "dimgray", lineHeight: "32px" }}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    width: "100%",
+                    gap: "0px 10px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
-                  @{location}
-                </Typography>
+                  <Typography variant="h6" sx={{ lineHeight: "32px" }}>
+                    {activityName}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: "dimgray", lineHeight: "32px" }}
+                  >
+                    @{location}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    color: "green",
+                    margin: "0px",
+                    marginLeft: "auto",
+                    padding: "0px",
+                  }}
+                >
+                  <PersonIcon />
+                  <Typography variant="body2">(1/{pax})</Typography>
+                </Box>
               </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  color: "green",
-                  margin: "0px",
-                  marginLeft: "auto",
-                  padding: "0px",
-                }}
+              <Typography
+                variant="body2"
+                sx={{ color: "gray", fontSize: "16px" }}
               >
-                <PersonIcon />
-                <Typography variant="body2">(1/{pax})</Typography>
-              </Box>
+                {startDate} - {endDate}
+              </Typography>
             </Box>
             <Typography
+              sx={{ marginBottom: "auto" }}
               variant="body2"
-              sx={{ color: "gray", fontSize: "16px" }}
+              color="textSecondary"
+              width="90%"
             >
-              {startDate} - {endDate}
+              {description}
             </Typography>
-          </Box>
-          <Typography
-            sx={{ marginBottom: "auto" }}
-            variant="body2"
-            color="textSecondary"
-            width="90%"
-          >
-            {description}
-          </Typography>
+          </CardActionArea>
         </CardContent>
         <CardActions
           disableSpacing
