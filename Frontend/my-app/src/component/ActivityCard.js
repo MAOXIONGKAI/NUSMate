@@ -1,11 +1,10 @@
-import React from "react";
+import React, { act } from "react";
 import dayjs from "dayjs";
 import {
   Typography,
   Box,
   Card,
   CardContent,
-  CardHeader,
   CardActions,
   CardActionArea,
   IconButton,
@@ -22,8 +21,9 @@ import CustomizedSnackbar from "./CustomizedSnackbar";
 import ActivityDetail from "./ActivityDetail";
 
 export default function ActivityCard(prop) {
-  const { activity } = prop;
+  const { profile, activity } = prop;
   let {
+    _id,
     hostID,
     hostName,
     activityName,
@@ -45,6 +45,15 @@ export default function ActivityCard(prop) {
     setOpenDetail(true);
   };
 
+  const handleDeleteActivity = (ID) => {
+    const sendDeleteRequest = async () => {
+      if (await DeleteActivity(ID)) {
+        setOpenDeleteSuccess(true);
+      }
+    }
+    sendDeleteRequest();
+  };
+
   return (
     <React.Fragment>
       <CustomizedSnackbar
@@ -57,7 +66,21 @@ export default function ActivityCard(prop) {
         open={openDeleteFail}
         setOpen={setOpenDeleteFail}
       />
-      <ActivityDetail open={openDetail} setOpenDetail={setOpenDetail} />
+      <ActivityDetail
+        open={openDetail}
+        setOpen={setOpenDetail}
+        profile={profile}
+        _id={_id}
+        hostID={hostID}
+        hostName={hostName}
+        activityName={activityName}
+        pax={pax}
+        startDate={startDate}
+        endDate={endDate}
+        location={location}
+        description={description}
+        handleDeleteActivity={handleDeleteActivity}
+      />
       <Card
         sx={{
           display: "flex",
@@ -78,9 +101,9 @@ export default function ActivityCard(prop) {
             textAlign: "center",
             backgroundColor: "#DFF1FF",
             marginRight: "auto",
-            width: "8%",
+            width: "12%",
             minWidth: "120px",
-            padding: "10% 0px",
+            padding: "10px 0px",
           }}
         >
           <ColorNameAvatar
@@ -176,7 +199,7 @@ export default function ActivityCard(prop) {
               </Typography>
             </Box>
             <Typography
-              sx={{ marginBottom: "auto" }}
+              sx={{ marginBottom: "auto", wordWrap: "break-word" }}
               variant="body2"
               color="textSecondary"
               width="90%"
@@ -190,14 +213,14 @@ export default function ActivityCard(prop) {
           sx={{
             display: "flex",
             width: "12%",
-            minWidth: "120px",
+            minWidth: "12%",
             padding: "10.6% 0px",
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "#EFF9FF",
           }}
         >
-          {prop.profile._id === hostID ? (
+          {profile._id === hostID ? (
             <>
               <Tooltip title="Edit this activity">
                 <IconButton
@@ -209,14 +232,7 @@ export default function ActivityCard(prop) {
                 </IconButton>
               </Tooltip>
               <Tooltip title="Delete this activity">
-                <IconButton
-                  onClick={() => {
-                    if (DeleteActivity(activity._id)) {
-                      setOpenDeleteSuccess(true);
-                    } else {
-                    }
-                  }}
-                >
+                <IconButton onClick={() => handleDeleteActivity(_id)}>
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
