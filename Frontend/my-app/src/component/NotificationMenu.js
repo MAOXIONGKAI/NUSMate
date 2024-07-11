@@ -11,7 +11,7 @@ import { Divider, IconButton, MenuList, Typography } from "@mui/material";
 import NoNotification from "../image/NoNotification.jpg";
 import CalculateTimesAgo from "../data/CalculateTimesAgo";
 
-import GetUserFriendStatus from "../data/GetUserFriendStatus";
+import GetUserFriendStatus from "../data/Friend/GetUserFriendStatus";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 

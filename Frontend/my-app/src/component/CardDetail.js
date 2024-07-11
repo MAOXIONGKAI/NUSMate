@@ -18,9 +18,6 @@ import {
   DialogActions,
 } from "@mui/material";
 
-import SendFriendRequest from "../data/SendFriendRequest";
-import WithdrawFriendRequest from "../data/WithdrawFriendRequest";
-
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";

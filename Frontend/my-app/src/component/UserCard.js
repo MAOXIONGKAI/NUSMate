@@ -25,15 +25,15 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import ColorNameAvatar from "./ColorNameAvatar";
 import { Tooltip } from "@mui/material";
 import CardDetail from "./CardDetail";
-import SendFriendRequest from "../data/SendFriendRequest";
-import CheckIfPendingRequest from "../data/CheckIfPendingRequest";
-import WithdrawFriendRequest from "../data/WithdrawFriendRequest";
-import ApproveFriendRequest from "../data/ApproveFriendRequest";
-import GetFriendRequestData from "../data/GetFriendRequestData";
-import CheckIfFriend from "../data/CheckIfFriend";
-import DeclineFriendRequest from "../data/DeclineFriendRequest";
-import GetFriendshipData from "../data/GetFriendshipData";
-import RemoveFriend from "../data/RemoveFriend";
+import SendFriendRequest from "../data/Friend/SendFriendRequest";
+import CheckIfPendingRequest from "../data/Friend/CheckIfPendingRequest";
+import WithdrawFriendRequest from "../data/Friend/WithdrawFriendRequest";
+import ApproveFriendRequest from "../data/Friend/ApproveFriendRequest";
+import GetFriendRequestData from "../data/Friend/GetFriendRequestData";
+import CheckIfFriend from "../data/Friend/CheckIfFriend";
+import DeclineFriendRequest from "../data/Friend/DeclineFriendRequest";
+import GetFriendshipData from "../data/Friend/GetFriendshipData";
+import RemoveFriend from "../data/Friend/RemoveFriend";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 

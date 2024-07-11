@@ -8,7 +8,7 @@ import AccountMenu from "../component/AccountMenu";
 import { Link } from "react-router-dom";
 import StyledButton from "../component/StyledButton";
 
-import GetUserFriendStatus from "../data/GetUserFriendStatus";
+import GetUserFriendStatus from "../data/Friend/GetUserFriendStatus";
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 function LoggedInHeader(prop) {
