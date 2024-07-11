@@ -1,5 +1,17 @@
 import React from "react";
-import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Table,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableBody,
+  TableRow,
+  Tooltip,
+  Typography,
+  Paper,
+} from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import ToggleMenu from "../component/ToggleMenu";
 import NoActivityPage from "../image/NoActivityPage.jpg";
@@ -14,6 +26,11 @@ import GetActivity from "../data/Activity/GetActivity";
 import ActivityRequestCard from "../component/ActivityRequestCard";
 import GetPendingActivityRequests from "../data/Activity/GetPendingActivityRequests";
 import GetUserProfile from "../data/GetUserProfile";
+import ColorNameAvatar from "../component/ColorNameAvatar";
+import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlined from "@mui/icons-material/CancelOutlined";
+
+import CalculateTimesAgo from "../data/CalculateTimesAgo";
 
 export default function Activity(prop) {
   const groupOptions = [
@@ -184,21 +201,98 @@ export default function Activity(prop) {
                 gap: "50px",
               }}
             >
-              {currentGroup === "Pending Request"
-                ? activitySection.map((request) => (
-                    <ActivityRequestCard
-                      key={request._id}
-                      participantName={request.username}
-                      activityName={request.activityName}
-                    />
-                  ))
-                : activitySection.map((activity) => (
-                    <ActivityCard
-                      key={activity._id}
-                      activity={activity}
-                      profile={prop.profile}
-                    />
-                  ))}
+              {currentGroup === "Pending Request" ? (
+                <TableContainer component={Paper}>
+                  <Table sx={{ width: "90vw" }}>
+                    <TableHead
+                      sx={{
+                        background:
+                          "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+                      }}
+                    >
+                      <TableRow>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Request Profile
+                        </TableCell>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Activity Info
+                        </TableCell>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Requested At
+                        </TableCell>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Host Actions
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {activitySection.map((request) => (
+                        <TableRow>
+                          <TableCell
+                            sx={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              textAlign: "center",
+                              gap: "5px",
+                            }}
+                          >
+                            <ColorNameAvatar
+                              username={request.username}
+                              sx={{ size: "14px", fontSize: "10px" }}
+                            />
+                            <Typography
+                              variant="body2"
+                              sx={{ color: "gray", fontSize: "14px" }}
+                            >
+                              {request.username}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ textAlign: "center" }}>
+                            <Typography>{request.activityName}</Typography>
+                          </TableCell>
+                          <TableCell sx={{ textAlign: "center" }}>
+                            <Typography
+                              sx={{
+                                color: "gray",
+                                fontSize: "16px",
+                                fontWeight: 400,
+                              }}
+                            >
+                              {CalculateTimesAgo(request.updatedAt)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ textAlign: "center" }}>
+                            <Tooltip
+                              title={`Approve join request from ${request.username}`}
+                            >
+                              <IconButton sx={{color: "#32CD32"}}>
+                                <CheckCircleOutline />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip
+                              title={`Decline join request from ${request.username}`}
+                            >
+                              <IconButton sx={{color: "red"}}>
+                                <CancelOutlined />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              ) : (
+                activitySection.map((activity) => (
+                  <ActivityCard
+                    key={activity._id}
+                    activity={activity}
+                    profile={prop.profile}
+                  />
+                ))
+              )}
             </Box>
             <Pagination
               showFirstButton
