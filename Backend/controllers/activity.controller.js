@@ -10,29 +10,31 @@ const createActivity = async (req, res) => {
 };
 
 const getActvities = async (req, res) => {
-    try {
-      const activity = await Activity.find({});
-      if (!activity) {
-        return res.status(404).json({ message: "No activity found in database" });
-      }
-      res.status(200).json(activity);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+  try {
+    const activity = await Activity.find({}).sort({ updatedAt: -1 });
+    if (!activity) {
+      return res.status(404).json({ message: "No activity found in database" });
     }
-  };
-
-  const getActivity = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const activity = await Activity.findById(id);
-      if (!activity) {
-        return res.status(404).json({message: "No activity associated with this id"})
-      }
-      res.status(200).json(activity);
-    } catch (error) {
-      res.status(500).json({message: error.message});
-    }
+    res.status(200).json(activity);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
+};
+
+const getActivity = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const activity = await Activity.findById(id);
+    if (!activity) {
+      return res
+        .status(404)
+        .json({ message: "No activity associated with this id" });
+    }
+    res.status(200).json(activity);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 const deleteActivity = async (req, res) => {
   try {
@@ -51,5 +53,5 @@ module.exports = {
   createActivity,
   getActvities,
   getActivity,
-  deleteActivity
+  deleteActivity,
 };

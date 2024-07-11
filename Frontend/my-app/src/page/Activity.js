@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import ToggleMenu from "../component/ToggleMenu";
@@ -8,12 +7,10 @@ import AddIcon from "@mui/icons-material/Add";
 import FormDialog from "../component/FormDialog";
 import CustomizedSnackbar from "../component/CustomizedSnackbar";
 import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
-import GetActivities from "../data/GetActivities";
+import GetActivities from "../data/Activity/GetActivities";
 import ActivityCard from "../component/ActivityCard";
 import GetAllSentRequests from "../data/Participant/GetAllSentRequests";
-import GetActivity from "../data/GetActivity";
-
-const backendURL = process.env.REACT_APP_BACKEND_URL;
+import GetActivity from "../data/Activity/GetActivity";
 
 export default function Activity(prop) {
   const groupOptions = [

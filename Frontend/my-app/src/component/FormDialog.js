@@ -1,6 +1,6 @@
 import React from "react";
 import dayjs from "dayjs";
-import CreateActivity from "../data/CreateActivity";
+import CreateActivity from "../data/Activity/CreateActivity";
 import { Box, FormHelperText } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";

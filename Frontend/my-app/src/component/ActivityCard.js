@@ -17,7 +17,7 @@ import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import ShareIcon from "@mui/icons-material/Share";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import DeleteActivity from "../data/DeleteActivity";
+import DeleteActivity from "../data/Activity/DeleteActivity";
 import CustomizedSnackbar from "./CustomizedSnackbar";
 import ActivityDetail from "./ActivityDetail";
 import CreateParticipant from "../data/Participant/CreateParticipant";
