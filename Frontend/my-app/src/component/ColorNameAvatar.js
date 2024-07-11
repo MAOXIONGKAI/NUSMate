@@ -21,6 +21,7 @@ export default function ColorNameAvatar(prop) {
   }
 
   function stringAvatar(name) {
+    if (!name) return "";
     return {
       sx: prop.sx
         ? { ...prop.sx, bgcolor: stringToColor(name) }
@@ -44,7 +45,6 @@ export default function ColorNameAvatar(prop) {
         height: 120,
         mb: 2,
       }}
-      //TODO: replace with user's own uploaded avatar
       {...stringAvatar(prop.username)}
       src=""
       alt="User Avatar"

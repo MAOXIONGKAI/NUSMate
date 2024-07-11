@@ -14,6 +14,58 @@ const readAllParticipants = async (req, res) => {
   }
 };
 
+const readAllSentRequests = async (req, res) => {
+  try {
+    const { userID } = req.params;
+    const response = await Participant.find({
+      participantID: userID,
+      status: "Pending",
+    });
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No sent activity request for the user: " });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const readAllJoinedActivities = async (req, res) => {
+  try {
+    const { userID } = req.params;
+    const response = await Participant.find({
+      participantID: userID,
+      status: "Approved",
+    });
+    if (!response) {
+      return res.status(404).json({ message: "No joined activity found" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const readAllPendingRequests = async (req, res) => {
+  try {
+    const { hostID } = req.params;
+    const response = await Participant.find({
+      hostID: hostID,
+      status: "Pending",
+    }).sort({ updatedAt: -1 });
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No pending activity request for the user" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const readParticipant = async (req, res) => {
   try {
     const response = await Participant.findOne(req.body);
@@ -26,6 +78,18 @@ const readParticipant = async (req, res) => {
   }
 };
 
+const checkIfJoined = async (req, res) => {
+  try {
+    const response = await Participant.findOne(req.body);
+    if (!response) {
+      return res.status(404).json({message: "User has not joined the activity"})
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({message: error.message})
+  }
+}
+
 const createParticipant = async (req, res) => {
   try {
     const response = await Participant.create(req.body);
@@ -33,6 +97,34 @@ const createParticipant = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+const approveParticipant = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await Participant.findByIdAndUpdate(id, req.body);
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No pending activity request found to be approved" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const declineParticipant = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await Participant.findByIdAndUpdate(id, req.body);
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No pending activity request found to be declined" });
+    }
+    res.status(200).json(response);
+  } catch (error) {}
 };
 
 const removeParticipant = async (req, res) => {
@@ -52,7 +144,13 @@ const removeParticipant = async (req, res) => {
 
 module.exports = {
   readAllParticipants,
+  readAllSentRequests,
+  readAllPendingRequests,
+  readAllJoinedActivities,
+  checkIfJoined,
   readParticipant,
   createParticipant,
+  approveParticipant,
+  declineParticipant,
   removeParticipant,
 };

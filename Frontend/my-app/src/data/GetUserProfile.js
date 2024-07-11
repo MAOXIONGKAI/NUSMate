@@ -4,7 +4,7 @@ const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export default async function GetUserProfile(ID) {
   try {
-    const response = await axios.get(`${backendURL}/api/friends/${ID}`);
+    const response = await axios.get(`${backendURL}/api/profiles/${ID}`);
     return response.data;
   } catch (error) {
     console.log(

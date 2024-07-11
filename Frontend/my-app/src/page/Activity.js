@@ -1,5 +1,17 @@
 import React from "react";
-import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Table,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableBody,
+  TableRow,
+  Tooltip,
+  Typography,
+  Paper,
+} from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import ToggleMenu from "../component/ToggleMenu";
 import NoActivityPage from "../image/NoActivityPage.jpg";
@@ -7,19 +19,53 @@ import AddIcon from "@mui/icons-material/Add";
 import FormDialog from "../component/FormDialog";
 import CustomizedSnackbar from "../component/CustomizedSnackbar";
 import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
-import GetActivities from "../data/GetActivities";
+import GetActivities from "../data/Activity/GetActivities";
 import ActivityCard from "../component/ActivityCard";
+import GetAllSentRequests from "../data/Participant/GetAllSentRequests";
+import GetActivity from "../data/Activity/GetActivity";
+import GetPendingActivityRequests from "../data/Activity/GetPendingActivityRequests";
+import GetUserProfile from "../data/GetUserProfile";
+import ColorNameAvatar from "../component/ColorNameAvatar";
+import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlined from "@mui/icons-material/CancelOutlined";
+
+import CalculateTimesAgo from "../data/CalculateTimesAgo";
+import ApproveParticipant from "../data/Participant/ApproveParticipant";
+import DeclineParticipant from "../data/Participant/DeclineParticipant";
+import GetAllJoinedActivities from "../data/Participant/GetAllJoinedActivities";
 
 export default function Activity(prop) {
   const groupOptions = [
     { value: "All Activities" },
-    { value: "My Activities" },
+    { value: "Requested Activities" },
+    { value: "Joined Activities" },
+    { value: "My Hosted Activities" },
+    { value: "Pending Request" },
   ];
   const [currentGroup, setCurrentGroup] = React.useState("All Activities");
   const [currentResult, setCurrentResult] = React.useState([]);
   const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
   const [openSuccess, setOpenSuccess] = React.useState(false);
   const [openFail, setOpenFail] = React.useState(false);
+
+  const [hasModified, setHasModified] = React.useState(false);
+  const handleApproveActivityRequest = (requestID) => {
+    const sendApproveRequest = async () => {
+      if (await ApproveParticipant(requestID)) {
+        setHasModified((prev) => !prev);
+      }
+    };
+    sendApproveRequest();
+  };
+
+  const handleDeclineActivityRequest = (requestID) => {
+    const sendDeclineRequest = async () => {
+      if (await DeclineParticipant(requestID)) {
+        setHasModified((prev) => !prev);
+      }
+    };
+    sendDeclineRequest();
+  };
 
   React.useEffect(() => {
     UpdateLocalUserProfile(prop.profile, prop.setProfile);
@@ -29,17 +75,51 @@ export default function Activity(prop) {
     const getData = async () => {
       if (currentGroup === "All Activities") {
         setCurrentResult(await GetActivities());
-      } else {
+      } else if (currentGroup === "My Hosted Activities") {
         setCurrentResult(
           (await GetActivities()).filter(
             (activity) => activity.hostID === prop.profile._id
           )
         );
+      } else if (currentGroup === "Requested Activities") {
+        const sentRequests = await GetAllSentRequests(prop.profile._id);
+        const activityPromises = await sentRequests.map((request) => {
+          return GetActivity(request.activityID);
+        });
+        const activities = await Promise.all(activityPromises);
+        setCurrentResult(activities);
+      } else if (currentGroup === "Joined Activities") {
+        const joinedActivityRequests = await GetAllJoinedActivities(
+          prop.profile._id
+        );
+        const activityPromises = await joinedActivityRequests.map((request) => {
+          return GetActivity(request.activityID);
+        });
+        const activities = await Promise.all(activityPromises);
+        setCurrentResult(activities);
+      } else if (currentGroup === "Pending Request") {
+        setCurrentResult([]);
+        const pendingRequests = await GetPendingActivityRequests(
+          prop.profile._id
+        );
+        const requests = await Promise.all(
+          pendingRequests.map(async (request) => {
+            const [userProfile, activity] = await Promise.all([
+              GetUserProfile(request.participantID),
+              GetActivity(request.activityID),
+            ]);
+
+            return { ...userProfile, ...activity, ...request };
+          })
+        );
+        setCurrentResult(requests);
+      } else {
+        setCurrentResult([]);
       }
     };
     getData();
     resetPaginationSetting();
-  }, [currentGroup]);
+  }, [currentGroup, hasModified, prop.profile._id]);
 
   // Settings for pagination
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -55,7 +135,7 @@ export default function Activity(prop) {
 
   const resetPaginationSetting = () => {
     setCurrentPage(1);
-  }
+  };
 
   return (
     <Box
@@ -152,13 +232,109 @@ export default function Activity(prop) {
                 gap: "50px",
               }}
             >
-              {activitySection.map((activity) => (
-                <ActivityCard
-                  key={activity._id}
-                  activity={activity}
-                  profile={prop.profile}
-                />
-              ))}
+              {currentGroup === "Pending Request" ? (
+                <TableContainer component={Paper}>
+                  <Table sx={{ width: "90vw" }}>
+                    <TableHead
+                      sx={{
+                        background:
+                          "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+                      }}
+                    >
+                      <TableRow>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Request Profile
+                        </TableCell>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Activity Info
+                        </TableCell>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Requested At
+                        </TableCell>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Host Actions
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {activitySection.map((request) => (
+                        <TableRow key={request._id}>
+                          <TableCell
+                            sx={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              textAlign: "center",
+                              gap: "5px",
+                            }}
+                          >
+                            <ColorNameAvatar
+                              username={request.username}
+                              sx={{ size: "14px", fontSize: "10px" }}
+                            />
+                            <Typography
+                              variant="body2"
+                              sx={{ color: "gray", fontSize: "14px" }}
+                            >
+                              {request.username}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ textAlign: "center" }}>
+                            <Typography>{request.activityName}</Typography>
+                          </TableCell>
+                          <TableCell sx={{ textAlign: "center" }}>
+                            <Typography
+                              sx={{
+                                color: "gray",
+                                fontSize: "16px",
+                                fontWeight: 400,
+                              }}
+                            >
+                              {CalculateTimesAgo(request.updatedAt)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ textAlign: "center" }}>
+                            <Tooltip
+                              title={`Approve join request from ${request.username}`}
+                            >
+                              <IconButton
+                                sx={{ color: "#32CD32" }}
+                                onClick={() =>
+                                  handleApproveActivityRequest(request._id)
+                                }
+                              >
+                                <CheckCircleOutline />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip
+                              title={`Decline join request from ${request.username}`}
+                            >
+                              <IconButton
+                                sx={{ color: "red" }}
+                                onClick={() =>
+                                  handleDeclineActivityRequest(request._id)
+                                }
+                              >
+                                <CancelOutlined />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              ) : (
+                activitySection.map((activity) => (
+                  <ActivityCard
+                    key={activity._id}
+                    activity={activity}
+                    profile={prop.profile}
+                    setHasModified={setHasModified}
+                  />
+                ))
+              )}
             </Box>
             <Pagination
               showFirstButton
