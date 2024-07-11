@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import ToggleMenu from "../component/ToggleMenu";
@@ -9,11 +10,17 @@ import CustomizedSnackbar from "../component/CustomizedSnackbar";
 import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
 import GetActivities from "../data/GetActivities";
 import ActivityCard from "../component/ActivityCard";
+import GetAllSentRequests from "../data/Participant/GetAllSentRequests";
+import GetActivity from "../data/GetActivity";
+
+const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export default function Activity(prop) {
   const groupOptions = [
     { value: "All Activities" },
-    { value: "My Activities" },
+    { value: "Requested Activities" },
+    { value: "Joined Activities" },
+    { value: "My Hosted Activities" },
   ];
   const [currentGroup, setCurrentGroup] = React.useState("All Activities");
   const [currentResult, setCurrentResult] = React.useState([]);
@@ -29,12 +36,22 @@ export default function Activity(prop) {
     const getData = async () => {
       if (currentGroup === "All Activities") {
         setCurrentResult(await GetActivities());
-      } else {
+      } else if (currentGroup === "My Hosted Activities") {
         setCurrentResult(
           (await GetActivities()).filter(
             (activity) => activity.hostID === prop.profile._id
           )
         );
+      } else if (currentGroup === "Requested Activities") {
+        const sentRequests = await GetAllSentRequests(prop.profile._id);
+        const activityPromises = await sentRequests.map(request => {
+          return GetActivity(request.activityID);
+        })
+        const activities = await Promise.all(activityPromises);
+        console.log(activities)
+        setCurrentResult(activities);
+      } else {
+        setCurrentResult([]);
       }
     };
     getData();
@@ -55,7 +72,7 @@ export default function Activity(prop) {
 
   const resetPaginationSetting = () => {
     setCurrentPage(1);
-  }
+  };
 
   return (
     <Box

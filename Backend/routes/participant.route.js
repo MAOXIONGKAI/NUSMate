@@ -5,6 +5,7 @@ const router = express.Router();
 
 const {
   readAllParticipants,
+  readAllSentRequests,
   createParticipant,
   removeParticipant,
   readParticipant,
@@ -13,6 +14,8 @@ const {
 router.get("/", readAllParticipants);
 
 router.post("/participant/", readParticipant);
+
+router.post("/sent_requests/:userID", readAllSentRequests);
 
 router.post("/", createParticipant);
 

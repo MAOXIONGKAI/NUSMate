@@ -6,6 +6,7 @@ const {
     createActivity,
     deleteActivity,
     getActvities,
+    getActivity,
 } = require("../controllers/activity.controller");
 
 // Import controller from activity.controllers when needed
@@ -13,7 +14,9 @@ const {
 // Specify the routes
 router.post("/", createActivity);
 
-router.get("/", getActvities)
+router.get("/", getActvities);
+
+router.get("/:id", getActivity);
 
 router.delete("/:id", deleteActivity);
 
