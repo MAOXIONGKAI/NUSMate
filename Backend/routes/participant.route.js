@@ -9,6 +9,7 @@ const {
   createParticipant,
   removeParticipant,
   readParticipant,
+  readAllPendingRequests,
 } = require("../controllers/participant.controller.js");
 
 router.get("/", readAllParticipants);
@@ -16,6 +17,8 @@ router.get("/", readAllParticipants);
 router.post("/participant/", readParticipant);
 
 router.post("/sent_requests/:userID", readAllSentRequests);
+
+router.post("/pending_requests/:hostID", readAllPendingRequests);
 
 router.post("/", createParticipant);
 

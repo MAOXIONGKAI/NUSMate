@@ -32,6 +32,24 @@ const readAllSentRequests = async (req, res) => {
   }
 };
 
+const readAllPendingRequests = async (req, res) => {
+  try {
+    const { hostID } = req.params;
+    const response = await Participant.find({
+      hostID: hostID,
+      status: "Pending",
+    }).sort({ updatedAt: -1 });
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No pending activity request for the user" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const readParticipant = async (req, res) => {
   try {
     const response = await Participant.findOne(req.body);
@@ -71,6 +89,7 @@ const removeParticipant = async (req, res) => {
 module.exports = {
   readAllParticipants,
   readAllSentRequests,
+  readAllPendingRequests,
   readParticipant,
   createParticipant,
   removeParticipant,

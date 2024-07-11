@@ -11,6 +11,9 @@ import GetActivities from "../data/Activity/GetActivities";
 import ActivityCard from "../component/ActivityCard";
 import GetAllSentRequests from "../data/Participant/GetAllSentRequests";
 import GetActivity from "../data/Activity/GetActivity";
+import ActivityRequestCard from "../component/ActivityRequestCard";
+import GetPendingActivityRequests from "../data/Activity/GetPendingActivityRequests";
+import GetUserProfile from "../data/GetUserProfile";
 
 export default function Activity(prop) {
   const groupOptions = [
@@ -18,6 +21,7 @@ export default function Activity(prop) {
     { value: "Requested Activities" },
     { value: "Joined Activities" },
     { value: "My Hosted Activities" },
+    { value: "Pending Request" },
   ];
   const [currentGroup, setCurrentGroup] = React.useState("All Activities");
   const [currentResult, setCurrentResult] = React.useState([]);
@@ -41,12 +45,26 @@ export default function Activity(prop) {
         );
       } else if (currentGroup === "Requested Activities") {
         const sentRequests = await GetAllSentRequests(prop.profile._id);
-        const activityPromises = await sentRequests.map(request => {
+        const activityPromises = await sentRequests.map((request) => {
           return GetActivity(request.activityID);
-        })
+        });
         const activities = await Promise.all(activityPromises);
-        console.log(activities)
         setCurrentResult(activities);
+      } else if (currentGroup === "Pending Request") {
+        const pendingRequests = await GetPendingActivityRequests(
+          prop.profile._id
+        );
+        const requests = await Promise.all(
+          pendingRequests.map(async (request) => {
+            const [userProfile, activity] = await Promise.all([
+              GetUserProfile(request.participantID),
+              GetActivity(request.activityID),
+            ]);
+
+            return { ...userProfile, ...activity, ...request };
+          })
+        );
+        setCurrentResult(requests);
       } else {
         setCurrentResult([]);
       }
@@ -166,13 +184,21 @@ export default function Activity(prop) {
                 gap: "50px",
               }}
             >
-              {activitySection.map((activity) => (
-                <ActivityCard
-                  key={activity._id}
-                  activity={activity}
-                  profile={prop.profile}
-                />
-              ))}
+              {currentGroup === "Pending Request"
+                ? activitySection.map((request) => (
+                    <ActivityRequestCard
+                      key={request._id}
+                      participantName={request.username}
+                      activityName={request.activityName}
+                    />
+                  ))
+                : activitySection.map((activity) => (
+                    <ActivityCard
+                      key={activity._id}
+                      activity={activity}
+                      profile={prop.profile}
+                    />
+                  ))}
             </Box>
             <Pagination
               showFirstButton
