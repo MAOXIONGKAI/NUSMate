@@ -13,12 +13,16 @@ import {
 import ColorNameAvatar from "../component/ColorNameAvatar";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import ShareIcon from "@mui/icons-material/Share";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteActivity from "../data/DeleteActivity";
 import CustomizedSnackbar from "./CustomizedSnackbar";
 import ActivityDetail from "./ActivityDetail";
+import CreateParticipant from "../data/Participant/CreateParticipant";
+import RemoveParticipant from "../data/Participant/RemoveParticipant";
+import GetParticipantRequest from "../data/Participant/GetParticipantRequest";
 
 export default function ActivityCard(prop) {
   const { profile, activity } = prop;
@@ -38,6 +42,7 @@ export default function ActivityCard(prop) {
   endDate = dayjs(endDate).format("ddd, MMM D, YYYY h:mm A");
 
   const [openDetail, setOpenDetail] = React.useState(false);
+  const [hasRequestedToJoin, setHasRequestedToJoin] = React.useState(false);
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
 
@@ -50,8 +55,31 @@ export default function ActivityCard(prop) {
       if (await DeleteActivity(ID)) {
         setOpenDeleteSuccess(true);
       }
-    }
+    };
     sendDeleteRequest();
+  };
+
+  const handleJoinActivity = (participantID, hostID, activityID) => {
+    const sendJoinRequest = async () => {
+      if (await CreateParticipant(participantID, hostID, activityID)) {
+        setHasRequestedToJoin(true);
+      }
+    };
+    sendJoinRequest();
+  };
+
+  const handleWithdrawFromActivity = (participantID, activityID) => {
+    const sendWithdrawRequest = async () => {
+      const requestData = await GetParticipantRequest(
+        participantID,
+        activityID
+      );
+      const requestID = await requestData._id;
+      if (await RemoveParticipant(requestID)) {
+        setHasRequestedToJoin(false);
+      }
+    };
+    sendWithdrawRequest();
   };
 
   return (
@@ -237,9 +265,19 @@ export default function ActivityCard(prop) {
                 </IconButton>
               </Tooltip>
             </>
+          ) : hasRequestedToJoin ? (
+            <Tooltip title="Withdraw join request for this activity">
+              <IconButton
+                onClick={() => handleWithdrawFromActivity(profile._id, _id)}
+              >
+                <GroupRemoveIcon />
+              </IconButton>
+            </Tooltip>
           ) : (
             <Tooltip title="Request to join this activity">
-              <IconButton>
+              <IconButton
+                onClick={() => handleJoinActivity(profile._id, hostID, _id)}
+              >
                 <GroupAddIcon />
               </IconButton>
             </Tooltip>
