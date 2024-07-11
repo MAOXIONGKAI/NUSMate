@@ -46,6 +46,18 @@ export default function ActivityCard(prop) {
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
 
+  //Check with database about whether the user has requested to join this activity
+  React.useEffect(() => {
+    const checkRequested = async () => {
+      if (await GetParticipantRequest(profile._id, _id)) {
+        setHasRequestedToJoin(true); 
+      } else {
+        setHasRequestedToJoin(false);
+      }
+    };
+    checkRequested();
+  }, []);
+
   const handleOpenDetail = () => {
     setOpenDetail(true);
   };

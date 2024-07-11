@@ -10,7 +10,7 @@ export default async function GetParticipantRequest(participantID, activityID) {
       status: "Pending",
     };
     const response = await axios.post(`${backendURL}/api/participants/participant`, requestBody);
-    return response.data;
+    return response?.data;
   } catch (error) {
     console.log(
       "Error when getting participant data: " +
