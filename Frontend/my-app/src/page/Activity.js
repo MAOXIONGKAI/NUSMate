@@ -23,7 +23,6 @@ import GetActivities from "../data/Activity/GetActivities";
 import ActivityCard from "../component/ActivityCard";
 import GetAllSentRequests from "../data/Participant/GetAllSentRequests";
 import GetActivity from "../data/Activity/GetActivity";
-import ActivityRequestCard from "../component/ActivityRequestCard";
 import GetPendingActivityRequests from "../data/Activity/GetPendingActivityRequests";
 import GetUserProfile from "../data/GetUserProfile";
 import ColorNameAvatar from "../component/ColorNameAvatar";
@@ -31,6 +30,9 @@ import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
 import CancelOutlined from "@mui/icons-material/CancelOutlined";
 
 import CalculateTimesAgo from "../data/CalculateTimesAgo";
+import ApproveParticipant from "../data/Participant/ApproveParticipant";
+import DeclineParticipant from "../data/Participant/DeclineParticipant";
+import GetAllJoinedActivities from "../data/Participant/GetAllJoinedActivities";
 
 export default function Activity(prop) {
   const groupOptions = [
@@ -45,6 +47,25 @@ export default function Activity(prop) {
   const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
   const [openSuccess, setOpenSuccess] = React.useState(false);
   const [openFail, setOpenFail] = React.useState(false);
+
+  const [hasModified, setHasModified] = React.useState(false);
+  const handleApproveActivityRequest = (requestID) => {
+    const sendApproveRequest = async () => {
+      if (await ApproveParticipant(requestID)) {
+        setHasModified((prev) => !prev);
+      }
+    };
+    sendApproveRequest();
+  };
+
+  const handleDeclineActivityRequest = (requestID) => {
+    const sendDeclineRequest = async () => {
+      if (await DeclineParticipant(requestID)) {
+        setHasModified((prev) => !prev);
+      }
+    };
+    sendDeclineRequest();
+  };
 
   React.useEffect(() => {
     UpdateLocalUserProfile(prop.profile, prop.setProfile);
@@ -67,7 +88,17 @@ export default function Activity(prop) {
         });
         const activities = await Promise.all(activityPromises);
         setCurrentResult(activities);
+      } else if (currentGroup === "Joined Activities") {
+        const joinedActivityRequests = await GetAllJoinedActivities(
+          prop.profile._id
+        );
+        const activityPromises = await joinedActivityRequests.map((request) => {
+          return GetActivity(request.activityID);
+        });
+        const activities = await Promise.all(activityPromises);
+        setCurrentResult(activities);
       } else if (currentGroup === "Pending Request") {
+        setCurrentResult([]);
         const pendingRequests = await GetPendingActivityRequests(
           prop.profile._id
         );
@@ -88,7 +119,7 @@ export default function Activity(prop) {
     };
     getData();
     resetPaginationSetting();
-  }, [currentGroup]);
+  }, [currentGroup, hasModified, prop.profile._id]);
 
   // Settings for pagination
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -227,7 +258,7 @@ export default function Activity(prop) {
                     </TableHead>
                     <TableBody>
                       {activitySection.map((request) => (
-                        <TableRow>
+                        <TableRow key={request._id}>
                           <TableCell
                             sx={{
                               display: "flex",
@@ -267,14 +298,24 @@ export default function Activity(prop) {
                             <Tooltip
                               title={`Approve join request from ${request.username}`}
                             >
-                              <IconButton sx={{color: "#32CD32"}}>
+                              <IconButton
+                                sx={{ color: "#32CD32" }}
+                                onClick={() =>
+                                  handleApproveActivityRequest(request._id)
+                                }
+                              >
                                 <CheckCircleOutline />
                               </IconButton>
                             </Tooltip>
                             <Tooltip
                               title={`Decline join request from ${request.username}`}
                             >
-                              <IconButton sx={{color: "red"}}>
+                              <IconButton
+                                sx={{ color: "red" }}
+                                onClick={() =>
+                                  handleDeclineActivityRequest(request._id)
+                                }
+                              >
                                 <CancelOutlined />
                               </IconButton>
                             </Tooltip>
@@ -290,6 +331,7 @@ export default function Activity(prop) {
                     key={activity._id}
                     activity={activity}
                     profile={prop.profile}
+                    setHasModified={setHasModified}
                   />
                 ))
               )}
