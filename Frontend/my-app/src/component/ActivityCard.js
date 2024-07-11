@@ -1,11 +1,10 @@
-import React from "react";
+import React, { act } from "react";
 import dayjs from "dayjs";
 import {
   Typography,
   Box,
   Card,
   CardContent,
-  CardHeader,
   CardActions,
   CardActionArea,
   IconButton,
@@ -19,10 +18,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteActivity from "../data/DeleteActivity";
 import CustomizedSnackbar from "./CustomizedSnackbar";
+import ActivityDetail from "./ActivityDetail";
 
 export default function ActivityCard(prop) {
-  const { activity } = prop;
+  const { profile, activity } = prop;
   let {
+    _id,
     hostID,
     hostName,
     activityName,
@@ -36,8 +37,22 @@ export default function ActivityCard(prop) {
   startDate = dayjs(startDate).format("ddd, MMM D, YYYY h:mm A");
   endDate = dayjs(endDate).format("ddd, MMM D, YYYY h:mm A");
 
+  const [openDetail, setOpenDetail] = React.useState(false);
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
+
+  const handleOpenDetail = () => {
+    setOpenDetail(true);
+  };
+
+  const handleDeleteActivity = (ID) => {
+    const sendDeleteRequest = async () => {
+      if (await DeleteActivity(ID)) {
+        setOpenDeleteSuccess(true);
+      }
+    }
+    sendDeleteRequest();
+  };
 
   return (
     <React.Fragment>
@@ -50,6 +65,21 @@ export default function ActivityCard(prop) {
         text="Delete Activity Failed: Unknown Server Error"
         open={openDeleteFail}
         setOpen={setOpenDeleteFail}
+      />
+      <ActivityDetail
+        open={openDetail}
+        setOpen={setOpenDetail}
+        profile={profile}
+        _id={_id}
+        hostID={hostID}
+        hostName={hostName}
+        activityName={activityName}
+        pax={pax}
+        startDate={startDate}
+        endDate={endDate}
+        location={location}
+        description={description}
+        handleDeleteActivity={handleDeleteActivity}
       />
       <Card
         sx={{
@@ -71,9 +101,9 @@ export default function ActivityCard(prop) {
             textAlign: "center",
             backgroundColor: "#DFF1FF",
             marginRight: "auto",
-            width: "8%",
+            width: "12%",
             minWidth: "120px",
-            padding: "10% 0px",
+            padding: "10px 0px",
           }}
         >
           <ColorNameAvatar
@@ -87,94 +117,110 @@ export default function ActivityCard(prop) {
         <CardContent
           sx={{
             display: "flex",
-            flexDirection: "column",
-            width: "80%",
             alignItems: "center",
+            width: "80%",
             justifyContent: "top",
-            padding: "16px",
             margin: "0px",
+            padding: "0px",
             marginRight: "auto",
           }}
         >
-          <Box
+          <CardActionArea
             sx={{
-              margin: "0px",
-              marginBottom: "auto",
+              display: "flex",
+              flexDirection: "column",
+              flexWrap: "wrap",
               width: "100%",
+              alignItems: "center",
+              justifyContent: "top",
+              padding: "0px",
+              margin: "0px",
+              marginRight: "auto",
+              height: "100%",
             }}
+            onClick={handleOpenDetail}
           >
             <Box
               sx={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
+                margin: "0px",
+                padding: "16px",
                 marginBottom: "auto",
-                gap: "20px",
+                width: "100%",
               }}
             >
               <Box
                 sx={{
                   display: "flex",
-                  flexWrap: "wrap",
                   width: "100%",
-                  gap: "0px 10px",
-                  justifyContent: "center",
                   alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: "auto",
+                  gap: "20px",
                 }}
               >
-                <Typography variant="h6" sx={{ lineHeight: "32px" }}>
-                  {activityName}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ color: "dimgray", lineHeight: "32px" }}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    width: "100%",
+                    gap: "0px 10px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
-                  @{location}
-                </Typography>
+                  <Typography variant="h6" sx={{ lineHeight: "32px" }}>
+                    {activityName}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: "dimgray", lineHeight: "32px" }}
+                  >
+                    @{location}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    color: "green",
+                    margin: "0px",
+                    marginLeft: "auto",
+                    padding: "0px",
+                  }}
+                >
+                  <PersonIcon />
+                  <Typography variant="body2">(1/{pax})</Typography>
+                </Box>
               </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  color: "green",
-                  margin: "0px",
-                  marginLeft: "auto",
-                  padding: "0px",
-                }}
+              <Typography
+                variant="body2"
+                sx={{ color: "gray", fontSize: "16px" }}
               >
-                <PersonIcon />
-                <Typography variant="body2">(1/{pax})</Typography>
-              </Box>
+                {startDate} - {endDate}
+              </Typography>
             </Box>
             <Typography
+              sx={{ marginBottom: "auto", wordWrap: "break-word" }}
               variant="body2"
-              sx={{ color: "gray", fontSize: "16px" }}
+              color="textSecondary"
+              width="90%"
             >
-              {startDate} - {endDate}
+              {description}
             </Typography>
-          </Box>
-          <Typography
-            sx={{ marginBottom: "auto" }}
-            variant="body2"
-            color="textSecondary"
-            width="90%"
-          >
-            {description}
-          </Typography>
+          </CardActionArea>
         </CardContent>
         <CardActions
           disableSpacing
           sx={{
             display: "flex",
             width: "12%",
-            minWidth: "120px",
+            minWidth: "12%",
             padding: "10.6% 0px",
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "#EFF9FF",
           }}
         >
-          {prop.profile._id === hostID ? (
+          {profile._id === hostID ? (
             <>
               <Tooltip title="Edit this activity">
                 <IconButton
@@ -186,14 +232,7 @@ export default function ActivityCard(prop) {
                 </IconButton>
               </Tooltip>
               <Tooltip title="Delete this activity">
-                <IconButton
-                  onClick={() => {
-                    if (DeleteActivity(activity._id)) {
-                      setOpenDeleteSuccess(true);
-                    } else {
-                    }
-                  }}
-                >
+                <IconButton onClick={() => handleDeleteActivity(_id)}>
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
