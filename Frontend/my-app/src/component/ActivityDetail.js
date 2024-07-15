@@ -4,17 +4,11 @@ import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
-import { Tooltip } from "@mui/material";
 
 import PersonIcon from "@mui/icons-material/Person";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ShareIcon from "@mui/icons-material/Share";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -45,7 +39,6 @@ export default function ActivityDetail(prop) {
     endDate,
     location,
     description,
-    handleDeleteActivity
   } = prop;
 
   const handleClose = () => {
@@ -135,39 +128,6 @@ export default function ActivityDetail(prop) {
             </Typography>
           </Box>
         </DialogContent>
-        <DialogActions>
-        {profile._id === hostID ? (
-            <>
-              <Tooltip title="Edit this activity">
-                <IconButton
-                  onClick={() => {
-                    console.log("Editing: " + activityName);
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete this activity">
-                <IconButton
-                  onClick={() => handleDeleteActivity(_id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
-            </>
-          ) : (
-            <Tooltip title="Request to join this activity">
-              <IconButton>
-                <GroupAddIcon />
-              </IconButton>
-            </Tooltip>
-          )}
-          <Tooltip title="Share this activity">
-            <IconButton>
-              <ShareIcon />
-            </IconButton>
-          </Tooltip>
-        </DialogActions>
       </BootstrapDialog>
     </React.Fragment>
   );

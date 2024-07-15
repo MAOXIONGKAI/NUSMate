@@ -7,8 +7,7 @@ import ChatMenu from "../component/ChatMenu";
 import AccountMenu from "../component/AccountMenu";
 import { Link } from "react-router-dom";
 import StyledButton from "../component/StyledButton";
-
-import GetUserFriendStatus from "../data/Friend/GetUserFriendStatus";
+import GetNotifications from "../data/Notification/GetNotifications";
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 function LoggedInHeader(prop) {
@@ -18,17 +17,21 @@ function LoggedInHeader(prop) {
 
   React.useEffect(() => {
     const getData = async () => {
-      setMessages(await GetUserFriendStatus(profile._id));
+      setMessages(await GetNotifications(profile._id));
     };
     getData();
   }, []);
 
   React.useEffect(() => {
     const getRequestInfo = async () => {
-      const requestPromises = messages.map((message) => {
-        return axios.get(
+      const requestPromises = messages.map(async (message) => {
+        const profileResponse = await axios.get(
           `${backendURL}/api/profiles/${
-            message.fromUserID === profile._id
+            message.activityID
+              ? message.participantID === profile._id
+                ? message.hostID
+                : message.participantID
+              : message.fromUserID === profile._id
               ? message.toUserID
               : message.fromUserID
           }`,
@@ -36,16 +39,24 @@ function LoggedInHeader(prop) {
             headers: { "Content-Type": "application/json" },
           }
         );
-      });
-      const profiles = await Promise.all(requestPromises);
-      const profileData = profiles.map((profile) => profile.data);
-      setNotifications(
-        messages.map((message, index) => ({
+        const activityResponse = message.activityID
+          ? await axios.get(
+              `${backendURL}/api/activities/${message.activityID}`
+            )
+          : null;
+
+        const profileData = await profileResponse.data;
+        const activityData = await activityResponse?.data;
+        return {
+          ...profileData,
+          ...(activityData ? activityData : {}),
           ...message,
-          ...profileData[index],
           requestTime: message.updatedAt,
-        }))
-      );
+        };
+      });
+
+      const result = await Promise.all(requestPromises);
+      setNotifications(result);
     };
     getRequestInfo();
   }, [messages]);

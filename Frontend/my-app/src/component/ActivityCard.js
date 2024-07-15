@@ -149,7 +149,6 @@ export default function ActivityCard(prop) {
         endDate={endDate}
         location={location}
         description={description}
-        handleDeleteActivity={handleDeleteActivity}
       />
       <Card
         sx={{

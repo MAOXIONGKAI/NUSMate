@@ -1,6 +1,8 @@
 import React from "react";
+import dayjs from "dayjs";
 import {
   Box,
+  Button,
   IconButton,
   Table,
   TableCell,
@@ -21,6 +23,7 @@ import CustomizedSnackbar from "../component/CustomizedSnackbar";
 import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
 import GetActivities from "../data/Activity/GetActivities";
 import ActivityCard from "../component/ActivityCard";
+import ActivityDetail from "../component/ActivityDetail";
 import GetAllSentRequests from "../data/Participant/GetAllSentRequests";
 import GetActivity from "../data/Activity/GetActivity";
 import GetPendingActivityRequests from "../data/Activity/GetPendingActivityRequests";
@@ -109,7 +112,12 @@ export default function Activity(prop) {
               GetActivity(request.activityID),
             ]);
 
-            return { ...userProfile, ...activity, ...request };
+            return {
+              ...userProfile,
+              ...activity,
+              ...request,
+              activityID: activity._id,
+            };
           })
         );
         setCurrentResult(requests);
@@ -120,6 +128,36 @@ export default function Activity(prop) {
     getData();
     resetPaginationSetting();
   }, [currentGroup, hasModified, prop.profile._id]);
+
+  const [openDetail, setOpenDetail] = React.useState(false);
+  const [activityDetail, setActivityDetail] = React.useState({});
+
+  const handleOpenActivityDetail = (
+    profile,
+    _id,
+    hostID,
+    hostName,
+    activityName,
+    pax,
+    startDate,
+    endDate,
+    location,
+    description
+  ) => {
+    setActivityDetail({
+      profile: profile,
+      _id: _id,
+      hostID: hostID,
+      hostName: hostName,
+      activityName: activityName,
+      pax: pax,
+      startDate,
+      endDate,
+      location,
+      description,
+    });
+    setOpenDetail(true);
+  };
 
   // Settings for pagination
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -158,6 +196,11 @@ export default function Activity(prop) {
         text="Added new activity failed: Unknown Server Error"
         open={openFail}
         setOpen={setOpenFail}
+      />
+      <ActivityDetail
+        open={openDetail}
+        setOpen={setOpenDetail}
+        {...activityDetail}
       />
       <FormDialog
         open={openCreateDialog}
@@ -243,10 +286,10 @@ export default function Activity(prop) {
                     >
                       <TableRow>
                         <TableCell sx={{ color: "white", textAlign: "center" }}>
-                          Request Profile
+                          Profile Info
                         </TableCell>
                         <TableCell sx={{ color: "white", textAlign: "center" }}>
-                          Activity Info
+                          Action Detail
                         </TableCell>
                         <TableCell sx={{ color: "white", textAlign: "center" }}>
                           Requested At
@@ -259,29 +302,71 @@ export default function Activity(prop) {
                     <TableBody>
                       {activitySection.map((request) => (
                         <TableRow key={request._id}>
-                          <TableCell
+                          <Button
                             sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              textAlign: "center",
-                              gap: "5px",
+                              margin: "0px",
+                              padding: "0px",
+                              width: "100%",
                             }}
                           >
-                            <ColorNameAvatar
-                              username={request.username}
-                              sx={{ size: "14px", fontSize: "10px" }}
-                            />
-                            <Typography
-                              variant="body2"
-                              sx={{ color: "gray", fontSize: "14px" }}
+                            <TableCell
+                              sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                textAlign: "center",
+                                gap: "8px"
+                              }}
                             >
-                              {request.username}
-                            </Typography>
-                          </TableCell>
+                              <ColorNameAvatar
+                                username={request.username}
+                                sx={{ size: "14px", fontSize: "10px" }}
+                              />
+                              <Typography
+                                variant="body2"
+                                sx={{ color: "gray", fontSize: "10px" }}
+                              >
+                                {request.username}
+                              </Typography>
+                            </TableCell>
+                          </Button>
                           <TableCell sx={{ textAlign: "center" }}>
-                            <Typography>{request.activityName}</Typography>
+                            <Typography>
+                              <Typography
+                                sx={{
+                                  display: "inline",
+                                  color: "gray",
+                                  fontSize: "16px",
+                                }}
+                              >
+                                {request.status === "Pending"
+                                  ? "requested to join"
+                                  : "has been invited to join"}
+                              </Typography>{" "}
+                              <Button
+                                onClick={() =>
+                                  handleOpenActivityDetail(
+                                    prop.profile,
+                                    request.activityID,
+                                    request.hostID,
+                                    request.hostName,
+                                    request.activityName,
+                                    request.pax,
+                                    dayjs(request.startDate).format(
+                                      "ddd, MMM D, YYYY h:mm A"
+                                    ),
+                                    dayjs(request.endDate).format(
+                                      "ddd, MMM D, YYYY h:mm A"
+                                    ),
+                                    request.location,
+                                    request.description
+                                  )
+                                }
+                              >
+                                {request.activityName}
+                              </Button>
+                            </Typography>
                           </TableCell>
                           <TableCell sx={{ textAlign: "center" }}>
                             <Typography

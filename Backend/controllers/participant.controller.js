@@ -66,6 +66,28 @@ const readAllPendingRequests = async (req, res) => {
   }
 };
 
+const readAllAssociatedParticipation = async (req, res) => {
+  try {
+    const { userID } = req.params;
+    const query = {
+      $or: [
+        { hostID: userID, status: "Pending" },
+        { participantID: userID, status: "Approved" },
+        { participantID: userID, status: "Declined" },
+      ],
+    };
+    const response = await Participant.find(query).sort({ updatedAt: -1 });
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No associated Participation found in database" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const readParticipant = async (req, res) => {
   try {
     const response = await Participant.findOne(req.body);
@@ -82,13 +104,15 @@ const checkIfJoined = async (req, res) => {
   try {
     const response = await Participant.findOne(req.body);
     if (!response) {
-      return res.status(404).json({message: "User has not joined the activity"})
+      return res
+        .status(404)
+        .json({ message: "User has not joined the activity" });
     }
     res.status(200).json(response);
   } catch (error) {
-    res.status(500).json({message: error.message})
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 const createParticipant = async (req, res) => {
   try {
@@ -147,6 +171,7 @@ module.exports = {
   readAllSentRequests,
   readAllPendingRequests,
   readAllJoinedActivities,
+  readAllAssociatedParticipation,
   checkIfJoined,
   readParticipant,
   createParticipant,

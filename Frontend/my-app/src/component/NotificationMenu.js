@@ -11,7 +11,7 @@ import { Divider, IconButton, MenuList, Typography } from "@mui/material";
 import NoNotification from "../image/NoNotification.jpg";
 import CalculateTimesAgo from "../data/CalculateTimesAgo";
 
-import GetUserFriendStatus from "../data/Friend/GetUserFriendStatus";
+import GetNotifications from "../data/Notification/GetNotifications";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -30,17 +30,21 @@ export default function NotificationMenu(prop) {
 
   React.useEffect(() => {
     const getData = async () => {
-      setMessages(await GetUserFriendStatus(profile._id));
+      setMessages(await GetNotifications(profile._id));
     };
     getData();
   }, [open, profile._id, setMessages]);
 
   React.useEffect(() => {
     const getRequestInfo = async () => {
-      const requestPromises = messages.map((message) => {
-        return axios.get(
+      const requestPromises = messages.map(async (message) => {
+        const profileResponse = await axios.get(
           `${backendURL}/api/profiles/${
-            message.fromUserID === profile._id
+            message.activityID
+              ? message.participantID === profile._id
+                ? message.hostID
+                : message.participantID
+              : message.fromUserID === profile._id
               ? message.toUserID
               : message.fromUserID
           }`,
@@ -48,28 +52,50 @@ export default function NotificationMenu(prop) {
             headers: { "Content-Type": "application/json" },
           }
         );
-      });
-      const profiles = await Promise.all(requestPromises);
-      const profileData = profiles.map((profile) => profile.data);
-      setNotifications(
-        messages.map((message, index) => ({
+        const activityResponse = message.activityID
+          ? await axios.get(
+              `${backendURL}/api/activities/${message.activityID}`
+            )
+          : null;
+
+        const profileData = await profileResponse.data;
+        const activityData = await activityResponse?.data;
+        return {
+          ...profileData,
+          ...(activityData ? activityData : {}),
           ...message,
-          ...profileData[index],
           requestTime: message.updatedAt,
-        }))
-      );
+        };
+      });
+
+      const result = await Promise.all(requestPromises);
+      setNotifications(result);
     };
     getRequestInfo();
-  }, [open, messages, setNotifications]);
+  }, [open, messages, setNotifications, profile._id]);
 
-  const getUserActionMessage = (status) => {
-    return status === "Approved"
-      ? "has approved your friend request"
-      : status === "Declined"
-      ? "has declined your friend request"
-      : status === "Pending"
-      ? "has sent you a friend request"
-      : "";
+  const getUserActionMessage = (notification) => {
+    if (notification.fromUserID) {
+      if (notification.status === "Approved") {
+        return "has approved your friend request";
+      } else if (notification.status === "Declined") {
+        return "has declined your friend request";
+      } else if (notification.status === "Pending") {
+        return "has sent you a friend request";
+      } else {
+        return "";
+      }
+    } else {
+      if (notification.status === "Approved") {
+        return `has approved your request to join`;
+      } else if (notification.status === "Declined") {
+        return `has declined your request to join`;
+      } else if (notification.status === "Pending") {
+        return `has requested to join`;
+      } else {
+        return "";
+      }
+    }
   };
 
   return (
@@ -157,8 +183,21 @@ export default function NotificationMenu(prop) {
               </MenuItem>
             ) : (
               notifications.map((notification) => (
-                <>
-                  <MenuItem key={notification.fromUserID}>
+                <React.Fragment
+                  key={
+                    profile.id +
+                    (notification?.fromUserID
+                      ? notification?.fromUserID === profile._id
+                        ? notification?.toUserID
+                        : notification?.fromUserID
+                      : notification?.participantID === profile._id
+                      ? notification?.hostID
+                      : notification?.participantID) +
+                    notification.activityID +
+                    notification._id
+                  }
+                >
+                  <MenuItem>
                     <Box
                       sx={{
                         display: "flex",
@@ -182,7 +221,7 @@ export default function NotificationMenu(prop) {
                           sx={{
                             color: "black",
                             fontSize: "14px",
-                            lineHeight: "14px",
+                            lineHeight: "18px",
                           }}
                         >
                           <Typography
@@ -190,11 +229,26 @@ export default function NotificationMenu(prop) {
                               display: "inline",
                               color: "#5b93f8",
                               fontSize: "14px",
+                              lineHeight: "18px",
                             }}
                           >
                             {notification.username}
                           </Typography>{" "}
-                          {getUserActionMessage(notification.status)}
+                          {getUserActionMessage(notification)}{" "}
+                          {notification.activityID ? (
+                            <Typography
+                              sx={{
+                                display: "inline",
+                                color: "#5b93f8",
+                                fontSize: "14px",
+                                lineHeight: "18px",
+                              }}
+                            >
+                              {notification.activityName}
+                            </Typography>
+                          ) : (
+                            <></>
+                          )}
                         </Typography>
                         <Typography
                           sx={{
@@ -208,7 +262,7 @@ export default function NotificationMenu(prop) {
                     </Box>
                   </MenuItem>
                   <Divider />
-                </>
+                </React.Fragment>
               ))
             )}
           </MenuList>
