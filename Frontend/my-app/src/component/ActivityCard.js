@@ -25,7 +25,9 @@ import CreateParticipant from "../data/Participant/CreateParticipant";
 import RemoveParticipant from "../data/Participant/RemoveParticipant";
 import GetParticipantRequest from "../data/Participant/GetParticipantRequest";
 import CheckIfJoined from "../data/Participant/CheckIfJoined";
+import GetUserProfile from "../data/GetUserProfile";
 import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
+import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
 
 export default function ActivityCard(prop) {
   const { profile, activity, setHasModified } = prop;
@@ -49,6 +51,23 @@ export default function ActivityCard(prop) {
   const [hasJoined, setHasJoined] = React.useState(false);
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
+
+  const [participants, setParticipants] = React.useState([]);
+
+  React.useEffect(() => {
+    const getParticipants = async () => {
+      const participations = await GetAllJoinedParticipants(_id);
+      const profilePromises = participations?.map((participation) => {
+        return GetUserProfile(participation.participantID);
+      });
+      const hostProfile = await GetUserProfile(hostID);
+      const result = hostProfile && profilePromises
+        ? await Promise.all([hostProfile, ...profilePromises])
+        : [];
+      setParticipants(result);
+    };
+    getParticipants();
+  }, [_id]);
 
   //Check with database about whether the user has requested to join this activity
   React.useEffect(() => {
@@ -257,7 +276,7 @@ export default function ActivityCard(prop) {
                   }}
                 >
                   <PersonIcon />
-                  <Typography variant="body2">(1/{pax})</Typography>
+                  <Typography variant="body2">({participants.length}/{pax})</Typography>
                 </Box>
               </Box>
               <Typography

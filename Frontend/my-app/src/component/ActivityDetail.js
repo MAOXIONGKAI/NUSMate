@@ -9,6 +9,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 
 import PersonIcon from "@mui/icons-material/Person";
+import { List, ListItem, ListSubheader, Paper } from "@mui/material";
+import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
+import MiniUserCard from "./MiniUserCard";
+import GetUserProfile from "../data/GetUserProfile";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -45,6 +49,24 @@ export default function ActivityDetail(prop) {
     setOpen(false);
   };
 
+  const [participants, setParticipants] = React.useState([]);
+
+  React.useEffect(() => {
+    const getParticipants = async () => {
+      const participations = await GetAllJoinedParticipants(_id);
+      const profilePromises = participations?.map((participation) => {
+        return GetUserProfile(participation.participantID);
+      });
+      const hostProfile = await GetUserProfile(hostID);
+      const result =
+        hostProfile && profilePromises
+          ? await Promise.all([hostProfile, ...profilePromises])
+          : [];
+      setParticipants(result);
+    };
+    getParticipants();
+  }, [_id]);
+
   return (
     <React.Fragment>
       <BootstrapDialog
@@ -74,18 +96,6 @@ export default function ActivityDetail(prop) {
               >
                 @{location}
               </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  color: "green",
-                  margin: "0px",
-                  marginLeft: "auto",
-                  padding: "0px",
-                }}
-              >
-                <PersonIcon />
-                <Typography variant="body2">(1/{pax})</Typography>
-              </Box>
             </Box>
             <Typography
               variant="body2"
@@ -115,17 +125,72 @@ export default function ActivityDetail(prop) {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              textAlign: "center"
+              textAlign: "center",
+              gap: "30px",
             }}
           >
             <Typography
               variant="body2"
               color="textSecondary"
-              width="90%"
-              sx={{ wordWrap: "break-word" }}
+              sx={{ width: "90%", wordWrap: "break-word" }}
             >
               {description}
             </Typography>
+            <Box
+              sx={{
+                width: "90%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "15px",
+              }}
+            >
+              <Box sx={{ display: "flex", gap: "10px" }}>
+                <Typography sx={{ color: "dimgray" }}>
+                  Participant List
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    color: "green",
+                    margin: "0px",
+                    padding: "0px",
+                  }}
+                >
+                  <PersonIcon />
+                  <Typography variant="body2">
+                    ({participants.length}/{pax})
+                  </Typography>
+                </Box>
+              </Box>
+              <Paper
+                sx={{
+                  width: "100%",
+                  maxHeight: "400px",
+                  backgroundColor: "#F5F5F5",
+                  overflow: "auto",
+                  borderRadius: "20px"
+                }}
+              >
+                <List
+                  sx={{
+                    width: "100%",
+                    textAlign: "center",
+                  }}
+                >
+                  {participants &&
+                    participants.map((participant, index) => (
+                      <ListItem>
+                        <MiniUserCard
+                          isHost={index === 0}
+                          username={participant.username}
+                        />
+                      </ListItem>
+                    ))}
+                </List>
+              </Paper>
+            </Box>
           </Box>
         </DialogContent>
       </BootstrapDialog>
