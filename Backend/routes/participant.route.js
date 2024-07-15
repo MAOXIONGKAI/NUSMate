@@ -15,6 +15,7 @@ const {
   readAllJoinedActivities,
   checkIfJoined,
   readAllAssociatedParticipation,
+  readAllJoinedParticipants,
 } = require("../controllers/participant.controller.js");
 
 router.get("/", readAllParticipants);
@@ -26,6 +27,8 @@ router.post("/sent_requests/:userID", readAllSentRequests);
 router.post("/pending_requests/:hostID", readAllPendingRequests);
 
 router.post("/joined_activities/:userID", readAllJoinedActivities);
+
+router.post("/joined_participants/:activityID", readAllJoinedParticipants);
 
 router.post("/associated_participations/:userID", readAllAssociatedParticipation);
 

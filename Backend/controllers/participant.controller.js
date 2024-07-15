@@ -48,6 +48,22 @@ const readAllJoinedActivities = async (req, res) => {
   }
 };
 
+const readAllJoinedParticipants = async (req, res) => {
+  try {
+    const { activityID } = req.params;
+    const response = await Participant.find({
+      activityID: activityID,
+      status: "Approved",
+    }).sort({updatedAt: -1});
+    if (!response) {
+      return res.status(404).json({message: "No participant found for this activity"})
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const readAllPendingRequests = async (req, res) => {
   try {
     const { hostID } = req.params;
@@ -171,6 +187,7 @@ module.exports = {
   readAllSentRequests,
   readAllPendingRequests,
   readAllJoinedActivities,
+  readAllJoinedParticipants,
   readAllAssociatedParticipation,
   checkIfJoined,
   readParticipant,
