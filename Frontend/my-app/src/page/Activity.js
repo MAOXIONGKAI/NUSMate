@@ -231,6 +231,7 @@ export default function Activity(prop) {
               background:
                 "linear-gradient(90deg, rgba(83,207,255,0.8) 0%, rgba(100,85,240,0.8) 100%)",
             },
+            zIndex: 1000,
           }}
         >
           <AddIcon sx={{ color: "white" }} />
