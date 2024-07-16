@@ -3,6 +3,7 @@ import axios from "axios";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import ColorNameAvatar from "./ColorNameAvatar";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
 import CardDetail from "./CardDetail";
 import CheckIfPendingRequest from "../data/Friend/CheckIfPendingRequest";
 import CheckIfFriend from "../data/Friend/CheckIfFriend";
@@ -13,11 +14,22 @@ import ApproveFriendRequest from "../data/Friend/ApproveFriendRequest";
 import DeclineFriendRequest from "../data/Friend/DeclineFriendRequest";
 import GetFriendshipData from "../data/Friend/GetFriendshipData";
 import RemoveFriend from "../data/Friend/RemoveFriend";
+import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
+import RemoveParticipant from "../data/Participant/RemoveParticipant";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export default function MiniUserCard(prop) {
-  const { isHost, profile, userID, participantID } = prop;
+  const {
+    isHost,
+    isEditMode,
+    profile,
+    userID,
+    participantID,
+    activityID,
+    openRemoveSuccess,
+    setOpenRemoveSuccess
+  } = prop;
 
   const { username } = profile;
 
@@ -56,9 +68,7 @@ export default function MiniUserCard(prop) {
   // Check database to see if there is sent request to the target user
   React.useEffect(() => {
     const checkSendRequestStatus = async () => {
-      setHasSentRequest(
-        await CheckIfPendingRequest(userID, participantID)
-      );
+      setHasSentRequest(await CheckIfPendingRequest(userID, participantID));
     };
     checkSendRequestStatus();
   }, [userID, participantID]);
@@ -66,9 +76,7 @@ export default function MiniUserCard(prop) {
   // Check database to see if there is incoming request from target user
   React.useEffect(() => {
     const checkIncomingRequestStatus = async () => {
-      setHasIncomingRequest(
-        await CheckIfPendingRequest(participantID, userID)
-      );
+      setHasIncomingRequest(await CheckIfPendingRequest(participantID, userID));
     };
     checkIncomingRequestStatus();
   }, [userID, participantID]);
@@ -199,6 +207,17 @@ export default function MiniUserCard(prop) {
     sendRemoveRequest();
   };
 
+  const handleRemoveParticipant = () => {
+    const sendRemoveRequest = async () => {
+      const requestData = await GetJoinedParticipant(participantID, activityID);
+      const requestID = await requestData._id;
+      if (await RemoveParticipant(requestID)) {
+         setOpenRemoveSuccess(true);
+      }
+    };
+    sendRemoveRequest();
+  };
+
   return (
     <Box
       sx={{
@@ -269,13 +288,22 @@ export default function MiniUserCard(prop) {
           )}
         </Box>
       </Box>
-      {participantID !== userID && (
-        <Tooltip title={`View ${username}'s profile`}>
-          <IconButton sx={{ margin: "0px 10px", marginLeft: "auto" }} onClick={handleCheckProfile}>
-            <InfoOutlinedIcon />
-          </IconButton>
-        </Tooltip>
-      )}
+      <Box sx={{ display: "flex", margin: "0px 10px", marginLeft: "auto" }}>
+        {participantID !== userID && (
+          <Tooltip title={`View ${username}'s profile`}>
+            <IconButton onClick={handleCheckProfile}>
+              <InfoOutlinedIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+        {isEditMode && !isHost && (
+          <Tooltip title={`Remove ${username} from the activity`}>
+            <IconButton onClick={handleRemoveParticipant}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
     </Box>
   );
 }

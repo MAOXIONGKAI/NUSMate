@@ -9,11 +9,14 @@ import {
   CardActionArea,
   IconButton,
   Tooltip,
+  Grid,
 } from "@mui/material";
 import ColorNameAvatar from "../component/ColorNameAvatar";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
+import GroupsIcon from "@mui/icons-material/Groups";
+import AddReactionIcon from "@mui/icons-material/AddReaction";
 import ShareIcon from "@mui/icons-material/Share";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -29,6 +32,7 @@ import GetUserProfile from "../data/GetUserProfile";
 import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
 import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
 import EditActivityForm from "./EditActivityForm";
+import ManageParticipantMenu from "./MangeParticipantMenu";
 
 export default function ActivityCard(prop) {
   const { profile, activity, setHasModified } = prop;
@@ -49,12 +53,14 @@ export default function ActivityCard(prop) {
 
   const [openDetail, setOpenDetail] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
+  const [openParticipantMenu, setOpenParticipantMenu] = React.useState(false);
   const [hasRequestedToJoin, setHasRequestedToJoin] = React.useState(false);
   const [hasJoined, setHasJoined] = React.useState(false);
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
   const [openEditSuccess, setOpenEditSuccess] = React.useState(false);
   const [openEditFail, setOpenEditFail] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
+  const [openRemoveSuccess, setOpenRemoveSuccess] = React.useState(false);
 
   const [participants, setParticipants] = React.useState([]);
 
@@ -152,6 +158,10 @@ export default function ActivityCard(prop) {
     setOpenEdit(true);
   };
 
+  const handleManageParticipant = () => {
+    setOpenParticipantMenu(true);
+  };
+
   return (
     <React.Fragment>
       <CustomizedSnackbar
@@ -174,6 +184,11 @@ export default function ActivityCard(prop) {
         open={openEditFail}
         setOpen={setOpenEditFail}
       />
+      <CustomizedSnackbar
+        text="Successfully removed participant from the activity"
+        open={openRemoveSuccess}
+        setOpen={setOpenRemoveSuccess}
+      />
       <ActivityDetail
         open={openDetail}
         setOpen={setOpenDetail}
@@ -194,6 +209,19 @@ export default function ActivityCard(prop) {
         setOpenEditSuccess={setOpenEditSuccess}
         setOpenEditFail={setOpenEditFail}
         activity={activity}
+        currentPax={participants?.length}
+      />
+      <ManageParticipantMenu
+        open={openParticipantMenu}
+        setOpen={setOpenParticipantMenu}
+        openRemoveSuccess={openRemoveSuccess}
+        setOpenRemoveSuccess={setOpenRemoveSuccess}
+        profile={profile}
+        _id={_id}
+        hostID={hostID}
+        hostName={hostName}
+        activityName={activityName}
+        pax={pax}
       />
       <Card
         sx={{
@@ -295,7 +323,7 @@ export default function ActivityCard(prop) {
                 <Box
                   sx={{
                     display: "flex",
-                    color: "green",
+                    color: participants.length === pax ? "red" : "green",
                     margin: "0px",
                     marginLeft: "auto",
                     padding: "0px",
@@ -336,49 +364,67 @@ export default function ActivityCard(prop) {
             backgroundColor: "#EFF9FF",
           }}
         >
-          {profile._id === hostID ? (
-            <>
-              <Tooltip title="Edit this activity">
-                <IconButton onClick={handleEditActivity}>
-                  <EditIcon />
+          <Grid
+            container
+            sx={{ alignItems: "center", justifyContent: "center" }}
+          >
+            {profile._id === hostID ? (
+              <>
+                <Tooltip title="Edit this activity">
+                  <IconButton onClick={handleEditActivity}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Manage Participants">
+                  <IconButton onClick={handleManageParticipant}>
+                    <GroupsIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Invite friends to the activity">
+                  <IconButton>
+                    <AddReactionIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete this activity">
+                  <IconButton onClick={() => handleDeleteActivity(_id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : hasJoined ? (
+              <Tooltip title="Withdraw from this activity">
+                <IconButton
+                  onClick={() => handleWithdrawFromActivity(profile._id, _id)}
+                >
+                  <LogoutIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete this activity">
-                <IconButton onClick={() => handleDeleteActivity(_id)}>
-                  <DeleteIcon />
+            ) : hasRequestedToJoin ? (
+              <Tooltip title="Withdraw join request for this activity">
+                <IconButton
+                  onClick={() =>
+                    handleWithdrawActivityRequest(profile._id, _id)
+                  }
+                >
+                  <GroupRemoveIcon />
                 </IconButton>
               </Tooltip>
-            </>
-          ) : hasJoined ? (
-            <Tooltip title="Withdraw from this activity">
-              <IconButton
-                onClick={() => handleWithdrawFromActivity(profile._id, _id)}
-              >
-                <LogoutIcon />
+            ) : (
+              <Tooltip title="Request to join this activity">
+                <IconButton
+                  disabled={participants.length === pax}
+                  onClick={() => handleJoinActivity(profile._id, hostID, _id)}
+                >
+                  <GroupAddIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+            <Tooltip title="Share this activity">
+              <IconButton>
+                <ShareIcon />
               </IconButton>
             </Tooltip>
-          ) : hasRequestedToJoin ? (
-            <Tooltip title="Withdraw join request for this activity">
-              <IconButton
-                onClick={() => handleWithdrawActivityRequest(profile._id, _id)}
-              >
-                <GroupRemoveIcon />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            <Tooltip title="Request to join this activity">
-              <IconButton
-                onClick={() => handleJoinActivity(profile._id, hostID, _id)}
-              >
-                <GroupAddIcon />
-              </IconButton>
-            </Tooltip>
-          )}
-          <Tooltip title="Share this activity">
-            <IconButton>
-              <ShareIcon />
-            </IconButton>
-          </Tooltip>
+          </Grid>
         </CardActions>
       </Card>
     </React.Fragment>
