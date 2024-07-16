@@ -197,6 +197,7 @@ export default function ActivityCard(prop) {
         setOpenEditSuccess={setOpenEditSuccess}
         setOpenEditFail={setOpenEditFail}
         activity={activity}
+        currentPax={participants?.length}
       />
       <Card
         sx={{

@@ -14,7 +14,14 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export default function FormDialog(prop) {
-  const { open, setOpen, activity, setOpenEditSuccess, setOpenEditFail } = prop;
+  const {
+    open,
+    setOpen,
+    activity,
+    setOpenEditSuccess,
+    setOpenEditFail,
+    currentPax,
+  } = prop;
   let {
     _id,
     hostID,
@@ -67,6 +74,10 @@ export default function FormDialog(prop) {
       (dayjs(formData.startDate).isAfter(dayjs(formData.endDate)) ||
         dayjs(formData.endDate).isBefore(dayjs()))
     ) {
+      isValid = false;
+    }
+
+    if (formData.pax < currentPax) {
       isValid = false;
     }
 
@@ -228,22 +239,39 @@ export default function FormDialog(prop) {
               onChange={handleChange}
               type="text"
               variant="standard"
-              sx={{ flex: 2 }}
+              sx={{ flex: 3 }}
               inputProps={{ maxLength: 60 }}
             />
-            <TextField
-              required
-              margin="none"
-              size="small"
-              name="pax"
-              label="Number of Participants"
-              value={formData.pax}
-              onChange={handleChange}
-              type="number"
-              sx={{ flex: 1 }}
-              inputProps={{ min: 1, max: 999 }}
-            />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                flexWrap: "wrap",
+                flex: 2,
+              }}
+            >
+              <TextField
+                required
+                margin="none"
+                size="small"
+                name="pax"
+                label="Number of Participants"
+                value={formData.pax}
+                onChange={handleChange}
+                type="number"
+                inputProps={{ min: 1, max: 999 }}
+              />
+              {formData.pax && formData.pax < currentPax && (
+                <FormHelperText
+                  sx={{ margin: "none", marginLeft: "auto", color: "red" }}
+                >
+                  New limit must be at least the number of people who 
+                  joined the activity now
+                </FormHelperText>
+              )}
+            </Box>
           </Box>
+
           <TextField
             required
             margin="dense"
