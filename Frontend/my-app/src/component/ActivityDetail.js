@@ -153,7 +153,7 @@ export default function ActivityDetail(prop) {
                 <Box
                   sx={{
                     display: "flex",
-                    color: "green",
+                    color: participants.length === pax ? "red" : "green",
                     margin: "0px",
                     padding: "0px",
                   }}
