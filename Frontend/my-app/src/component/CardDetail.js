@@ -264,7 +264,7 @@ export default function CardDetail(prop) {
                             textAlign: "left",
                           }}
                         >
-                          {interests.map((interest, index) => (
+                          {interests && interests.map((interest, index) => (
                             <li key={index} style={{ fontWeight: "lighter" }}>
                               {interest}
                             </li>
