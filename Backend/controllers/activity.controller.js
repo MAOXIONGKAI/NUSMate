@@ -36,6 +36,19 @@ const getActivity = async (req, res) => {
   }
 };
 
+const editActivity = async (req, res) => {
+  try {
+    const { activityID } = req.params;
+    const activity = await Activity.findByIdAndUpdate(activityID, req.body);
+    if (!activity) {
+      return res.status(404).json({message: "No activity found for edit"})
+    }
+    res.status(200).json(activity);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const deleteActivity = async (req, res) => {
   try {
     const { id } = req.params;
@@ -51,6 +64,7 @@ const deleteActivity = async (req, res) => {
 
 module.exports = {
   createActivity,
+  editActivity,
   getActvities,
   getActivity,
   deleteActivity,

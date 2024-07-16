@@ -1,13 +1,12 @@
 import React from "react";
 import dayjs from "dayjs";
-import CreateActivity from "../data/Activity/CreateActivity";
+import EditActivity from "../data/Activity/EditActivity";
 import { Box, FormHelperText } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Divider } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
@@ -15,21 +14,32 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export default function FormDialog(prop) {
-  const { open, setOpen } = prop;
+  const { open, setOpen, activity, setOpenEditSuccess, setOpenEditFail } = prop;
+  let {
+    _id,
+    hostID,
+    hostName,
+    activityName,
+    pax,
+    startDate,
+    endDate,
+    location,
+    description,
+  } = activity;
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const [formData, setFormData] = React.useState({
-    hostID: prop.profile._id,
-    hostName: prop.profile.username,
-    activityName: "",
-    pax: "",
-    startDate: null,
-    endDate: null,
-    location: "",
-    description: "",
+    hostID: hostID,
+    hostName: hostName,
+    activityName: activityName,
+    pax: pax,
+    startDate: dayjs(startDate),
+    endDate: dayjs(endDate),
+    location: location,
+    description: description,
   });
 
   const handleChange = (event) => {
@@ -84,11 +94,11 @@ export default function FormDialog(prop) {
     event.preventDefault();
     const isValid = validateForm(formData);
     if (isValid) {
-      if (CreateActivity(formData)) {
-        prop.setOpenSuccess(true);
+      if (EditActivity(_id, formData)) {
+        setOpenEditSuccess(true);
         handleClose();
       } else {
-        prop.setOpenFail(true);
+        setOpenEditFail(true);
       }
     }
   };
@@ -123,9 +133,8 @@ export default function FormDialog(prop) {
             marginBottom: "20px",
           }}
         >
-          {prop.title}
+          Edit - {activityName}
         </DialogTitle>
-        <DialogContentText>{prop.content}</DialogContentText>
         <DialogContent
           sx={{
             display: "flex",
@@ -286,7 +295,7 @@ export default function FormDialog(prop) {
               "&:hover": { background: "rgba(50,50,50, 0.1)" },
             }}
           >
-            Create
+            Edit
           </Button>
         </DialogActions>
       </Dialog>

@@ -1,4 +1,4 @@
-import React, { act } from "react";
+import React from "react";
 import dayjs from "dayjs";
 import {
   Typography,
@@ -17,7 +17,7 @@ import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import ShareIcon from "@mui/icons-material/Share";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout";
 import DeleteActivity from "../data/Activity/DeleteActivity";
 import CustomizedSnackbar from "./CustomizedSnackbar";
 import ActivityDetail from "./ActivityDetail";
@@ -28,6 +28,7 @@ import CheckIfJoined from "../data/Participant/CheckIfJoined";
 import GetUserProfile from "../data/GetUserProfile";
 import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
 import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
+import EditActivityForm from "./EditActivityForm";
 
 export default function ActivityCard(prop) {
   const { profile, activity, setHasModified } = prop;
@@ -47,9 +48,12 @@ export default function ActivityCard(prop) {
   endDate = dayjs(endDate).format("ddd, MMM D, YYYY h:mm A");
 
   const [openDetail, setOpenDetail] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
   const [hasRequestedToJoin, setHasRequestedToJoin] = React.useState(false);
   const [hasJoined, setHasJoined] = React.useState(false);
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
+  const [openEditSuccess, setOpenEditSuccess] = React.useState(false);
+  const [openEditFail, setOpenEditFail] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
 
   const [participants, setParticipants] = React.useState([]);
@@ -61,9 +65,10 @@ export default function ActivityCard(prop) {
         return GetUserProfile(participation.participantID);
       });
       const hostProfile = await GetUserProfile(hostID);
-      const result = hostProfile && profilePromises
-        ? await Promise.all([hostProfile, ...profilePromises])
-        : [];
+      const result =
+        hostProfile && profilePromises
+          ? await Promise.all([hostProfile, ...profilePromises])
+          : [];
       setParticipants(result);
     };
     getParticipants();
@@ -106,7 +111,7 @@ export default function ActivityCard(prop) {
     const sendJoinRequest = async () => {
       if (await CreateParticipant(participantID, hostID, activityID)) {
         setHasRequestedToJoin(true);
-        setHasModified(prev => !prev);
+        setHasModified((prev) => !prev);
       }
     };
     sendJoinRequest();
@@ -121,7 +126,7 @@ export default function ActivityCard(prop) {
       const requestID = await requestData._id;
       if (await RemoveParticipant(requestID)) {
         setHasRequestedToJoin(false);
-        setHasModified(prev => !prev);
+        setHasModified((prev) => !prev);
       }
     };
     sendWithdrawRequest();
@@ -137,10 +142,14 @@ export default function ActivityCard(prop) {
       if (await RemoveParticipant(requestID)) {
         setHasJoined(false);
         setHasRequestedToJoin(false);
-        setHasModified(prev => !prev);
+        setHasModified((prev) => !prev);
       }
     };
     sendWithdrawRequest();
+  };
+
+  const handleEditActivity = () => {
+    setOpenEdit(true);
   };
 
   return (
@@ -155,6 +164,16 @@ export default function ActivityCard(prop) {
         open={openDeleteFail}
         setOpen={setOpenDeleteFail}
       />
+      <CustomizedSnackbar
+        text="Edit Activity Successfully"
+        open={openEditSuccess}
+        setOpen={setOpenEditSuccess}
+      />
+      <CustomizedSnackbar
+        text="Edit Activity Failed: Unknown Server Error"
+        open={openEditFail}
+        setOpen={setOpenEditFail}
+      />
       <ActivityDetail
         open={openDetail}
         setOpen={setOpenDetail}
@@ -168,6 +187,13 @@ export default function ActivityCard(prop) {
         endDate={endDate}
         location={location}
         description={description}
+      />
+      <EditActivityForm
+        open={openEdit}
+        setOpen={setOpenEdit}
+        setOpenEditSuccess={setOpenEditSuccess}
+        setOpenEditFail={setOpenEditFail}
+        activity={activity}
       />
       <Card
         sx={{
@@ -276,7 +302,9 @@ export default function ActivityCard(prop) {
                   }}
                 >
                   <PersonIcon />
-                  <Typography variant="body2">({participants.length}/{pax})</Typography>
+                  <Typography variant="body2">
+                    ({participants.length}/{pax})
+                  </Typography>
                 </Box>
               </Box>
               <Typography
@@ -311,11 +339,7 @@ export default function ActivityCard(prop) {
           {profile._id === hostID ? (
             <>
               <Tooltip title="Edit this activity">
-                <IconButton
-                  onClick={() => {
-                    console.log("Editing: " + activityName);
-                  }}
-                >
+                <IconButton onClick={handleEditActivity}>
                   <EditIcon />
                 </IconButton>
               </Tooltip>
@@ -327,7 +351,9 @@ export default function ActivityCard(prop) {
             </>
           ) : hasJoined ? (
             <Tooltip title="Withdraw from this activity">
-              <IconButton onClick={() => handleWithdrawFromActivity(profile._id, _id)}>
+              <IconButton
+                onClick={() => handleWithdrawFromActivity(profile._id, _id)}
+              >
                 <LogoutIcon />
               </IconButton>
             </Tooltip>
