@@ -28,7 +28,6 @@ import GetAllSentRequests from "../data/Participant/GetAllSentRequests";
 import GetActivity from "../data/Activity/GetActivity";
 import GetPendingActivityRequests from "../data/Activity/GetPendingActivityRequests";
 import GetUserProfile from "../data/GetUserProfile";
-import ColorNameAvatar from "../component/ColorNameAvatar";
 import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
 import CancelOutlined from "@mui/icons-material/CancelOutlined";
 
@@ -36,6 +35,7 @@ import CalculateTimesAgo from "../data/CalculateTimesAgo";
 import ApproveParticipant from "../data/Participant/ApproveParticipant";
 import DeclineParticipant from "../data/Participant/DeclineParticipant";
 import GetAllJoinedActivities from "../data/Participant/GetAllJoinedActivities";
+import UserButton from "../component/UserButton";
 
 export default function Activity(prop) {
   const groupOptions = [
@@ -116,6 +116,11 @@ export default function Activity(prop) {
               ...userProfile,
               ...activity,
               ...request,
+              requestUserID: userProfile._id,
+              requestUserLocation: userProfile.location,
+              requestUserDescription: userProfile.description,
+              activityDescription: activity.description,
+              activityLocation: activity.location,
               activityID: activity._id,
             };
           })
@@ -151,10 +156,10 @@ export default function Activity(prop) {
       hostName: hostName,
       activityName: activityName,
       pax: pax,
-      startDate,
-      endDate,
-      location,
-      description,
+      startDate: startDate,
+      endDate: endDate,
+      location: location,
+      description: description,
     });
     setOpenDetail(true);
   };
@@ -301,36 +306,11 @@ export default function Activity(prop) {
                     </TableHead>
                     <TableBody>
                       {activitySection.map((request) => (
-                        <TableRow key={request._id}>
-                          <Button
-                            sx={{
-                              margin: "0px",
-                              padding: "0px",
-                              width: "100%",
-                            }}
-                          >
-                            <TableCell
-                              sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                textAlign: "center",
-                                gap: "8px"
-                              }}
-                            >
-                              <ColorNameAvatar
-                                username={request.username}
-                                sx={{ size: "14px", fontSize: "10px" }}
-                              />
-                              <Typography
-                                variant="body2"
-                                sx={{ color: "gray", fontSize: "10px" }}
-                              >
-                                {request.username}
-                              </Typography>
-                            </TableCell>
-                          </Button>
+                        <TableRow key={request._id + prop.profile._id}>
+                          <UserButton
+                            request={request}
+                            userID={prop.profile._id}
+                          />
                           <TableCell sx={{ textAlign: "center" }}>
                             <Typography>
                               <Typography
@@ -359,8 +339,8 @@ export default function Activity(prop) {
                                     dayjs(request.endDate).format(
                                       "ddd, MMM D, YYYY h:mm A"
                                     ),
-                                    request.location,
-                                    request.description
+                                    request.activityLocation,
+                                    request.activityDescription
                                   )
                                 }
                               >
