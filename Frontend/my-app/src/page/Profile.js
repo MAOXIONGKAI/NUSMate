@@ -1,11 +1,11 @@
 import React from "react";
 import ProfilePage from "../component/ProfilePage";
-import GetUserProfile from "../data/GetUserProfile";
+import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
 
 export default function Profile(prop) {
   
   React.useEffect(() => {
-    GetUserProfile(prop.profile, prop.setProfile);
+    UpdateLocalUserProfile(prop.profile, prop.setProfile);
   }, []);
 
   return (

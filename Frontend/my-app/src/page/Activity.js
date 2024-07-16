@@ -1,19 +1,49 @@
 import React from "react";
-import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import dayjs from "dayjs";
+import {
+  Box,
+  Button,
+  IconButton,
+  Table,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableBody,
+  TableRow,
+  Tooltip,
+  Typography,
+  Paper,
+} from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import ToggleMenu from "../component/ToggleMenu";
 import NoActivityPage from "../image/NoActivityPage.jpg";
 import AddIcon from "@mui/icons-material/Add";
 import FormDialog from "../component/FormDialog";
 import CustomizedSnackbar from "../component/CustomizedSnackbar";
-import GetUserProfile from "../data/GetUserProfile";
-import GetActivities from "../data/GetActivities";
+import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
+import GetActivities from "../data/Activity/GetActivities";
 import ActivityCard from "../component/ActivityCard";
+import ActivityDetail from "../component/ActivityDetail";
+import GetAllSentRequests from "../data/Participant/GetAllSentRequests";
+import GetActivity from "../data/Activity/GetActivity";
+import GetPendingActivityRequests from "../data/Activity/GetPendingActivityRequests";
+import GetUserProfile from "../data/GetUserProfile";
+import ColorNameAvatar from "../component/ColorNameAvatar";
+import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlined from "@mui/icons-material/CancelOutlined";
+
+import CalculateTimesAgo from "../data/CalculateTimesAgo";
+import ApproveParticipant from "../data/Participant/ApproveParticipant";
+import DeclineParticipant from "../data/Participant/DeclineParticipant";
+import GetAllJoinedActivities from "../data/Participant/GetAllJoinedActivities";
 
 export default function Activity(prop) {
   const groupOptions = [
     { value: "All Activities" },
-    { value: "My Activities" },
+    { value: "Requested Activities" },
+    { value: "Joined Activities" },
+    { value: "My Hosted Activities" },
+    { value: "Pending Request" },
   ];
   const [currentGroup, setCurrentGroup] = React.useState("All Activities");
   const [currentResult, setCurrentResult] = React.useState([]);
@@ -21,24 +51,113 @@ export default function Activity(prop) {
   const [openSuccess, setOpenSuccess] = React.useState(false);
   const [openFail, setOpenFail] = React.useState(false);
 
+  const [hasModified, setHasModified] = React.useState(false);
+  const handleApproveActivityRequest = (requestID) => {
+    const sendApproveRequest = async () => {
+      if (await ApproveParticipant(requestID)) {
+        setHasModified((prev) => !prev);
+      }
+    };
+    sendApproveRequest();
+  };
+
+  const handleDeclineActivityRequest = (requestID) => {
+    const sendDeclineRequest = async () => {
+      if (await DeclineParticipant(requestID)) {
+        setHasModified((prev) => !prev);
+      }
+    };
+    sendDeclineRequest();
+  };
+
   React.useEffect(() => {
-    GetUserProfile(prop.profile, prop.setProfile);
+    UpdateLocalUserProfile(prop.profile, prop.setProfile);
   }, []);
 
   React.useEffect(() => {
     const getData = async () => {
       if (currentGroup === "All Activities") {
         setCurrentResult(await GetActivities());
-      } else {
+      } else if (currentGroup === "My Hosted Activities") {
         setCurrentResult(
           (await GetActivities()).filter(
             (activity) => activity.hostID === prop.profile._id
           )
         );
+      } else if (currentGroup === "Requested Activities") {
+        const sentRequests = await GetAllSentRequests(prop.profile._id);
+        const activityPromises = await sentRequests.map((request) => {
+          return GetActivity(request.activityID);
+        });
+        const activities = await Promise.all(activityPromises);
+        setCurrentResult(activities);
+      } else if (currentGroup === "Joined Activities") {
+        const joinedActivityRequests = await GetAllJoinedActivities(
+          prop.profile._id
+        );
+        const activityPromises = await joinedActivityRequests.map((request) => {
+          return GetActivity(request.activityID);
+        });
+        const activities = await Promise.all(activityPromises);
+        setCurrentResult(activities);
+      } else if (currentGroup === "Pending Request") {
+        setCurrentResult([]);
+        const pendingRequests = await GetPendingActivityRequests(
+          prop.profile._id
+        );
+        const requests = await Promise.all(
+          pendingRequests.map(async (request) => {
+            const [userProfile, activity] = await Promise.all([
+              GetUserProfile(request.participantID),
+              GetActivity(request.activityID),
+            ]);
+
+            return {
+              ...userProfile,
+              ...activity,
+              ...request,
+              activityID: activity._id,
+            };
+          })
+        );
+        setCurrentResult(requests);
+      } else {
+        setCurrentResult([]);
       }
     };
     getData();
-  }, [currentGroup]);
+    resetPaginationSetting();
+  }, [currentGroup, hasModified, prop.profile._id]);
+
+  const [openDetail, setOpenDetail] = React.useState(false);
+  const [activityDetail, setActivityDetail] = React.useState({});
+
+  const handleOpenActivityDetail = (
+    profile,
+    _id,
+    hostID,
+    hostName,
+    activityName,
+    pax,
+    startDate,
+    endDate,
+    location,
+    description
+  ) => {
+    setActivityDetail({
+      profile: profile,
+      _id: _id,
+      hostID: hostID,
+      hostName: hostName,
+      activityName: activityName,
+      pax: pax,
+      startDate,
+      endDate,
+      location,
+      description,
+    });
+    setOpenDetail(true);
+  };
 
   // Settings for pagination
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -50,6 +169,10 @@ export default function Activity(prop) {
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
+  };
+
+  const resetPaginationSetting = () => {
+    setCurrentPage(1);
   };
 
   return (
@@ -73,6 +196,11 @@ export default function Activity(prop) {
         text="Added new activity failed: Unknown Server Error"
         open={openFail}
         setOpen={setOpenFail}
+      />
+      <ActivityDetail
+        open={openDetail}
+        setOpen={setOpenDetail}
+        {...activityDetail}
       />
       <FormDialog
         open={openCreateDialog}
@@ -147,13 +275,151 @@ export default function Activity(prop) {
                 gap: "50px",
               }}
             >
-              {activitySection.map((activity) => (
-                <ActivityCard
-                  key={activity._id}
-                  activity={activity}
-                  profile={prop.profile}
-                />
-              ))}
+              {currentGroup === "Pending Request" ? (
+                <TableContainer component={Paper}>
+                  <Table sx={{ width: "90vw" }}>
+                    <TableHead
+                      sx={{
+                        background:
+                          "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+                      }}
+                    >
+                      <TableRow>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Profile Info
+                        </TableCell>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Action Detail
+                        </TableCell>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Requested At
+                        </TableCell>
+                        <TableCell sx={{ color: "white", textAlign: "center" }}>
+                          Host Actions
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {activitySection.map((request) => (
+                        <TableRow key={request._id}>
+                          <Button
+                            sx={{
+                              margin: "0px",
+                              padding: "0px",
+                              width: "100%",
+                            }}
+                          >
+                            <TableCell
+                              sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                textAlign: "center",
+                                gap: "8px"
+                              }}
+                            >
+                              <ColorNameAvatar
+                                username={request.username}
+                                sx={{ size: "14px", fontSize: "10px" }}
+                              />
+                              <Typography
+                                variant="body2"
+                                sx={{ color: "gray", fontSize: "10px" }}
+                              >
+                                {request.username}
+                              </Typography>
+                            </TableCell>
+                          </Button>
+                          <TableCell sx={{ textAlign: "center" }}>
+                            <Typography>
+                              <Typography
+                                sx={{
+                                  display: "inline",
+                                  color: "gray",
+                                  fontSize: "16px",
+                                }}
+                              >
+                                {request.status === "Pending"
+                                  ? "requested to join"
+                                  : "has been invited to join"}
+                              </Typography>{" "}
+                              <Button
+                                onClick={() =>
+                                  handleOpenActivityDetail(
+                                    prop.profile,
+                                    request.activityID,
+                                    request.hostID,
+                                    request.hostName,
+                                    request.activityName,
+                                    request.pax,
+                                    dayjs(request.startDate).format(
+                                      "ddd, MMM D, YYYY h:mm A"
+                                    ),
+                                    dayjs(request.endDate).format(
+                                      "ddd, MMM D, YYYY h:mm A"
+                                    ),
+                                    request.location,
+                                    request.description
+                                  )
+                                }
+                              >
+                                {request.activityName}
+                              </Button>
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ textAlign: "center" }}>
+                            <Typography
+                              sx={{
+                                color: "gray",
+                                fontSize: "16px",
+                                fontWeight: 400,
+                              }}
+                            >
+                              {CalculateTimesAgo(request.updatedAt)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ textAlign: "center" }}>
+                            <Tooltip
+                              title={`Approve join request from ${request.username}`}
+                            >
+                              <IconButton
+                                sx={{ color: "#32CD32" }}
+                                onClick={() =>
+                                  handleApproveActivityRequest(request._id)
+                                }
+                              >
+                                <CheckCircleOutline />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip
+                              title={`Decline join request from ${request.username}`}
+                            >
+                              <IconButton
+                                sx={{ color: "red" }}
+                                onClick={() =>
+                                  handleDeclineActivityRequest(request._id)
+                                }
+                              >
+                                <CancelOutlined />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              ) : (
+                activitySection.map((activity) => (
+                  <ActivityCard
+                    key={activity._id}
+                    activity={activity}
+                    profile={prop.profile}
+                    setHasModified={setHasModified}
+                  />
+                ))
+              )}
             </Box>
             <Pagination
               showFirstButton

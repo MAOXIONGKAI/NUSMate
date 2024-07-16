@@ -1,6 +1,6 @@
 import React from "react";
 import "../index.css";
-import GetUserProfile from "../data/GetUserProfile";
+import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
 import {
   Autocomplete,
   Chip,
@@ -70,7 +70,7 @@ export default function Discover(prop) {
   }));
 
   React.useEffect(() => {
-    GetUserProfile(prop.profile, prop.setProfile);
+    UpdateLocalUserProfile(prop.profile, prop.setProfile);
   }, []);
 
   const userID = prop.profile._id;
