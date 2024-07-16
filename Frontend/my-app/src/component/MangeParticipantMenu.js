@@ -13,7 +13,6 @@ import { List, ListItem, Paper } from "@mui/material";
 import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
 import MiniUserCard from "./MiniUserCard";
 import GetUserProfile from "../data/GetUserProfile";
-import CustomizedSnackbar from "./CustomizedSnackbar";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -30,7 +29,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function ActivityDetail(prop) {
+export default function ManageParticipantMenu(prop) {
   const {
     open,
     setOpen,
@@ -40,10 +39,8 @@ export default function ActivityDetail(prop) {
     hostName,
     activityName,
     pax,
-    startDate,
-    endDate,
-    location,
-    description,
+    openRemoveSuccess,
+    setOpenRemoveSuccess,
   } = prop;
 
   const handleClose = () => {
@@ -51,8 +48,6 @@ export default function ActivityDetail(prop) {
   };
 
   const [participants, setParticipants] = React.useState([]);
-  const [openRemoveSuccess, setOpenRemoveSuccess] =
-    React.useState(false);
 
   React.useEffect(() => {
     const getParticipants = async () => {
@@ -68,7 +63,7 @@ export default function ActivityDetail(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [hostID, _id, openRemoveSuccess]);
+  }, [_id, hostID]);
 
   return (
     <React.Fragment>
@@ -78,40 +73,15 @@ export default function ActivityDetail(prop) {
         open={open}
       >
         <DialogTitle
-          sx={{ m: 0, p: 2, backgroundColor: "#EFF9FF" }}
+          sx={{ m: 0, p: 2, backgroundColor: "#EFF9FF", textAlign: "center" }}
           id="customized-dialog-title"
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <Typography
+            sx={{ display: "inline", color: "gray", fontSize: "24px" }}
           >
-            <CustomizedSnackbar
-              text="Successfully removed participant from the activity"
-              open={openRemoveSuccess}
-              setOpen={setOpenRemoveSuccess}
-            />
-            <Box sx={{ display: "flex", gap: "0px 10px" }}>
-              <Typography variant="h6" sx={{ lineHeight: "32px" }}>
-                {activityName}
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ color: "dimgray", lineHeight: "32px" }}
-              >
-                @{location}
-              </Typography>
-            </Box>
-            <Typography
-              variant="body2"
-              sx={{ color: "gray", fontSize: "16px" }}
-            >
-              {startDate} - {endDate}
-            </Typography>
-          </Box>
+            Manage Participants in
+          </Typography>{" "}
+          {activityName}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -137,13 +107,6 @@ export default function ActivityDetail(prop) {
               gap: "30px",
             }}
           >
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              sx={{ width: "90%", wordWrap: "break-word" }}
-            >
-              {description}
-            </Typography>
             <Box
               sx={{
                 width: "90%",
@@ -189,13 +152,13 @@ export default function ActivityDetail(prop) {
                 >
                   {participants &&
                     participants.map((participant, index) => (
-                      <ListItem key={profile._id + participant._id + _id}>
+                      <ListItem>
                         <MiniUserCard
                           isHost={index === 0}
+                          isEditMode={true}
                           profile={participant}
                           userID={profile._id}
                           participantID={participant._id}
-                          activityID={_id}
                           openRemoveSuccess={openRemoveSuccess}
                           setOpenRemoveSuccess={setOpenRemoveSuccess}
                         />

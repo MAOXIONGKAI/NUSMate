@@ -32,6 +32,7 @@ import GetUserProfile from "../data/GetUserProfile";
 import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
 import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
 import EditActivityForm from "./EditActivityForm";
+import ManageParticipantMenu from "./MangeParticipantMenu";
 
 export default function ActivityCard(prop) {
   const { profile, activity, setHasModified } = prop;
@@ -52,12 +53,14 @@ export default function ActivityCard(prop) {
 
   const [openDetail, setOpenDetail] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
+  const [openParticipantMenu, setOpenParticipantMenu] = React.useState(false);
   const [hasRequestedToJoin, setHasRequestedToJoin] = React.useState(false);
   const [hasJoined, setHasJoined] = React.useState(false);
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
   const [openEditSuccess, setOpenEditSuccess] = React.useState(false);
   const [openEditFail, setOpenEditFail] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
+  const [openRemoveSuccess, setOpenRemoveSuccess] = React.useState(false);
 
   const [participants, setParticipants] = React.useState([]);
 
@@ -155,6 +158,10 @@ export default function ActivityCard(prop) {
     setOpenEdit(true);
   };
 
+  const handleManageParticipant = () => {
+    setOpenParticipantMenu(true);
+  };
+
   return (
     <React.Fragment>
       <CustomizedSnackbar
@@ -177,6 +184,11 @@ export default function ActivityCard(prop) {
         open={openEditFail}
         setOpen={setOpenEditFail}
       />
+      <CustomizedSnackbar
+        text="Successfully removed participant from the activity"
+        open={openRemoveSuccess}
+        setOpen={setOpenRemoveSuccess}
+      />
       <ActivityDetail
         open={openDetail}
         setOpen={setOpenDetail}
@@ -198,6 +210,18 @@ export default function ActivityCard(prop) {
         setOpenEditFail={setOpenEditFail}
         activity={activity}
         currentPax={participants?.length}
+      />
+      <ManageParticipantMenu
+        open={openParticipantMenu}
+        setOpen={setOpenParticipantMenu}
+        openRemoveSuccess={openRemoveSuccess}
+        setOpenRemoveSuccess={setOpenRemoveSuccess}
+        profile={profile}
+        _id={_id}
+        hostID={hostID}
+        hostName={hostName}
+        activityName={activityName}
+        pax={pax}
       />
       <Card
         sx={{
@@ -352,7 +376,7 @@ export default function ActivityCard(prop) {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Manage Participants">
-                  <IconButton>
+                  <IconButton onClick={handleManageParticipant}>
                     <GroupsIcon />
                   </IconButton>
                 </Tooltip>
