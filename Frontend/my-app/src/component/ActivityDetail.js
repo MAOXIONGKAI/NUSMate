@@ -184,7 +184,9 @@ export default function ActivityDetail(prop) {
                       <ListItem>
                         <MiniUserCard
                           isHost={index === 0}
-                          username={participant.username}
+                          profile={participant}
+                          userID={profile._id}
+                          participantID={participant._id}
                         />
                       </ListItem>
                     ))}
