@@ -92,6 +92,12 @@ export default function NotificationMenu(prop) {
         return `has declined your request to join`;
       } else if (notification.status === "Pending") {
         return `has requested to join`;
+      }else if (notification.status === "Invited") {
+        return `has invited you to join`;
+      }else if (notification.status === "Invite-Accepted") {
+        return `has accepted your invitation to`;
+      }else if (notification.status === "Invite-Rejected") {
+        return `has rejected your invitation to`;
       } else {
         return "";
       }

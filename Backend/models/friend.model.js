@@ -4,21 +4,21 @@ const mongoose = require("mongoose");
 const FriendSchema = mongoose.Schema(
   {
     fromUserID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Profile",
-        required: true,
-    }, 
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profile",
+      required: true,
+    },
     toUserID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Profile",
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profile",
+      required: true,
     },
     status: {
-        type: String,
-        enum: ["Approved", "Declined", "Pending"],
-        default: "Pending",
-        required: true
-    }
+      type: String,
+      enum: ["Approved", "Declined", "Pending"],
+      default: "Pending",
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -28,7 +28,9 @@ const FriendSchema = mongoose.Schema(
 // Create unique index based on the fromUserID and toUserID
 // to ensure that the database does not contain multiple entries of same
 // friend relationship
-FriendSchema.index({ fromUserID: 1, toUserID: 1 }, { unique: true });
+// Status is included to prevent existing declined record from causing duplicating
+// key errors when submitting new friend request
+FriendSchema.index({ fromUserID: 1, toUserID: 1, status: 1 }, { unique: true });
 
 const Friend = mongoose.model("Friend", FriendSchema);
 

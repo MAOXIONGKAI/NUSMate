@@ -111,8 +111,12 @@ const readAllAssociatedParticipation = async (req, res) => {
     const query = {
       $or: [
         { hostID: userID, status: "Pending" },
+        { hostID: userID, status: "Invite-Accepted"},
+        { hostID: userID, status: "Invite-Rejected"},
         { participantID: userID, status: "Approved" },
         { participantID: userID, status: "Declined" },
+        { participantID: userID, status: "Invited" },
+        
       ],
     };
     const response = await Participant.find(query).sort({ updatedAt: -1 });
