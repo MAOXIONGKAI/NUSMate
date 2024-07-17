@@ -61,6 +61,7 @@ export default function ActivityCard(prop) {
   const [openEditFail, setOpenEditFail] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
   const [openRemoveSuccess, setOpenRemoveSuccess] = React.useState(false);
+  const [openRemoveFail, setOpenRemoveFail] = React.useState(false);
 
   const [participants, setParticipants] = React.useState([]);
 
@@ -171,6 +172,7 @@ export default function ActivityCard(prop) {
       />
       <CustomizedSnackbar
         text="Delete Activity Failed: Unknown Server Error"
+        severity="error"
         open={openDeleteFail}
         setOpen={setOpenDeleteFail}
       />
@@ -182,12 +184,19 @@ export default function ActivityCard(prop) {
       <CustomizedSnackbar
         text="Edit Activity Failed: Unknown Server Error"
         open={openEditFail}
+        severity="error"
         setOpen={setOpenEditFail}
       />
       <CustomizedSnackbar
         text="Successfully removed participant from the activity"
         open={openRemoveSuccess}
         setOpen={setOpenRemoveSuccess}
+      />
+      <CustomizedSnackbar
+        text="Removed Participant Failed: Unknown Server Error"
+        severity="error"
+        open={openRemoveFail}
+        setOpen={setOpenRemoveFail}
       />
       <ActivityDetail
         open={openDetail}
@@ -216,6 +225,8 @@ export default function ActivityCard(prop) {
         setOpen={setOpenParticipantMenu}
         openRemoveSuccess={openRemoveSuccess}
         setOpenRemoveSuccess={setOpenRemoveSuccess}
+        openRemoveFail={openRemoveFail}
+        setOpenRemoveFail={setOpenRemoveFail}
         profile={profile}
         _id={_id}
         hostID={hostID}

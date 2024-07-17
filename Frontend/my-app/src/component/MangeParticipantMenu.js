@@ -41,6 +41,8 @@ export default function ManageParticipantMenu(prop) {
     pax,
     openRemoveSuccess,
     setOpenRemoveSuccess,
+    openRemoveFail,
+    setOpenRemoveFail,
   } = prop;
 
   const handleClose = () => {
@@ -159,8 +161,8 @@ export default function ManageParticipantMenu(prop) {
                           profile={participant}
                           userID={profile._id}
                           participantID={participant._id}
-                          openRemoveSuccess={openRemoveSuccess}
                           setOpenRemoveSuccess={setOpenRemoveSuccess}
+                          setOpenRemoveFail={setOpenRemoveFail}
                         />
                       </ListItem>
                     ))}

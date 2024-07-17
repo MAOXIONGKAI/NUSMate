@@ -27,8 +27,8 @@ export default function MiniUserCard(prop) {
     userID,
     participantID,
     activityID,
-    openRemoveSuccess,
-    setOpenRemoveSuccess
+    setOpenRemoveSuccess,
+    setOpenRemoveFail,
   } = prop;
 
   const { username } = profile;
@@ -199,6 +199,9 @@ export default function MiniUserCard(prop) {
   const handleRemoveFriend = () => {
     const sendRemoveRequest = async () => {
       const friendshipData = await GetFriendshipData(userID, participantID);
+      if (!friendshipData) {
+        return;
+      }
       const friendshipID = await friendshipData._id;
       if (await RemoveFriend(friendshipID)) {
         setIsFriend(false);
@@ -210,9 +213,15 @@ export default function MiniUserCard(prop) {
   const handleRemoveParticipant = () => {
     const sendRemoveRequest = async () => {
       const requestData = await GetJoinedParticipant(participantID, activityID);
+      if (!requestData) {
+        setOpenRemoveFail(true);
+        return;
+      }
       const requestID = await requestData._id;
       if (await RemoveParticipant(requestID)) {
-         setOpenRemoveSuccess(true);
+        setOpenRemoveSuccess(true);
+      } else {
+        setOpenRemoveFail(true);
       }
     };
     sendRemoveRequest();
