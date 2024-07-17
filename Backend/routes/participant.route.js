@@ -17,6 +17,8 @@ const {
   readAllAssociatedParticipation,
   readAllJoinedParticipants,
   checkIfInvited,
+  acceptInvitation,
+  rejectInvitation,
 } = require("../controllers/participant.controller.js");
 
 router.get("/", readAllParticipants);
@@ -42,6 +44,10 @@ router.post("/", createParticipant);
 router.put("/approve_request/:id", approveParticipant);
 
 router.put("/decline_request/:id", declineParticipant);
+
+router.put("/accept_invitation/:id", acceptInvitation);
+
+router.put("/reject_invitation/:id", rejectInvitation);
 
 router.delete("/:requestID", removeParticipant);
 

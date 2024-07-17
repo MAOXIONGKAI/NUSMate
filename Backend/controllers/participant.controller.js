@@ -35,10 +35,16 @@ const readAllSentRequests = async (req, res) => {
 const readAllJoinedActivities = async (req, res) => {
   try {
     const { userID } = req.params;
-    const response = await Participant.find({
-      participantID: userID,
-      status: "Approved",
-    });
+    const query = {
+      $or: [
+        {
+          participantID: userID,
+          status: "Approved",
+        },
+        { participantID: userID, status: "Invite-Accepted" },
+      ],
+    };
+    const response = await Participant.find(query).sort({ updatedAt: -1 });
     if (!response) {
       return res.status(404).json({ message: "No joined activity found" });
     }
@@ -51,12 +57,23 @@ const readAllJoinedActivities = async (req, res) => {
 const readAllJoinedParticipants = async (req, res) => {
   try {
     const { activityID } = req.params;
-    const response = await Participant.find({
-      activityID: activityID,
-      status: "Approved",
-    }).sort({updatedAt: -1});
+    const query = {
+      $or: [
+        {
+          activityID: activityID,
+          status: "Approved",
+        },
+        {
+          activityID: activityID,
+          status: "Invite-Accepted",
+        },
+      ],
+    };
+    const response = await Participant.find(query).sort({ updatedAt: -1 });
     if (!response) {
-      return res.status(404).json({message: "No participant found for this activity"})
+      return res
+        .status(404)
+        .json({ message: "No participant found for this activity" });
     }
     res.status(200).json(response);
   } catch (error) {
@@ -67,10 +84,16 @@ const readAllJoinedParticipants = async (req, res) => {
 const readAllPendingRequests = async (req, res) => {
   try {
     const { hostID } = req.params;
-    const response = await Participant.find({
-      hostID: hostID,
-      status: "Pending",
-    }).sort({ updatedAt: -1 });
+    const query = {
+      $or: [
+        {
+          hostID: hostID,
+          status: "Pending",
+        },
+        { participantID: hostID, status: "Invited" },
+      ],
+    };
+    const response = await Participant.find(query).sort({ updatedAt: -1 });
     if (!response) {
       return res
         .status(404)
@@ -140,9 +163,9 @@ const checkIfInvited = async (req, res) => {
     }
     res.status(200).json(response);
   } catch (error) {
-    res.status(500).json({message: error.message})
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 const createParticipant = async (req, res) => {
   try {
@@ -178,7 +201,39 @@ const declineParticipant = async (req, res) => {
         .json({ message: "No pending activity request found to be declined" });
     }
     res.status(200).json(response);
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const acceptInvitation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await Participant.findByIdAndUpdate(id, req.body);
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No invitation found to accept from the database" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const rejectInvitation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await Participant.findByIdAndUpdate(id, req.body);
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No invitation found to reject from the database" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 const removeParticipant = async (req, res) => {
@@ -209,5 +264,7 @@ module.exports = {
   createParticipant,
   approveParticipant,
   declineParticipant,
+  acceptInvitation,
+  rejectInvitation,
   removeParticipant,
 };
