@@ -25,6 +25,11 @@ const FriendSchema = mongoose.Schema(
   }
 );
 
+// Create unique index based on the fromUserID and toUserID
+// to ensure that the database does not contain multiple entries of same
+// friend relationship
+FriendSchema.index({ fromUserID: 1, toUserID: 1 }, { unique: true });
+
 const Friend = mongoose.model("Friend", FriendSchema);
 
 module.exports = Friend;

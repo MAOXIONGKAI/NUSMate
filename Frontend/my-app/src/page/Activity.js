@@ -298,10 +298,10 @@ export default function Activity(prop) {
                           Action Detail
                         </TableCell>
                         <TableCell sx={{ color: "white", textAlign: "center" }}>
-                          Requested At
+                          Time
                         </TableCell>
                         <TableCell sx={{ color: "white", textAlign: "center" }}>
-                          Host Actions
+                          Response Actions
                         </TableCell>
                       </TableRow>
                     </TableHead>

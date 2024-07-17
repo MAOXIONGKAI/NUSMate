@@ -33,6 +33,7 @@ import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
 import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
 import EditActivityForm from "./EditActivityForm";
 import ManageParticipantMenu from "./MangeParticipantMenu";
+import FriendInviteMenu from "./FriendInviteMenu";
 
 export default function ActivityCard(prop) {
   const { profile, activity, setHasModified } = prop;
@@ -54,6 +55,7 @@ export default function ActivityCard(prop) {
   const [openDetail, setOpenDetail] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
   const [openParticipantMenu, setOpenParticipantMenu] = React.useState(false);
+  const [openInviteMenu, setOpenInviteMenu] = React.useState(false);
   const [hasRequestedToJoin, setHasRequestedToJoin] = React.useState(false);
   const [hasJoined, setHasJoined] = React.useState(false);
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
@@ -62,6 +64,8 @@ export default function ActivityCard(prop) {
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
   const [openRemoveSuccess, setOpenRemoveSuccess] = React.useState(false);
   const [openRemoveFail, setOpenRemoveFail] = React.useState(false);
+  const [openInviteSuccess, setOpenInviteSuccess] = React.useState(false);
+  const [openInviteFail, setOpenInviteFail] = React.useState(false);
 
   const [participants, setParticipants] = React.useState([]);
 
@@ -163,6 +167,10 @@ export default function ActivityCard(prop) {
     setOpenParticipantMenu(true);
   };
 
+  const handleFrinedInvite = () => {
+    setOpenInviteMenu(true);
+  };
+
   return (
     <React.Fragment>
       <CustomizedSnackbar
@@ -197,6 +205,17 @@ export default function ActivityCard(prop) {
         severity="error"
         open={openRemoveFail}
         setOpen={setOpenRemoveFail}
+      />
+      <CustomizedSnackbar
+        text="Successfully sent invitation to friend"
+        open={openInviteSuccess}
+        setOpen={setOpenInviteSuccess}
+      />
+      <CustomizedSnackbar
+        text="Send Invitation Failed: Unknown Server Error"
+        severity="error"
+        open={openInviteFail}
+        setOpen={setOpenInviteFail}
       />
       <ActivityDetail
         open={openDetail}
@@ -233,6 +252,14 @@ export default function ActivityCard(prop) {
         hostName={hostName}
         activityName={activityName}
         pax={pax}
+      />
+      <FriendInviteMenu
+        open={openInviteMenu}
+        setOpen={setOpenInviteMenu}
+        profile={profile}
+        activity={activity}
+        setOpenInviteSuccess={setOpenInviteSuccess}
+        setOpenInviteFail={setOpenInviteFail}
       />
       <Card
         sx={{
@@ -392,7 +419,10 @@ export default function ActivityCard(prop) {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Invite friends to the activity">
-                  <IconButton>
+                  <IconButton
+                    disabled={participants.length === pax}
+                    onClick={handleFrinedInvite}
+                  >
                     <AddReactionIcon />
                   </IconButton>
                 </Tooltip>

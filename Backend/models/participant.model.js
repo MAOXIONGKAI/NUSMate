@@ -20,7 +20,14 @@ const ParticipantSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Approved", "Declined", "Pending"],
+      enum: [
+        "Approved",
+        "Declined",
+        "Pending",
+        "Invite-Accepted",
+        "Invite-Rejected",
+        "Invited",
+      ],
       default: "Pending",
       required: true,
     },
@@ -29,6 +36,11 @@ const ParticipantSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Create unique index based on the participant, host and activity's ID
+// to ensure that the database does not contain multiple entries of same
+// participation relationship
+ParticipantSchema.index({ participantID: 1, hostID: 1, activityID: 1 }, { unique: true });
 
 const Participant = mongoose.model("Participant", ParticipantSchema);
 
