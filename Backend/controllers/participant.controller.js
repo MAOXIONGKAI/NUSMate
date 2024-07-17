@@ -130,6 +130,20 @@ const checkIfJoined = async (req, res) => {
   }
 };
 
+const checkIfInvited = async (req, res) => {
+  try {
+    const response = await Participant.findOne(req.body);
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "User has not been invited to the activity" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({message: error.message})
+  }
+}
+
 const createParticipant = async (req, res) => {
   try {
     const response = await Participant.create(req.body);
@@ -190,6 +204,7 @@ module.exports = {
   readAllJoinedParticipants,
   readAllAssociatedParticipation,
   checkIfJoined,
+  checkIfInvited,
   readParticipant,
   createParticipant,
   approveParticipant,

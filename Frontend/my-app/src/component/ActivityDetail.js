@@ -51,8 +51,6 @@ export default function ActivityDetail(prop) {
   };
 
   const [participants, setParticipants] = React.useState([]);
-  const [openRemoveSuccess, setOpenRemoveSuccess] =
-    React.useState(false);
 
   React.useEffect(() => {
     const getParticipants = async () => {
@@ -68,7 +66,7 @@ export default function ActivityDetail(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [hostID, _id, openRemoveSuccess]);
+  }, [hostID, _id]);
 
   return (
     <React.Fragment>
@@ -89,11 +87,7 @@ export default function ActivityDetail(prop) {
               justifyContent: "center",
             }}
           >
-            <CustomizedSnackbar
-              text="Successfully removed participant from the activity"
-              open={openRemoveSuccess}
-              setOpen={setOpenRemoveSuccess}
-            />
+            
             <Box sx={{ display: "flex", gap: "0px 10px" }}>
               <Typography variant="h6" sx={{ lineHeight: "32px" }}>
                 {activityName}
@@ -196,8 +190,6 @@ export default function ActivityDetail(prop) {
                           userID={profile._id}
                           participantID={participant._id}
                           activityID={_id}
-                          openRemoveSuccess={openRemoveSuccess}
-                          setOpenRemoveSuccess={setOpenRemoveSuccess}
                         />
                       </ListItem>
                     ))}

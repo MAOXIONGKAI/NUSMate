@@ -1,14 +1,15 @@
-import * as React from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Checkbox from '@mui/material/Checkbox';
-import Avatar from '@mui/material/Avatar';
+import React from "react";
+import Box from "@mui/material/Box";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Checkbox from "@mui/material/Checkbox";
+import ColorNameAvatar from "./ColorNameAvatar";
 
 export default function FriendInviteList(prop) {
-  const [checked, setChecked] = React.useState([1]);
+  const { profile, friends, checked, setChecked } = prop;
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -24,30 +25,53 @@ export default function FriendInviteList(prop) {
   };
 
   return (
-    <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      {[0, 1, 2, 3].map((value) => {
-        const labelId = `checkbox-list-secondary-label-${value}`;
+    <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+      {friends.map((friend, value) => {
+        const labelId = `checkbox-list-secondary-label-${friend._id}`;
         return (
           <ListItem
-            key={value}
-            primaryAction={
+            key={profile._id + friend._id}
+            secondaryAction={
               <Checkbox
                 edge="end"
                 onChange={handleToggle(value)}
                 checked={checked.indexOf(value) !== -1}
-                inputProps={{ 'aria-labelledby': labelId }}
+                inputProps={{ "aria-labelledby": labelId }}
               />
             }
             disablePadding
           >
-            <ListItemButton>
+            <ListItemButton onClick={handleToggle(value)}>
               <ListItemAvatar>
-                <Avatar
-                  alt={`Avatar n°${value + 1}`}
-                  src={`/static/images/avatar/${value + 1}.jpg`}
+                <ColorNameAvatar
+                  username={friend.username}
+                  sx={{
+                    fontSize: "14px",
+                    height: "40px",
+                    width: "40px",
+                    margin: "8px",
+                  }}
                 />
               </ListItemAvatar>
-              <ListItemText id={labelId} primary={`Line item ${value + 1}`} />
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <ListItemText
+                  sx={{
+                    "& .MuiListItemText-primary": {
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    },
+                  }}
+                  id={labelId}
+                  primary={friend.username}
+                />
+              </Box>
             </ListItemButton>
           </ListItem>
         );

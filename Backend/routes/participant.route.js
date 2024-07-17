@@ -16,6 +16,7 @@ const {
   checkIfJoined,
   readAllAssociatedParticipation,
   readAllJoinedParticipants,
+  checkIfInvited,
 } = require("../controllers/participant.controller.js");
 
 router.get("/", readAllParticipants);
@@ -33,6 +34,8 @@ router.post("/joined_participants/:activityID", readAllJoinedParticipants);
 router.post("/associated_participations/:userID", readAllAssociatedParticipation);
 
 router.post("/check_if_joined", checkIfJoined);
+
+router.post("/check_if_invited", checkIfInvited);
 
 router.post("/", createParticipant);
 
