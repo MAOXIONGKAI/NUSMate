@@ -36,6 +36,8 @@ import ApproveParticipant from "../data/Participant/ApproveParticipant";
 import DeclineParticipant from "../data/Participant/DeclineParticipant";
 import GetAllJoinedActivities from "../data/Participant/GetAllJoinedActivities";
 import UserButton from "../component/UserButton";
+import AcceptInvitation from "../data/Participant/AcceptInvitation";
+import RejectInvitation from "../data/Participant/RejectInvitation";
 
 export default function Activity(prop) {
   const groupOptions = [
@@ -68,6 +70,24 @@ export default function Activity(prop) {
       }
     };
     sendDeclineRequest();
+  };
+
+  const handleAcceptActivityInvitation = (requestID) => {
+    const sendAcceptRequest = async () => {
+      if (await AcceptInvitation(requestID)) {
+        setHasModified((prev) => !prev);
+      }
+    };
+    sendAcceptRequest();
+  };
+
+  const handleRejectActivityInvitation = (requestID) => {
+    const sendRejectRequest = async () => {
+      if (await RejectInvitation(requestID)) {
+        setHasModified((prev) => !prev);
+      }
+    };
+    sendRejectRequest();
   };
 
   React.useEffect(() => {
@@ -108,7 +128,11 @@ export default function Activity(prop) {
         const requests = await Promise.all(
           pendingRequests.map(async (request) => {
             const [userProfile, activity] = await Promise.all([
-              GetUserProfile(request.participantID),
+              GetUserProfile(
+                request.participantID === prop.profile._id
+                  ? request.hostID
+                  : request.participantID
+              ),
               GetActivity(request.activityID),
             ]);
 
@@ -323,7 +347,9 @@ export default function Activity(prop) {
                               >
                                 {request.status === "Pending"
                                   ? "requested to join"
-                                  : "has been invited to join"}
+                                  : request.status === "Invited"
+                                  ? "has invited you to join"
+                                  : ""}
                               </Typography>{" "}
                               <Button
                                 onClick={() =>
@@ -362,24 +388,52 @@ export default function Activity(prop) {
                           </TableCell>
                           <TableCell sx={{ textAlign: "center" }}>
                             <Tooltip
-                              title={`Approve join request from ${request.username}`}
+                              title={
+                                request.hostID === prop.profile._id
+                                  ? `Approve join request from ${request.username}`
+                                  : `Accept Invitation from ${request.username}`
+                              }
                             >
                               <IconButton
                                 sx={{ color: "#32CD32" }}
-                                onClick={() =>
-                                  handleApproveActivityRequest(request._id)
+                                onClick={
+                                  request.hostID === prop.profile._id
+                                    ? () => {
+                                        handleApproveActivityRequest(
+                                          request._id
+                                        );
+                                      }
+                                    : () => {
+                                        handleAcceptActivityInvitation(
+                                          request._id
+                                        );
+                                      }
                                 }
                               >
                                 <CheckCircleOutline />
                               </IconButton>
                             </Tooltip>
                             <Tooltip
-                              title={`Decline join request from ${request.username}`}
+                              title={
+                                request.hostID === prop.profile._id
+                                  ? `Decline join request from ${request.username}`
+                                  : `Reject invitation from ${request.username}`
+                              }
                             >
                               <IconButton
                                 sx={{ color: "red" }}
-                                onClick={() =>
-                                  handleDeclineActivityRequest(request._id)
+                                onClick={
+                                  request.hostID === prop.profile._id
+                                    ? () => {
+                                        handleDeclineActivityRequest(
+                                          request._id
+                                        );
+                                      }
+                                    : () => {
+                                        handleRejectActivityInvitation(
+                                          request._id
+                                        );
+                                      }
                                 }
                               >
                                 <CancelOutlined />
