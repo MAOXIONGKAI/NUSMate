@@ -40,7 +40,12 @@ const ParticipantSchema = mongoose.Schema(
 // Create unique index based on the participant, host and activity's ID
 // to ensure that the database does not contain multiple entries of same
 // participation relationship
-ParticipantSchema.index({ participantID: 1, hostID: 1, activityID: 1 }, { unique: true });
+// Status is included to prevent existing declined/rejected requests from
+// causing duplicating key errors when creating new requests
+ParticipantSchema.index(
+  { participantID: 1, hostID: 1, activityID: 1, status: 1 },
+  { unique: true }
+);
 
 const Participant = mongoose.model("Participant", ParticipantSchema);
 
