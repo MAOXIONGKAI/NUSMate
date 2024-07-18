@@ -6,8 +6,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
 import Badge from "@mui/material/Badge";
 import CircleIcon from "@mui/icons-material/Circle";
-import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
+import ChecklistRtlOutlinedIcon from '@mui/icons-material/ChecklistRtlOutlined';
 import MarkAsUnreadOutlinedIcon from "@mui/icons-material/MarkAsUnreadOutlined";
+import MarkEmailReadOutlinedIcon from '@mui/icons-material/MarkEmailReadOutlined';
+import MarkEmailUnreadOutlinedIcon from '@mui/icons-material/MarkEmailUnreadOutlined';
 import ColorNameAvatar from "../component/ColorNameAvatar";
 import NotificationsNone from "@mui/icons-material/NotificationsNone";
 import { Divider, IconButton, MenuList, Typography } from "@mui/material";
@@ -329,7 +331,7 @@ export default function NotificationMenu(prop) {
                                   handleMarkAsRead(notification)
                                 }
                               >
-                                <DraftsOutlinedIcon
+                                <MarkEmailReadOutlinedIcon
                                   sx={{ width: "20px", height: "20px" }}
                                 />
                               </IconButton>
@@ -342,7 +344,7 @@ export default function NotificationMenu(prop) {
                                   handleMarkAsUnread(notification)
                                 }
                               >
-                                <MarkAsUnreadOutlinedIcon
+                                <MarkEmailUnreadOutlinedIcon 
                                   sx={{ width: "20px", height: "20px" }}
                                 />
                               </IconButton>
@@ -372,7 +374,7 @@ export default function NotificationMenu(prop) {
                       sx={{ color: "#5b93f8" }}
                       onClick={() => handleMarkAllAsRead(notifications)}
                     >
-                      <DraftsOutlinedIcon
+                      <ChecklistRtlOutlinedIcon
                         sx={{ width: "20px", height: "20px" }}
                       />
                     </IconButton>
