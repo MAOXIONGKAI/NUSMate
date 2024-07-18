@@ -2,7 +2,7 @@ import axios from "axios";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
-export default async function CheckIfJoined(participantID, activityID) {
+export default async function CheckCanInvite(participantID, activityID) {
   try {
     const requestBody = {
       $or: [
@@ -16,6 +16,11 @@ export default async function CheckIfJoined(participantID, activityID) {
           activityID: activityID,
           status: "Invite-Accepted",
         },
+        {
+          participantID: participantID,
+          activityID: activityID,
+          status: "Pending"
+        }
       ],
     };
     const response = await axios.post(
