@@ -22,7 +22,7 @@ const getUserFriendStatus = async (req, res) => {
     const query = {
       $or: [
         { fromUserID: userID, status: "Approved" },
-        { fromUserID: userID, status: "Declined"},
+        { fromUserID: userID, status: "Declined" },
         { toUserID: userID, status: "Pending" },
       ],
     };
@@ -135,19 +135,26 @@ const withdrawSentRequest = async (req, res) => {
 
 const checkIfFriend = async (req, res) => {
   try {
-    let response = await Friend.findOne(req.body);
+    const { fromUserID, toUserID } = req.body;
+    const query = {
+      $or: [
+        {
+          fromUserID: fromUserID,
+          toUserID: toUserID,
+          status: "Approved",
+        },
+        {
+          fromUserID: toUserID,
+          toUserID: fromUserID,
+          status: "Approved",
+        },
+      ],
+    };
+    const response = await Friend.findOne(query);
     if (!response) {
-      response = await Friend.findOne({
-        fromUserID: req.body.toUserID,
-        toUserID: req.body.fromUserID,
-        status: "Approved",
-      });
-
-      if (!response) {
-        return res
-          .status(404)
-          .json({ message: "The two users are not friends..." });
-      }
+      return res
+        .status(404)
+        .json({ message: "The two users are not friends..." });
     }
     res.status(200).json(response);
   } catch (error) {
