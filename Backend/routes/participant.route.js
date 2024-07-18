@@ -19,6 +19,7 @@ const {
   checkIfInvited,
   acceptInvitation,
   rejectInvitation,
+  removeAllParticipantsbyActivity,
 } = require("../controllers/participant.controller.js");
 
 router.get("/", readAllParticipants);
@@ -33,7 +34,10 @@ router.post("/joined_activities/:userID", readAllJoinedActivities);
 
 router.post("/joined_participants/:activityID", readAllJoinedParticipants);
 
-router.post("/associated_participations/:userID", readAllAssociatedParticipation);
+router.post(
+  "/associated_participations/:userID",
+  readAllAssociatedParticipation
+);
 
 router.post("/check_if_joined", checkIfJoined);
 
@@ -50,5 +54,10 @@ router.put("/accept_invitation/:id", acceptInvitation);
 router.put("/reject_invitation/:id", rejectInvitation);
 
 router.delete("/:requestID", removeParticipant);
+
+router.delete(
+  "/remove_all_participants/:activityID",
+  removeAllParticipantsbyActivity
+);
 
 module.exports = router;

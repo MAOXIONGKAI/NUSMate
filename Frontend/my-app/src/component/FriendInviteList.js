@@ -7,6 +7,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Checkbox from "@mui/material/Checkbox";
 import ColorNameAvatar from "./ColorNameAvatar";
+import { ListSubheader } from "@mui/material";
 
 export default function FriendInviteList(prop) {
   const { profile, friends, checked, setChecked } = prop;
@@ -26,6 +27,7 @@ export default function FriendInviteList(prop) {
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+      <ListSubheader disableSticky>Friends who hasn't joined or requested to join this activity</ListSubheader>
       {friends.map((friend, value) => {
         const labelId = `checkbox-list-secondary-label-${friend._id}`;
         return (

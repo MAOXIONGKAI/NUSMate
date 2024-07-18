@@ -30,7 +30,9 @@ const FriendSchema = mongoose.Schema(
 // friend relationship
 // Status is included to prevent existing declined record from causing duplicating
 // key errors when submitting new friend request
-FriendSchema.index({ fromUserID: 1, toUserID: 1, status: 1 }, { unique: true });
+FriendSchema.index({ fromUserID: 1, toUserID: 1, status: 1 }, { unique: true, partialFilterExpression: {
+  $or: [{ status: "Pending" }, { status: "Approved" }],
+},  });
 
 const Friend = mongoose.model("Friend", FriendSchema);
 

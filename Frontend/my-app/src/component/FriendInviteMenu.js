@@ -1,6 +1,7 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -13,9 +14,10 @@ import GetUserProfile from "../data/GetUserProfile";
 import InviteParticipant from "../data/Participant/InviteParticipant";
 import CheckIfInvited from "../data/Participant/CheckIfInvited";
 import RemoveParticipant from "../data/Participant/RemoveParticipant";
-import GetParticipantRequest from "../data/Participant/GetParticipantRequest";
 import GetInvitationRequest from "../data/Participant/GetInvitationRequest";
 import { Typography } from "@mui/material";
+import CheckCanInvite from "../data/Participant/CheckCanInvite";
+import NoFriendToInvite from "../image/NoFriendToInvite.jpg";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -62,7 +64,6 @@ export default function FriendInviteMenu(prop) {
         } else {
           const requestData = requestDataArray[index];
           if (!requestData) {
-            console.log("No request data found");
             return null;
           }
           const requestID = requestData._id;
@@ -79,24 +80,36 @@ export default function FriendInviteMenu(prop) {
     sendInvitations();
   };
 
-  // Check with database to get user's friend profiles
+  // Check with database to get user's friend profiles which the system can
+  // send invitation to
+  // Otherwise, for friends who have already joined the activity/sent a join request,
+  // the system would not allow user to send invitation request
   React.useEffect(() => {
     const checkFriends = async () => {
       const relationships = await GetFriends(profile._id);
-      const resultPromises = relationships.map((relationship) => {
+      const profilePromises = relationships.map((relationship) => {
         return GetUserProfile(
           relationship.fromUserID === profile._id
             ? relationship.toUserID
             : relationship.fromUserID
         );
       });
-      const result = await Promise.all(resultPromises);
-      setFriends(result);
+      const profiles = await Promise.all(profilePromises);
+      const resultPromises = profiles.map(async (profile) => {
+        if (await CheckCanInvite(profile._id, activity._id)) {
+          return {};
+        } else {
+          return profile;
+        }
+      });
+      const results = await Promise.all(resultPromises);
+      setFriends(results.filter((result) => result._id));
     };
     checkFriends();
-  }, [profile._id]);
+  }, [profile._id, activity._id]);
 
   // Check with database to see who have already been invited
+  // but hasn't accepted/rejected the invitation
   React.useEffect(() => {
     const getCheckedStatus = async () => {
       const statusPromises = friends.map(async (friend) => {
@@ -149,18 +162,45 @@ export default function FriendInviteMenu(prop) {
           <CloseIcon />
         </IconButton>
         <DialogContent sx={{ textAlign: "center" }} dividers>
-          <Typography sx={{ display: "inline", color: "gray" }}>
-            Currently Invited:{" "}
-            <Typography sx={{ color: "black", display: "inline" }}>
-              ({checked.length}/{friends.length})
-            </Typography>
-          </Typography>
-          <FriendInviteList
-            profile={profile}
-            friends={friends}
-            checked={checked}
-            setChecked={setChecked}
-          />
+          {friends.length !== 0 ? (
+            <>
+              <Typography sx={{ display: "inline", color: "gray" }}>
+                Currently Inviting:{" "}
+                <Typography sx={{ color: "black", display: "inline" }}>
+                  ({checked.length}/{friends.length})
+                </Typography>
+              </Typography>
+              <FriendInviteList
+                profile={profile}
+                friends={friends}
+                checked={checked}
+                setChecked={setChecked}
+              />
+            </>
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <img
+                width="40%"
+                style={{ borderRadius: "50%" }}
+                src={NoFriendToInvite}
+                alt="No Friend to Invite Page"
+              />
+              <Typography sx={{ fontFamily: "Handlee, sans-serif", fontWeight: 600 }}>
+                Oops... Seems like there are no friends to invite at the moment.
+                <br />
+                You can try to make more friends through Discover Page or
+                <br /> check if any friends has requested to join this activity.
+              </Typography>
+            </Box>
+          )}
         </DialogContent>
         <DialogActions
           sx={{
@@ -182,6 +222,7 @@ export default function FriendInviteMenu(prop) {
               color: "white",
               "&:hover": { background: "rgba(50,50,50, 0.1)" },
             }}
+            disabled={friends.length === 0}
             onClick={() => {
               handleInvite();
               handleClose();

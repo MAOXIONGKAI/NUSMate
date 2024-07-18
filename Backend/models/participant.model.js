@@ -1,4 +1,4 @@
-const { Timestamp, ObjectId } = require("mongodb");
+const { Timestamp, ObjectId, Db } = require("mongodb");
 const mongoose = require("mongoose");
 
 const ParticipantSchema = mongoose.Schema(
@@ -44,7 +44,17 @@ const ParticipantSchema = mongoose.Schema(
 // causing duplicating key errors when creating new requests
 ParticipantSchema.index(
   { participantID: 1, hostID: 1, activityID: 1, status: 1 },
-  { unique: true }
+  {
+    unique: true,
+    partialFilterExpression: {
+      $or: [
+        { status: "Pending" },
+        { status: "Invited" },
+        { status: "Approved" },
+        { status: "Invite-Accepted" },
+      ],
+    },
+  }
 );
 
 const Participant = mongoose.model("Participant", ParticipantSchema);

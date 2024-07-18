@@ -111,12 +111,11 @@ const readAllAssociatedParticipation = async (req, res) => {
     const query = {
       $or: [
         { hostID: userID, status: "Pending" },
-        { hostID: userID, status: "Invite-Accepted"},
-        { hostID: userID, status: "Invite-Rejected"},
+        { hostID: userID, status: "Invite-Accepted" },
+        { hostID: userID, status: "Invite-Rejected" },
         { participantID: userID, status: "Approved" },
         { participantID: userID, status: "Declined" },
         { participantID: userID, status: "Invited" },
-        
       ],
     };
     const response = await Participant.find(query).sort({ updatedAt: -1 });
@@ -255,6 +254,21 @@ const removeParticipant = async (req, res) => {
   }
 };
 
+const removeAllParticipantsbyActivity = async (req, res) => {
+  try {
+    const { activityID } = req.params;
+    const response = await Participant.deleteMany({ activityID: activityID });
+    if (!response) {
+      return res.status(404).json({
+        message: "No participants associated with the activity to remove",
+      });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   readAllParticipants,
   readAllSentRequests,
@@ -271,4 +285,5 @@ module.exports = {
   acceptInvitation,
   rejectInvitation,
   removeParticipant,
+  removeAllParticipantsbyActivity,
 };
