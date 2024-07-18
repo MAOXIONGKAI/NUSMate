@@ -6,7 +6,7 @@ export default async function ApproveFriendRequest(requestID) {
   try {
     const response = await axios.put(
       `${backendURL}/api/friends/approve_request/${requestID}`,
-      { status: "Approved" },
+      { status: "Approved", notified: false },
       { headers: { "Content-Type": "application/json" } }
     );
     return response.data;

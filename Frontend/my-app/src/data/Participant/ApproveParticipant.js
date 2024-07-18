@@ -6,7 +6,7 @@ export default async function ApproveParticipant(id) {
   try {
     const response = await axios.put(
       `${backendURL}/api/participants/approve_request/${id}`,
-      { status: "Approved" },
+      { status: "Approved", notified: false },
       { headers: { "Content-Type": "application/json" } }
     );
     return response.data;

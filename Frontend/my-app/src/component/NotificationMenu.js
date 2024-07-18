@@ -5,6 +5,9 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
 import Badge from "@mui/material/Badge";
+import CircleIcon from "@mui/icons-material/Circle";
+import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
+import MarkAsUnreadOutlinedIcon from "@mui/icons-material/MarkAsUnreadOutlined";
 import ColorNameAvatar from "../component/ColorNameAvatar";
 import NotificationsNone from "@mui/icons-material/NotificationsNone";
 import { Divider, IconButton, MenuList, Typography } from "@mui/material";
@@ -12,6 +15,10 @@ import NoNotification from "../image/NoNotification.jpg";
 import CalculateTimesAgo from "../data/CalculateTimesAgo";
 
 import GetNotifications from "../data/Notification/GetNotifications";
+import MarkAsRead from "../data/Notification/MarkAsRead";
+import MarkAsUnread from "../data/Notification/MarkAsUnread";
+import MarkAllAsRead from "../data/Notification/MarkAllAsRead";
+import MarkAllAsUnread from "../data/Notification/MarkAllAsUnread";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -92,11 +99,11 @@ export default function NotificationMenu(prop) {
         return `has declined your request to join`;
       } else if (notification.status === "Pending") {
         return `has requested to join`;
-      }else if (notification.status === "Invited") {
+      } else if (notification.status === "Invited") {
         return `has invited you to join`;
-      }else if (notification.status === "Invite-Accepted") {
+      } else if (notification.status === "Invite-Accepted") {
         return `has accepted your invitation to`;
-      }else if (notification.status === "Invite-Rejected") {
+      } else if (notification.status === "Invite-Rejected") {
         return `has rejected your invitation to`;
       } else {
         return "";
@@ -104,10 +111,40 @@ export default function NotificationMenu(prop) {
     }
   };
 
+  const handleMarkAsRead = (notification) => {
+    const sendMarkRequest = async () => {
+      await MarkAsRead(notification);
+    };
+    sendMarkRequest();
+  };
+
+  const handleMarkAsUnread = (notification) => {
+    const sendMarkRequest = async () => {
+      await MarkAsUnread(notification);
+    };
+    sendMarkRequest();
+  };
+
+  const handleMarkAllAsRead = (notifications) => {
+    const sendMarkRequests = async () => {
+      await MarkAllAsRead(notifications);
+    };
+    sendMarkRequests();
+  };
+
+  const handleMarkAllAsUnread = (notifications) => {
+    const sendMarkRequests = async () => {
+      await MarkAllAsUnread(notifications);
+    };
+    sendMarkRequests();
+  };
+
   return (
     <React.Fragment>
       <Badge
-        badgeContent={notifications.length}
+        badgeContent={
+          notifications.filter((notification) => !notification.notified).length
+        }
         overlap="circular"
         color="primary"
       >
@@ -225,6 +262,7 @@ export default function NotificationMenu(prop) {
                       >
                         <Typography
                           sx={{
+                            display: "inline",
                             color: "black",
                             fontSize: "14px",
                             lineHeight: "18px",
@@ -238,6 +276,17 @@ export default function NotificationMenu(prop) {
                               lineHeight: "18px",
                             }}
                           >
+                            {!notification.notified && (
+                              <CircleIcon
+                                sx={{
+                                  display: "inline",
+                                  height: "8px",
+                                  width: "8px",
+                                  color: "red",
+                                }}
+                                style={{ verticalAlign: "middle" }}
+                              />
+                            )}{" "}
                             {notification.username}
                           </Typography>{" "}
                           {getUserActionMessage(notification)}{" "}
@@ -256,14 +305,50 @@ export default function NotificationMenu(prop) {
                             <></>
                           )}
                         </Typography>
-                        <Typography
+                        <Box
                           sx={{
-                            color: "gray",
-                            fontSize: "12px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                           }}
                         >
-                          {CalculateTimesAgo(notification.requestTime)}
-                        </Typography>
+                          <Typography
+                            sx={{
+                              color: "gray",
+                              fontSize: "12px",
+                            }}
+                          >
+                            {CalculateTimesAgo(notification.requestTime)}
+                          </Typography>
+                          <Box sx={{ display: "flex" }}>
+                            <Tooltip title="Mark as read">
+                              <IconButton
+                                size="small"
+                                sx={{ color: "#5b93f8" }}
+                                onClick={() =>
+                                  handleMarkAsRead(notification)
+                                }
+                              >
+                                <DraftsOutlinedIcon
+                                  sx={{ width: "20px", height: "20px" }}
+                                />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Mark as unread">
+                              <IconButton
+                                size="small"
+                                sx={{ color: "#5b93f8" }}
+                                onClick={() =>
+                                  handleMarkAsUnread(notification)
+                                }
+                              >
+                                <MarkAsUnreadOutlinedIcon
+                                  sx={{ width: "20px", height: "20px" }}
+                                />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </Box>
                       </Box>
                     </Box>
                   </MenuItem>
@@ -271,6 +356,41 @@ export default function NotificationMenu(prop) {
                 </React.Fragment>
               ))
             )}
+            <Box
+              sx={{
+                width: "95%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "right",
+              }}
+            >
+              {notifications.length !== 0 && (
+                <>
+                  <Tooltip title="Mark all as read">
+                    <IconButton
+                      size="small"
+                      sx={{ color: "#5b93f8" }}
+                      onClick={() => handleMarkAllAsRead(notifications)}
+                    >
+                      <DraftsOutlinedIcon
+                        sx={{ width: "20px", height: "20px" }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Mark all as unread">
+                    <IconButton
+                      size="small"
+                      sx={{ color: "#5b93f8" }}
+                      onClick={() => handleMarkAllAsUnread(notifications)}
+                    >
+                      <MarkAsUnreadOutlinedIcon
+                        sx={{ width: "20px", height: "20px" }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                </>
+              )}
+            </Box>
           </MenuList>
         </Menu>
       </Badge>
