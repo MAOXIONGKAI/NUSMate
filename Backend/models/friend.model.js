@@ -19,6 +19,10 @@ const FriendSchema = mongoose.Schema(
       default: "Pending",
       required: true,
     },
+    notified: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,

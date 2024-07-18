@@ -269,6 +269,23 @@ const removeAllParticipantsbyActivity = async (req, res) => {
   }
 };
 
+const markAsRead = async (req, res) => {
+  try {
+    const { requestID } = req.params;
+    const response = await Participant.findByIdAndUpdate(requestID, req.body, {
+      timestamps: false,
+    });
+    if (!response) {
+      return res.status(404).json({
+        message: "No participation found in database to mark as read",
+      });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   readAllParticipants,
   readAllSentRequests,
@@ -286,4 +303,5 @@ module.exports = {
   rejectInvitation,
   removeParticipant,
   removeAllParticipantsbyActivity,
+  markAsRead,
 };

@@ -207,6 +207,23 @@ const removeFriend = async (req, res) => {
   }
 };
 
+const markAsRead = async (req, res) => {
+  try {
+    const { requestID } = req.params;
+    const response = await Friend.findByIdAndUpdate(requestID, req.body, {
+      timestamps: false,
+    });
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No friendship found in database to mark as read" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAllFriendships,
   getUserFriendStatus,
@@ -220,4 +237,5 @@ module.exports = {
   approvePendingFriendRequest,
   declinePendingFriendRequest,
   removeFriend,
+  markAsRead,
 };
