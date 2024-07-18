@@ -254,7 +254,7 @@ export default function ActivityCard(prop) {
         setOpen={setOpenRemoveFail}
       />
       <CustomizedSnackbar
-        text="Successfully sent invitation to friend"
+        text="Successfully update invitations to friends"
         open={openInviteSuccess}
         setOpen={setOpenInviteSuccess}
       />
