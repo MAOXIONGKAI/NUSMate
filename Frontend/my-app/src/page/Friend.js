@@ -98,9 +98,8 @@ export default function Friend(prop) {
   const getMyFriendProfiles = async () => {
     try {
       const profilePromises = currentResult.map((request) => {
-        const ID = request.fromUserID !== userID
-        ? request.fromUserID
-        : request.toUserID;
+        const ID =
+          request.fromUserID !== userID ? request.fromUserID : request.toUserID;
 
         return axios.get(`${backendURL}/api/profiles/${ID}`, {
           headers: {
@@ -149,11 +148,18 @@ export default function Friend(prop) {
   const getPendingRequestProfiles = async () => {
     try {
       const profilePromises = currentResult.map((request) => {
-        return axios.get(`${backendURL}/api/profiles/${request.fromUserID}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        return axios.get(
+          `${backendURL}/api/profiles/${
+            request.fromUserID === userID
+              ? request.toUserID
+              : request.fromUserID
+          }`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       });
       const responses = await Promise.all(profilePromises);
       const responsesData = responses
@@ -171,11 +177,16 @@ export default function Friend(prop) {
   const getMyFriendRequestProfiles = async () => {
     try {
       const profilePromises = currentResult.map((request) => {
-        return axios.get(`${backendURL}/api/profiles/${request.toUserID}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        return axios.get(
+          `${backendURL}/api/profiles/${
+            request.toUserID === userID ? request.fromUserID : request.toUserID
+          }`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       });
       const responses = await Promise.all(profilePromises);
       const responsesData = responses
