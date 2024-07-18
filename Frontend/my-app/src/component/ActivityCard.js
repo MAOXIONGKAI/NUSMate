@@ -21,6 +21,8 @@ import ShareIcon from "@mui/icons-material/Share";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LogoutIcon from "@mui/icons-material/Logout";
+import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlined from "@mui/icons-material/CancelOutlined";
 import DeleteActivity from "../data/Activity/DeleteActivity";
 import CustomizedSnackbar from "./CustomizedSnackbar";
 import ActivityDetail from "./ActivityDetail";
@@ -34,6 +36,10 @@ import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipan
 import EditActivityForm from "./EditActivityForm";
 import ManageParticipantMenu from "./MangeParticipantMenu";
 import FriendInviteMenu from "./FriendInviteMenu";
+import CheckIfInvited from "../data/Participant/CheckIfInvited";
+import AcceptInvitation from "../data/Participant/AcceptInvitation";
+import RejectInvitation from "../data/Participant/RejectInvitation";
+import GetInvitationRequest from "../data/Participant/GetInvitationRequest";
 
 export default function ActivityCard(prop) {
   const { profile, activity, setHasModified } = prop;
@@ -58,6 +64,7 @@ export default function ActivityCard(prop) {
   const [openInviteMenu, setOpenInviteMenu] = React.useState(false);
   const [hasRequestedToJoin, setHasRequestedToJoin] = React.useState(false);
   const [hasJoined, setHasJoined] = React.useState(false);
+  const [hasBeenInvited, setHasBeenInvited] = React.useState(false);
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
   const [openEditSuccess, setOpenEditSuccess] = React.useState(false);
   const [openEditFail, setOpenEditFail] = React.useState(false);
@@ -109,6 +116,14 @@ export default function ActivityCard(prop) {
     setOpenDetail(true);
   };
 
+  //Check with database about whether the user has been invited to this activity
+  React.useEffect(() => {
+    const checkInviteStatus = async () => {
+      setHasBeenInvited(await CheckIfInvited(profile._id, hostID, _id));
+    };
+    checkInviteStatus();
+  }, []);
+
   const handleDeleteActivity = (ID) => {
     const sendDeleteRequest = async () => {
       if (await DeleteActivity(ID)) {
@@ -157,6 +172,38 @@ export default function ActivityCard(prop) {
       }
     };
     sendWithdrawRequest();
+  };
+
+  const handleAcceptActivityInvitation = (participantID, activityID) => {
+    const sendAcceptRequest = async () => {
+      const requestData = await GetInvitationRequest(participantID, activityID);
+      if (!requestData) {
+        return;
+      }
+      const requestID = await requestData._id;
+      if (await AcceptInvitation(requestID)) {
+        setHasBeenInvited(false);
+        setHasJoined(true);
+        setHasModified((prev) => !prev);
+      }
+    };
+    sendAcceptRequest();
+  };
+
+  const handleRejectActivityInvitation = (participantID, activityID) => {
+    const sendRejectRequest = async () => {
+      const requestData = await GetInvitationRequest(participantID, activityID);
+      if (!requestData) {
+        return;
+      }
+      const requestID = await requestData._id;
+      if (await RejectInvitation(requestID)) {
+        setHasBeenInvited(false);
+        setHasBeenInvited(false);
+        setHasModified((prev) => !prev);
+      }
+    };
+    sendRejectRequest();
   };
 
   const handleEditActivity = () => {
@@ -450,6 +497,29 @@ export default function ActivityCard(prop) {
                   <GroupRemoveIcon />
                 </IconButton>
               </Tooltip>
+            ) : hasBeenInvited ? (
+              <>
+                <Tooltip title={`Accept Invitation from ${activity.hostName}`}>
+                  <IconButton
+                    sx={{ color: "#32CD32" }}
+                    onClick={() =>
+                      handleAcceptActivityInvitation(profile._id, _id)
+                    }
+                  >
+                    <CheckCircleOutline />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip
+                  title={`Reject invitation from ${activity.hostName}`}
+                  onClick={() =>
+                    handleRejectActivityInvitation(profile._id, _id)
+                  }
+                >
+                  <IconButton sx={{ color: "red" }}>
+                    <CancelOutlined />
+                  </IconButton>
+                </Tooltip>
+              </>
             ) : (
               <Tooltip title="Request to join this activity">
                 <IconButton
