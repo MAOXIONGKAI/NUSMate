@@ -97,7 +97,11 @@ export default function Activity(prop) {
   React.useEffect(() => {
     const getData = async () => {
       if (currentGroup === "All Activities") {
-        setCurrentResult(await GetActivities());
+        setCurrentResult(
+          (await GetActivities()).filter(
+            (activity) => activity.hostID !== prop.profile._id
+          )
+        );
       } else if (currentGroup === "My Hosted Activities") {
         setCurrentResult(
           (await GetActivities()).filter(

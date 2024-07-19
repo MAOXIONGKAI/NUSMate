@@ -298,6 +298,7 @@ export default function ActivityCard(prop) {
         setOpen={setOpenEdit}
         setOpenEditSuccess={setOpenEditSuccess}
         setOpenEditFail={setOpenEditFail}
+        setHasModified={setHasModified}
         handleRefresh={handleRefresh}
         activity={activity}
         currentPax={participants?.length}

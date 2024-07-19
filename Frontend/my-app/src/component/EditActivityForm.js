@@ -21,6 +21,7 @@ export default function FormDialog(prop) {
     activity,
     setOpenEditSuccess,
     setOpenEditFail,
+    setHasModified,
     currentPax,
   } = prop;
   let {
@@ -110,6 +111,7 @@ export default function FormDialog(prop) {
       if (EditActivity(_id, formData)) {
         setOpenEditSuccess(true);
         handleClose();
+        setHasModified((prev) => !prev);
       } else {
         setOpenEditFail(true);
       }
@@ -267,8 +269,8 @@ export default function FormDialog(prop) {
                 <FormHelperText
                   sx={{ margin: "none", marginLeft: "auto", color: "red" }}
                 >
-                  New limit must be at least the number of people who 
-                  joined the activity now
+                  New limit must be at least the number of people who joined the
+                  activity now
                 </FormHelperText>
               )}
             </Box>
