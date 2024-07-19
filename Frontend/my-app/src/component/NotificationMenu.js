@@ -240,7 +240,8 @@ export default function NotificationMenu(prop) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "right",
-                    background: "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)"
+                    background: "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+                    marginBottom: "8px",
                   }}
                 >
                   <Tooltip title="Mark all as read">

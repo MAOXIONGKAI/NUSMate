@@ -19,6 +19,11 @@ export default function Friend(prop) {
   const userID = prop.profile._id;
   const backendURL = process.env.REACT_APP_BACKEND_URL;
 
+  const [refresh, setRefresh] = React.useState(false);
+  const refreshPage = () => {
+    setRefresh((prev) => !prev);
+  };
+
   const getMyFriends = async () => {
     try {
       const response = await axios.get(
@@ -217,7 +222,7 @@ export default function Friend(prop) {
     } else if (currentGroup === "My Friend") {
       getMyFriendProfiles();
     }
-  }, [currentResult, currentGroup]);
+  }, [currentResult, currentGroup, refresh]);
 
   React.useEffect(() => {
     resetPaginationSetting();
@@ -232,7 +237,7 @@ export default function Friend(prop) {
     } else {
       setCurrentResult([]);
     }
-  }, [currentGroup]);
+  }, [currentGroup, refresh]);
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const profilesPerPage = 9;
@@ -329,6 +334,7 @@ export default function Friend(prop) {
                         profile={profile}
                         userID={userID}
                         sx={{ flexGrow: 1 }}
+                        refreshPage={refreshPage}
                       />
                     </Box>
                   </Grid>

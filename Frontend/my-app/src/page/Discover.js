@@ -824,6 +824,7 @@ export default function Discover(prop) {
                         profile={profile}
                         userID={userID}
                         sx={{ flexGrow: 1 }}
+                        refreshPage={() => {}}
                       />
                     </Box>
                   </Grid>
