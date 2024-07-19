@@ -76,6 +76,12 @@ export default function ActivityCard(prop) {
 
   const [participants, setParticipants] = React.useState([]);
 
+  // Refresh activity card info after certain actions
+  const [refresh, setRefresh] = React.useState(false);
+  const handleRefresh = () => {
+    setRefresh((prev) => !prev);
+  };
+
   React.useEffect(() => {
     const getParticipants = async () => {
       const participations = await GetAllJoinedParticipants(_id);
@@ -90,7 +96,7 @@ export default function ActivityCard(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [_id]);
+  }, [_id, hostID, refresh]);
 
   //Check with database about whether the user has requested to join this activity
   React.useEffect(() => {
@@ -102,7 +108,7 @@ export default function ActivityCard(prop) {
       }
     };
     checkRequested();
-  }, []);
+  }, [_id, profile._id, refresh]);
 
   //Check with database about whether the user has joined this activity
   React.useEffect(() => {
@@ -124,6 +130,12 @@ export default function ActivityCard(prop) {
     checkInviteStatus();
   }, []);
 
+  React.useEffect(() => {
+    if (!openDeleteSuccess) {
+      setHasModified((prev) => !prev);
+    }
+  }, [openDeleteSuccess, setHasModified]);
+
   const handleDeleteActivity = (ID) => {
     const sendDeleteRequest = async () => {
       if (await DeleteActivity(ID)) {
@@ -138,6 +150,7 @@ export default function ActivityCard(prop) {
       if (await CreateParticipant(participantID, hostID, activityID)) {
         setHasRequestedToJoin(true);
         setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendJoinRequest();
@@ -153,6 +166,7 @@ export default function ActivityCard(prop) {
       if (await RemoveParticipant(requestID)) {
         setHasRequestedToJoin(false);
         setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendWithdrawRequest();
@@ -169,6 +183,7 @@ export default function ActivityCard(prop) {
         setHasJoined(false);
         setHasRequestedToJoin(false);
         setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendWithdrawRequest();
@@ -185,6 +200,7 @@ export default function ActivityCard(prop) {
         setHasBeenInvited(false);
         setHasJoined(true);
         setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendAcceptRequest();
@@ -201,6 +217,7 @@ export default function ActivityCard(prop) {
         setHasBeenInvited(false);
         setHasBeenInvited(false);
         setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendRejectRequest();
@@ -208,14 +225,17 @@ export default function ActivityCard(prop) {
 
   const handleEditActivity = () => {
     setOpenEdit(true);
+    handleRefresh();
   };
 
   const handleManageParticipant = () => {
     setOpenParticipantMenu(true);
+    handleRefresh();
   };
 
   const handleFrinedInvite = () => {
     setOpenInviteMenu(true);
+    handleRefresh();
   };
 
   return (
@@ -267,6 +287,7 @@ export default function ActivityCard(prop) {
       <ActivityDetail
         open={openDetail}
         setOpen={setOpenDetail}
+        refresh={refresh}
         profile={profile}
         _id={_id}
         hostID={hostID}
@@ -283,12 +304,16 @@ export default function ActivityCard(prop) {
         setOpen={setOpenEdit}
         setOpenEditSuccess={setOpenEditSuccess}
         setOpenEditFail={setOpenEditFail}
+        setHasModified={setHasModified}
+        handleRefresh={handleRefresh}
         activity={activity}
         currentPax={participants?.length}
       />
       <ManageParticipantMenu
         open={openParticipantMenu}
         setOpen={setOpenParticipantMenu}
+        refresh={refresh}
+        handleRefresh={handleRefresh}
         openRemoveSuccess={openRemoveSuccess}
         setOpenRemoveSuccess={setOpenRemoveSuccess}
         openRemoveFail={openRemoveFail}
@@ -305,6 +330,8 @@ export default function ActivityCard(prop) {
         setOpen={setOpenInviteMenu}
         profile={profile}
         activity={activity}
+        refresh={refresh}
+        handleRefresh={handleRefresh}
         setOpenInviteSuccess={setOpenInviteSuccess}
         setOpenInviteFail={setOpenInviteFail}
       />

@@ -97,7 +97,11 @@ export default function Activity(prop) {
   React.useEffect(() => {
     const getData = async () => {
       if (currentGroup === "All Activities") {
-        setCurrentResult(await GetActivities());
+        setCurrentResult(
+          (await GetActivities()).filter(
+            (activity) => activity.hostID !== prop.profile._id
+          )
+        );
       } else if (currentGroup === "My Hosted Activities") {
         setCurrentResult(
           (await GetActivities()).filter(
@@ -157,6 +161,12 @@ export default function Activity(prop) {
     getData();
     resetPaginationSetting();
   }, [currentGroup, hasModified, prop.profile._id]);
+
+  React.useEffect(() => {
+    if (!openSuccess) {
+      setHasModified((prev) => !prev);
+    }
+  }, [openSuccess, setHasModified]);
 
   const [openDetail, setOpenDetail] = React.useState(false);
   const [activityDetail, setActivityDetail] = React.useState({});

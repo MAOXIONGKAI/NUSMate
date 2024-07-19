@@ -29,6 +29,7 @@ export default function MiniUserCard(prop) {
     activityID,
     setOpenRemoveSuccess,
     setOpenRemoveFail,
+    handleRefresh,
   } = prop;
 
   const { username } = profile;
@@ -220,6 +221,7 @@ export default function MiniUserCard(prop) {
       const requestID = await requestData._id;
       if (await RemoveParticipant(requestID)) {
         setOpenRemoveSuccess(true);
+        handleRefresh();
       } else {
         setOpenRemoveFail(true);
       }

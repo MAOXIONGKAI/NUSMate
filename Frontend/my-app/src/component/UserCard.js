@@ -49,6 +49,8 @@ export default function UserCard(prop) {
     description,
   } = prop.profile;
 
+  const {refreshPage} = prop;
+
   // Get the view user's profile ID
   const userID = prop.userID;
 
@@ -166,11 +168,13 @@ export default function UserCard(prop) {
   const handleAddFavorite = () => {
     setIsFavorite(true);
     createFavorite();
+    refreshPage();
   };
 
   const handleDeleteFavorite = () => {
     setIsFavorite(false);
     deleteFavorite();
+    refreshPage();
   };
 
   const handleSendFriendRequest = () => {
@@ -180,6 +184,7 @@ export default function UserCard(prop) {
       }
     }
     sendFriendRequest();
+    refreshPage();
   }
 
   const handleWithdrawFriendRequest = () => {
@@ -188,6 +193,7 @@ export default function UserCard(prop) {
       const requestID = await requestData._id;
       if (await WithdrawFriendRequest(requestID)) {
         setHasSentRequest(false);
+        refreshPage();
       }
     }
     sendWithdrawRequest();
@@ -200,6 +206,7 @@ export default function UserCard(prop) {
       if (await ApproveFriendRequest(requestID)) {
         setIsFriend(true);
         setHasIncomingRequest(false);
+        refreshPage();
       }
     };
     sendApproveRequest();
@@ -211,6 +218,7 @@ export default function UserCard(prop) {
       const requestID = await requestData._id;
       if (await DeclineFriendRequest(requestID)) {
         setHasIncomingRequest(false);
+        refreshPage();
       }
     };
     sendDeclineRequest();
@@ -222,6 +230,7 @@ export default function UserCard(prop) {
       const friendshipID = await friendshipData._id;
       if (await RemoveFriend(friendshipID)) {
         setIsFriend(false);
+        refreshPage();
       }
     }
     sendRemoveRequest();
