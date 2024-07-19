@@ -14,7 +14,7 @@ export default function CustomizedSnackbar(prop) {
   return (
     <Snackbar
       open={prop.open}
-      autoHideDuration={(prop.time ? prop.time : 6) * 1000}
+      autoHideDuration={(prop.time ? prop.time : 3) * 1000}
       onClose={handleClose}
     >
       <Alert

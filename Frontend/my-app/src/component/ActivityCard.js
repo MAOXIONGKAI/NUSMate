@@ -79,8 +79,8 @@ export default function ActivityCard(prop) {
   // Refresh activity card info after certain actions
   const [refresh, setRefresh] = React.useState(false);
   const handleRefresh = () => {
-    setRefresh(prev => !prev);
-  }
+    setRefresh((prev) => !prev);
+  };
 
   React.useEffect(() => {
     const getParticipants = async () => {
@@ -129,6 +129,12 @@ export default function ActivityCard(prop) {
     };
     checkInviteStatus();
   }, []);
+
+  React.useEffect(() => {
+    if (!openDeleteSuccess) {
+      setHasModified((prev) => !prev);
+    }
+  }, [openDeleteSuccess, setHasModified]);
 
   const handleDeleteActivity = (ID) => {
     const sendDeleteRequest = async () => {
