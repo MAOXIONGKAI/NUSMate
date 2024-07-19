@@ -2,17 +2,23 @@ import React from "react";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
 import Badge from "@mui/material/Badge";
 import CircleIcon from "@mui/icons-material/Circle";
-import ChecklistRtlOutlinedIcon from '@mui/icons-material/ChecklistRtlOutlined';
+import ChecklistRtlOutlinedIcon from "@mui/icons-material/ChecklistRtlOutlined";
 import MarkAsUnreadOutlinedIcon from "@mui/icons-material/MarkAsUnreadOutlined";
-import MarkEmailReadOutlinedIcon from '@mui/icons-material/MarkEmailReadOutlined';
-import MarkEmailUnreadOutlinedIcon from '@mui/icons-material/MarkEmailUnreadOutlined';
+import MarkEmailReadOutlinedIcon from "@mui/icons-material/MarkEmailReadOutlined";
+import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
 import ColorNameAvatar from "../component/ColorNameAvatar";
 import NotificationsNone from "@mui/icons-material/NotificationsNone";
-import { Divider, IconButton, MenuList, Typography } from "@mui/material";
+import {
+  Divider,
+  IconButton,
+  ListItem,
+  ListSubheader,
+  MenuList,
+  Typography,
+} from "@mui/material";
 import NoNotification from "../image/NoNotification.jpg";
 import CalculateTimesAgo from "../data/CalculateTimesAgo";
 
@@ -47,24 +53,37 @@ export default function NotificationMenu(prop) {
   React.useEffect(() => {
     const getRequestInfo = async () => {
       const requestPromises = messages.map(async (message) => {
-        const profileResponse = await axios.get(
-          `${backendURL}/api/profiles/${
-            message.activityID
-              ? message.participantID === profile._id
-                ? message.hostID
-                : message.participantID
-              : message.fromUserID === profile._id
-              ? message.toUserID
-              : message.fromUserID
-          }`,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        const profileResponse = await axios
+          .get(
+            `${backendURL}/api/profiles/${
+              message.activityID
+                ? message.participantID === profile._id
+                  ? message.hostID
+                  : message.participantID
+                : message.fromUserID === profile._id
+                ? message.toUserID
+                : message.fromUserID
+            }`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          )
+          .catch((error) => {
+            console.log(
+              "Error when fetching user profile data contained in the notification through axios: " +
+                JSON.stringify(error.response?.data) || error.message
+            );
+          });
+
         const activityResponse = message.activityID
-          ? await axios.get(
-              `${backendURL}/api/activities/${message.activityID}`
-            )
+          ? await axios
+              .get(`${backendURL}/api/activities/${message.activityID}`)
+              .catch((error) => {
+                console.log(
+                  "Error when fetching activity info contained in the notification through axios: " +
+                    JSON.stringify(error.response?.data) || error.message
+                );
+              })
           : null;
 
         const profileData = await profileResponse.data;
@@ -172,6 +191,9 @@ export default function NotificationMenu(prop) {
           open={open}
           onClose={handleClose}
           onClick={handleClose}
+          slotProps={{
+            root: { sx: { '.MuiList-root': { padding: 0 } } },
+          }}
           PaperProps={{
             elevation: 0,
             sx: {
@@ -210,8 +232,44 @@ export default function NotificationMenu(prop) {
               },
             }}
           >
+            {notifications.length !== 0 && (
+              <>
+                <ListSubheader
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "right",
+                    background: "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)"
+                  }}
+                >
+                  <Tooltip title="Mark all as read">
+                    <IconButton
+                      size="small"
+                      sx={{ color: "white" }}
+                      onClick={() => handleMarkAllAsRead(notifications)}
+                    >
+                      <ChecklistRtlOutlinedIcon
+                        sx={{ width: "20px", height: "20px" }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Mark all as unread">
+                    <IconButton
+                      size="small"
+                      sx={{ color: "white" }}
+                      onClick={() => handleMarkAllAsUnread(notifications)}
+                    >
+                      <MarkAsUnreadOutlinedIcon
+                        sx={{ width: "20px", height: "20px" }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                </ListSubheader>
+              </>
+            )}
             {notifications.length === 0 ? (
-              <MenuItem disabled>
+              <ListItem>
                 <Box
                   sx={{
                     display: "flex",
@@ -225,7 +283,7 @@ export default function NotificationMenu(prop) {
                     alt="No Notification Background"
                   />
                 </Box>
-              </MenuItem>
+              </ListItem>
             ) : (
               notifications.map((notification) => (
                 <React.Fragment
@@ -242,7 +300,7 @@ export default function NotificationMenu(prop) {
                     notification._id
                   }
                 >
-                  <MenuItem>
+                  <ListItem>
                     <Box
                       sx={{
                         display: "flex",
@@ -327,9 +385,7 @@ export default function NotificationMenu(prop) {
                               <IconButton
                                 size="small"
                                 sx={{ color: "#5b93f8" }}
-                                onClick={() =>
-                                  handleMarkAsRead(notification)
-                                }
+                                onClick={() => handleMarkAsRead(notification)}
                               >
                                 <MarkEmailReadOutlinedIcon
                                   sx={{ width: "20px", height: "20px" }}
@@ -340,11 +396,9 @@ export default function NotificationMenu(prop) {
                               <IconButton
                                 size="small"
                                 sx={{ color: "#5b93f8" }}
-                                onClick={() =>
-                                  handleMarkAsUnread(notification)
-                                }
+                                onClick={() => handleMarkAsUnread(notification)}
                               >
-                                <MarkEmailUnreadOutlinedIcon 
+                                <MarkEmailUnreadOutlinedIcon
                                   sx={{ width: "20px", height: "20px" }}
                                 />
                               </IconButton>
@@ -353,46 +407,11 @@ export default function NotificationMenu(prop) {
                         </Box>
                       </Box>
                     </Box>
-                  </MenuItem>
-                  <Divider />
+                  </ListItem>
+                  <Divider sx={{ marginBottom: "5px" }} />
                 </React.Fragment>
               ))
             )}
-            <Box
-              sx={{
-                width: "95%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "right",
-              }}
-            >
-              {notifications.length !== 0 && (
-                <>
-                  <Tooltip title="Mark all as read">
-                    <IconButton
-                      size="small"
-                      sx={{ color: "#5b93f8" }}
-                      onClick={() => handleMarkAllAsRead(notifications)}
-                    >
-                      <ChecklistRtlOutlinedIcon
-                        sx={{ width: "20px", height: "20px" }}
-                      />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Mark all as unread">
-                    <IconButton
-                      size="small"
-                      sx={{ color: "#5b93f8" }}
-                      onClick={() => handleMarkAllAsUnread(notifications)}
-                    >
-                      <MarkAsUnreadOutlinedIcon
-                        sx={{ width: "20px", height: "20px" }}
-                      />
-                    </IconButton>
-                  </Tooltip>
-                </>
-              )}
-            </Box>
           </MenuList>
         </Menu>
       </Badge>

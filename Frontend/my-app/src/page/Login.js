@@ -123,7 +123,7 @@ export default function Login(prop) {
     }
 
     const profileData = await getData();
-    console.log("Data received:" + JSON.stringify(profileData));
+    //console.log("Data received:" + JSON.stringify(profileData));
     if (profileData) {
       prop.setProfile(profileData);
       prop.setLoggedIn(true);

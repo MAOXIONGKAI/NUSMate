@@ -28,7 +28,6 @@ export default function ForgotPassword() {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    console.log(formData);
   };
 
   const updateDatabase = async (email, password) => {
@@ -42,9 +41,6 @@ export default function ForgotPassword() {
         {
           headers: { "Content-Type": "application/json" },
         }
-      );
-      console.log(
-        "Password Successfully Updated" + JSON.stringify(response.data)
       );
       setOpenSuccess(true);
       setProfileNotFound(false);
