@@ -127,10 +127,10 @@ export default function UserCard(prop) {
           },
         }
       );
-      console.log(
-        `${username} successfully added to favorite: ` +
-          JSON.stringify(response.data)
-      );
+      // console.log(
+      //   `${username} successfully added to favorite: ` +
+      //     JSON.stringify(response.data)
+      // );
     } catch (error) {
       console.log("Error when setting user profile as favorite: " + error);
     }
@@ -152,10 +152,10 @@ export default function UserCard(prop) {
           },
         }
       );
-      console.log(
-        `${username} successfully removed from your favorite: ` +
-          JSON.stringify(response.data)
-      );
+      // console.log(
+      //   `${username} successfully removed from your favorite: ` +
+      //     JSON.stringify(response.data)
+      // );
     } catch (error) {
       console.log(
         "Error when deleting favorite from user collection: " + error

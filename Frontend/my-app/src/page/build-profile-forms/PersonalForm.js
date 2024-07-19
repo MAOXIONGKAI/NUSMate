@@ -40,7 +40,6 @@ export default function PersonalForm(prop) {
 
   function deleteInterest(index) {
     const interestArr = prop.formData.interests;
-    console.log(index);
     const newInterests = [
       ...interestArr.slice(0, index),
       ...interestArr.slice(index + 1),

@@ -36,7 +36,7 @@ const RandomImage = () => {
         setAttribution(
           `https://unsplash.com/@${response.data.user.username}?utm_source=NUSMate&utm_medium=referral`
         );
-        console.log("The author for this image is " + response.data.user.name);
+        //console.log("The author for this image is " + response.data.user.name);
       } catch (error) {
         console.error("Error fetching the image from Unsplash:", error);
       }

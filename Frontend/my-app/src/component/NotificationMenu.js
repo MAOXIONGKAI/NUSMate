@@ -52,26 +52,34 @@ export default function NotificationMenu(prop) {
   React.useEffect(() => {
     const getRequestInfo = async () => {
       const requestPromises = messages.map(async (message) => {
-        const profileResponse = await axios.get(
-          `${backendURL}/api/profiles/${
-            message.activityID
-              ? message.participantID === profile._id
-                ? message.hostID
-                : message.participantID
-              : message.fromUserID === profile._id
-              ? message.toUserID
-              : message.fromUserID
-          }`,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        const profileResponse = await axios
+          .get(
+            `${backendURL}/api/profiles/${
+              message.activityID
+                ? message.participantID === profile._id
+                  ? message.hostID
+                  : message.participantID
+                : message.fromUserID === profile._id
+                ? message.toUserID
+                : message.fromUserID
+            }`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          )
+          .catch((error) => {
+            console.log(
+              "Error when fetching user profile data contained in the notification through axios: " +
+                JSON.stringify(error.response?.data) || error.message
+            );
+          });
+
         const activityResponse = message.activityID
           ? await axios
               .get(`${backendURL}/api/activities/${message.activityID}`)
               .catch((error) => {
                 console.log(
-                  "Error when search activity info: " +
+                  "Error when fetching activity info contained in the notification through axios: " +
                     JSON.stringify(error.response?.data) || error.message
                 );
               })

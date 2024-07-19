@@ -145,10 +145,10 @@ export default function ProfilePage(prop) {
               }
             );
             setOpenChange(true);
-            console.log(
-              "Personality Updated Successfully with response status: " +
-                response.status
-            );
+            // console.log(
+            //   "Personality Updated Successfully with response status: " +
+            //     response.status
+            // );
           } catch (error) {
             setOpenChangeFail(true);
             console.log(
@@ -200,10 +200,10 @@ export default function ProfilePage(prop) {
             },
           }
         );
-        console.log(
-          "Profile successfully updated with response status: " +
-            response.status
-        );
+        // console.log(
+        //   "Profile successfully updated with response status: " +
+        //     response.status
+        // );
         setOpenSuccess(true);
       } catch (error) {
         setOpenFail(true);
