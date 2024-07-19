@@ -76,6 +76,11 @@ export default function ActivityCard(prop) {
 
   const [participants, setParticipants] = React.useState([]);
 
+  const [refresh, setRefresh] = React.useState(false);
+  const handleRefresh = () => {
+    setRefresh(prev => !prev);
+  }
+
   React.useEffect(() => {
     const getParticipants = async () => {
       const participations = await GetAllJoinedParticipants(_id);
@@ -90,7 +95,7 @@ export default function ActivityCard(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [_id]);
+  }, [_id, hostID, refresh]);
 
   //Check with database about whether the user has requested to join this activity
   React.useEffect(() => {
@@ -102,7 +107,7 @@ export default function ActivityCard(prop) {
       }
     };
     checkRequested();
-  }, []);
+  }, [_id, profile._id, refresh]);
 
   //Check with database about whether the user has joined this activity
   React.useEffect(() => {
@@ -267,6 +272,7 @@ export default function ActivityCard(prop) {
       <ActivityDetail
         open={openDetail}
         setOpen={setOpenDetail}
+        refresh={refresh}
         profile={profile}
         _id={_id}
         hostID={hostID}
@@ -289,6 +295,8 @@ export default function ActivityCard(prop) {
       <ManageParticipantMenu
         open={openParticipantMenu}
         setOpen={setOpenParticipantMenu}
+        refresh={refresh}
+        handleRefresh={handleRefresh}
         openRemoveSuccess={openRemoveSuccess}
         setOpenRemoveSuccess={setOpenRemoveSuccess}
         openRemoveFail={openRemoveFail}
@@ -305,6 +313,7 @@ export default function ActivityCard(prop) {
         setOpen={setOpenInviteMenu}
         profile={profile}
         activity={activity}
+        refresh={refresh}
         setOpenInviteSuccess={setOpenInviteSuccess}
         setOpenInviteFail={setOpenInviteFail}
       />

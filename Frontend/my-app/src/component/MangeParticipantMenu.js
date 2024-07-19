@@ -39,6 +39,8 @@ export default function ManageParticipantMenu(prop) {
     hostName,
     activityName,
     pax,
+    refresh,
+    handleRefresh,
     openRemoveSuccess,
     setOpenRemoveSuccess,
     openRemoveFail,
@@ -65,7 +67,7 @@ export default function ManageParticipantMenu(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [_id, hostID]);
+  }, [_id, hostID, refresh]);
 
   return (
     <React.Fragment>
@@ -161,6 +163,7 @@ export default function ManageParticipantMenu(prop) {
                           profile={participant}
                           userID={profile._id}
                           participantID={participant._id}
+                          handleRefresh={handleRefresh}
                           setOpenRemoveSuccess={setOpenRemoveSuccess}
                           setOpenRemoveFail={setOpenRemoveFail}
                         />

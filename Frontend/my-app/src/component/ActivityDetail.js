@@ -13,7 +13,6 @@ import { List, ListItem, Paper } from "@mui/material";
 import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
 import MiniUserCard from "./MiniUserCard";
 import GetUserProfile from "../data/GetUserProfile";
-import CustomizedSnackbar from "./CustomizedSnackbar";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -34,6 +33,7 @@ export default function ActivityDetail(prop) {
   const {
     open,
     setOpen,
+    refresh,
     profile,
     _id,
     hostID,
@@ -66,7 +66,7 @@ export default function ActivityDetail(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [hostID, _id]);
+  }, [hostID, _id, refresh]);
 
   return (
     <React.Fragment>
@@ -87,7 +87,6 @@ export default function ActivityDetail(prop) {
               justifyContent: "center",
             }}
           >
-            
             <Box sx={{ display: "flex", gap: "0px 10px" }}>
               <Typography variant="h6" sx={{ lineHeight: "32px" }}>
                 {activityName}
