@@ -15,6 +15,7 @@ import {
   Divider,
   IconButton,
   ListItem,
+  ListSubheader,
   MenuList,
   Typography,
 } from "@mui/material";
@@ -190,6 +191,9 @@ export default function NotificationMenu(prop) {
           open={open}
           onClose={handleClose}
           onClick={handleClose}
+          slotProps={{
+            root: { sx: { '.MuiList-root': { padding: 0 } } },
+          }}
           PaperProps={{
             elevation: 0,
             sx: {
@@ -228,6 +232,42 @@ export default function NotificationMenu(prop) {
               },
             }}
           >
+            {notifications.length !== 0 && (
+              <>
+                <ListSubheader
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "right",
+                    background: "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)"
+                  }}
+                >
+                  <Tooltip title="Mark all as read">
+                    <IconButton
+                      size="small"
+                      sx={{ color: "white" }}
+                      onClick={() => handleMarkAllAsRead(notifications)}
+                    >
+                      <ChecklistRtlOutlinedIcon
+                        sx={{ width: "20px", height: "20px" }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Mark all as unread">
+                    <IconButton
+                      size="small"
+                      sx={{ color: "white" }}
+                      onClick={() => handleMarkAllAsUnread(notifications)}
+                    >
+                      <MarkAsUnreadOutlinedIcon
+                        sx={{ width: "20px", height: "20px" }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                </ListSubheader>
+              </>
+            )}
             {notifications.length === 0 ? (
               <ListItem>
                 <Box
@@ -371,39 +411,6 @@ export default function NotificationMenu(prop) {
                   <Divider sx={{ marginBottom: "5px" }} />
                 </React.Fragment>
               ))
-            )}
-            {notifications.length !== 0 && (
-              <Box
-                sx={{
-                  width: "95%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "right",
-                }}
-              >
-                <Tooltip title="Mark all as read">
-                  <IconButton
-                    size="small"
-                    sx={{ color: "#5b93f8" }}
-                    onClick={() => handleMarkAllAsRead(notifications)}
-                  >
-                    <ChecklistRtlOutlinedIcon
-                      sx={{ width: "20px", height: "20px" }}
-                    />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Mark all as unread">
-                  <IconButton
-                    size="small"
-                    sx={{ color: "#5b93f8" }}
-                    onClick={() => handleMarkAllAsUnread(notifications)}
-                  >
-                    <MarkAsUnreadOutlinedIcon
-                      sx={{ width: "20px", height: "20px" }}
-                    />
-                  </IconButton>
-                </Tooltip>
-              </Box>
             )}
           </MenuList>
         </Menu>
