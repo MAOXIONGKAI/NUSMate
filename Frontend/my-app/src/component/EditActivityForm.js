@@ -17,6 +17,7 @@ export default function FormDialog(prop) {
   const {
     open,
     setOpen,
+    handleRefresh,
     activity,
     setOpenEditSuccess,
     setOpenEditFail,
@@ -36,6 +37,7 @@ export default function FormDialog(prop) {
 
   const handleClose = () => {
     setOpen(false);
+    handleRefresh();
   };
 
   const [formData, setFormData] = React.useState({

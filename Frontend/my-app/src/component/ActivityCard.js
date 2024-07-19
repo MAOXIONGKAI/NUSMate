@@ -76,6 +76,7 @@ export default function ActivityCard(prop) {
 
   const [participants, setParticipants] = React.useState([]);
 
+  // Refresh activity card info after certain actions
   const [refresh, setRefresh] = React.useState(false);
   const handleRefresh = () => {
     setRefresh(prev => !prev);
@@ -143,6 +144,7 @@ export default function ActivityCard(prop) {
       if (await CreateParticipant(participantID, hostID, activityID)) {
         setHasRequestedToJoin(true);
         setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendJoinRequest();
@@ -158,6 +160,7 @@ export default function ActivityCard(prop) {
       if (await RemoveParticipant(requestID)) {
         setHasRequestedToJoin(false);
         setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendWithdrawRequest();
@@ -174,6 +177,7 @@ export default function ActivityCard(prop) {
         setHasJoined(false);
         setHasRequestedToJoin(false);
         setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendWithdrawRequest();
@@ -190,6 +194,7 @@ export default function ActivityCard(prop) {
         setHasBeenInvited(false);
         setHasJoined(true);
         setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendAcceptRequest();
@@ -206,6 +211,7 @@ export default function ActivityCard(prop) {
         setHasBeenInvited(false);
         setHasBeenInvited(false);
         setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendRejectRequest();
@@ -213,14 +219,17 @@ export default function ActivityCard(prop) {
 
   const handleEditActivity = () => {
     setOpenEdit(true);
+    handleRefresh();
   };
 
   const handleManageParticipant = () => {
     setOpenParticipantMenu(true);
+    handleRefresh();
   };
 
   const handleFrinedInvite = () => {
     setOpenInviteMenu(true);
+    handleRefresh();
   };
 
   return (
@@ -289,6 +298,7 @@ export default function ActivityCard(prop) {
         setOpen={setOpenEdit}
         setOpenEditSuccess={setOpenEditSuccess}
         setOpenEditFail={setOpenEditFail}
+        handleRefresh={handleRefresh}
         activity={activity}
         currentPax={participants?.length}
       />
@@ -314,6 +324,7 @@ export default function ActivityCard(prop) {
         profile={profile}
         activity={activity}
         refresh={refresh}
+        handleRefresh={handleRefresh}
         setOpenInviteSuccess={setOpenInviteSuccess}
         setOpenInviteFail={setOpenInviteFail}
       />

@@ -41,7 +41,8 @@ export default function FriendInviteMenu(prop) {
     activity,
     setOpenInviteSuccess,
     setOpenInviteFail,
-    refresh
+    refresh,
+    handleRefresh,
   } = prop;
   const { activityName } = activity;
 
@@ -50,6 +51,7 @@ export default function FriendInviteMenu(prop) {
 
   const handleClose = () => {
     setOpen(false);
+    handleRefresh();
   };
 
   const handleInvite = () => {
@@ -77,6 +79,7 @@ export default function FriendInviteMenu(prop) {
       } else {
         setOpenInviteFail(true);
       }
+      handleRefresh();
     };
     sendInvitations();
   };
