@@ -17,7 +17,7 @@ export default function ChatMessages(prop) {
           }}
         >
           <img
-            style={{ width: "30%", borderRadius: "50%", marginBlock: "20px" }}
+            style={{ width: "35%", borderRadius: "50%", marginBlock: "25px" }}
             src={NoMessage}
             alt="No Message Background"
           />

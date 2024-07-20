@@ -17,6 +17,7 @@ import { TextField } from "@mui/material";
 import StyledButton from "../component/StyledButton";
 import { db } from "../data/Firebase/firebase-config";
 import ChatMessages from "../component/ChatMessages";
+import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
 
 export default function Chat(prop) {
   const { profile } = prop;
@@ -26,6 +27,10 @@ export default function Chat(prop) {
   const [currentFriend, setCurrentFriend] = React.useState("");
   const [newMessage, setNewMessages] = React.useState("");
   const [messages, setMessages] = React.useState([]);
+
+  React.useEffect(() => {
+    UpdateLocalUserProfile(prop.profile, prop.setProfile);
+  }, []);
 
   React.useEffect(() => {
     const getFriendProfiles = async () => {
