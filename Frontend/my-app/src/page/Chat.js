@@ -1,5 +1,13 @@
 import React from "react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  onSnapshot,
+  query,
+  where,
+  orderBy,
+} from "firebase/firestore";
 import GetFriends from "../data/Friend/GetFriends";
 import GetUserProfile from "../data/GetUserProfile";
 import ChatFriendMenu from "../component/ChatFriendMenu";
@@ -8,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import { TextField } from "@mui/material";
 import StyledButton from "../component/StyledButton";
 import { db } from "../data/Firebase/firebase-config";
+import ChatMessages from "../component/ChatMessages";
 
 export default function Chat(prop) {
   const { profile } = prop;
@@ -16,6 +25,7 @@ export default function Chat(prop) {
   const [friends, setFriends] = React.useState([]);
   const [currentFriend, setCurrentFriend] = React.useState("");
   const [newMessage, setNewMessages] = React.useState("");
+  const [messages, setMessages] = React.useState([]);
 
   React.useEffect(() => {
     const getFriendProfiles = async () => {
@@ -31,7 +41,7 @@ export default function Chat(prop) {
       setFriends(result);
     };
     getFriendProfiles();
-  }, []);
+  }, [userID]);
 
   React.useEffect(() => {
     if (friends.length !== 0) {
@@ -59,6 +69,32 @@ export default function Chat(prop) {
     setNewMessages("");
   };
 
+  React.useEffect(() => {
+    const queryMessages = query(
+      messagesRef,
+      where("user", "array-contains", userID),
+      orderBy("createdAt")
+    );
+    const unsubscribe = onSnapshot(
+      queryMessages,
+      (snapshot) => {
+        let messages = [];
+        const filteredMessages = snapshot.docs.filter((doc) => {
+          const userArray = doc.data().user;
+          return userArray.includes(currentFriend);
+        });
+        filteredMessages.forEach((doc) =>
+          messages.push({ ...doc.data(), id: doc.id })
+        );
+        setMessages(messages);
+      },
+      (error) => {
+        console.log("Error when fetching chat messages: " + error);
+      }
+    );
+    return () => unsubscribe();
+  }, [messagesRef, userID, friends, currentFriend]);
+
   return (
     <Box sx={{ display: "flex", height: "calc(100vh - 75px)", margin: "0px" }}>
       <Box sx={{ display: "flex", width: "20%" }}>
@@ -77,8 +113,7 @@ export default function Chat(prop) {
             height: "65vh",
           }}
         >
-          <Typography>Chat Message Section</Typography>
-          <Typography>{currentFriend}</Typography>
+          <ChatMessages messages={messages} />
         </Box>
         <Box
           sx={{
