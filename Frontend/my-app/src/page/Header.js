@@ -95,6 +95,11 @@ function LoggedInHeader(prop) {
                 Activity
               </Button>
             </li>
+            <li>
+              <Button component={Link} to="/chat" variant="text">
+                Chat
+              </Button>
+            </li>
           </ul>
         </nav>
         <nav className="header-userMenu">
