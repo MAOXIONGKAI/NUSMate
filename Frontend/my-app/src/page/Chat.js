@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import {
   addDoc,
   collection,
@@ -12,7 +13,6 @@ import GetFriends from "../data/Friend/GetFriends";
 import GetUserProfile from "../data/GetUserProfile";
 import ChatFriendMenu from "../component/ChatFriendMenu";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { TextField } from "@mui/material";
 import StyledButton from "../component/StyledButton";
 import { db } from "../data/Firebase/firebase-config";
@@ -23,8 +23,12 @@ export default function Chat(prop) {
   const { profile } = prop;
   const userID = profile._id;
 
+  // Get previous webpage's data if user come to this page by clicking user card
+  const location = useLocation();
+  const targetUser = location.state?.data ? location.state.data : "";
+
   const [friends, setFriends] = React.useState([]);
-  const [currentFriend, setCurrentFriend] = React.useState("");
+  const [currentFriend, setCurrentFriend] = React.useState(targetUser);
   const [newMessage, setNewMessages] = React.useState("");
   const [messages, setMessages] = React.useState([]);
 
@@ -49,10 +53,11 @@ export default function Chat(prop) {
   }, [userID]);
 
   React.useEffect(() => {
-    if (friends.length !== 0) {
+    if (friends.length === 0) return;
+    if (!targetUser) {
       setCurrentFriend(friends[0]._id);
     }
-  }, [friends]);
+  }, [friends, targetUser]);
 
   const handleChange = (event) => {
     setNewMessages(event.target.value);
