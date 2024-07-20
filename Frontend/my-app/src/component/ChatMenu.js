@@ -5,7 +5,6 @@ import MenuItem from "@mui/material/MenuItem";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import { Typography } from "@mui/material";
 import NoFriendDynamics from "../image/NoFriendDynamics.jpg";
 
 export default function AccountMenu() {

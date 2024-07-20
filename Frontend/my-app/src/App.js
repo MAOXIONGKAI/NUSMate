@@ -10,6 +10,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ForgotPassword from "./page/ForgotPassword";
 import Activity from "./page/Activity";
 import SignUp from "./page/SignUp";
+import Chat from "./page/Chat";
+import zIndex from "@mui/material/styles/zIndex";
 
 function App() {
   //Reading data from online source (database, server, API, etc.)
@@ -51,7 +53,11 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} profile={profile}/>
+        <Header
+          loggedIn={loggedIn}
+          setLoggedIn={setLoggedIn}
+          profile={profile}
+        />
         <Routes>
           <Route
             path="/"
@@ -79,6 +85,10 @@ function App() {
           <Route
             path="/activity"
             element={<Activity profile={profile} setProfile={setProfile} />}
+          />
+          <Route
+            path="/chat"
+            element={<Chat profile={profile} setProfile={setProfile} />}
           />
           <Route
             path="/login"
