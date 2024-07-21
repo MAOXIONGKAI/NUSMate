@@ -160,13 +160,13 @@ export default function Activity(prop) {
     };
     getData();
     resetPaginationSetting();
-  }, [currentGroup, hasModified, prop.profile._id]);
+  }, [currentGroup]);
 
   React.useEffect(() => {
     if (!openSuccess) {
       setHasModified((prev) => !prev);
     }
-  }, [openSuccess, setHasModified]);
+  }, [openSuccess]);
 
   const [openDetail, setOpenDetail] = React.useState(false);
   const [activityDetail, setActivityDetail] = React.useState({});
