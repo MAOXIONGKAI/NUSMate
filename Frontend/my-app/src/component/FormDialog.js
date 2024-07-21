@@ -115,6 +115,7 @@ export default function FormDialog(prop) {
         }}
         sx={{
           textAlign: "center",
+          
         }}
       >
         <DialogTitle
@@ -246,7 +247,7 @@ export default function FormDialog(prop) {
               onChange={handleChange}
               type="number"
               sx={{ flex: 1 }}
-              inputProps={{ min: 1, max: 999 }}
+              inputProps={{ min: 1, max: 50 }}
             />
           </Box>
           <TextField
@@ -271,11 +272,11 @@ export default function FormDialog(prop) {
             onChange={handleChange}
             type="text"
             multiline
-            maxRows={2}
+            maxRows={3}
             fullWidth
             variant="standard"
             sx={{ marginTop: "20px" }}
-            inputProps={{ maxLength: 300 }}
+            inputProps={{ maxLength: 500 }}
           />
         </DialogContent>
         <DialogActions
