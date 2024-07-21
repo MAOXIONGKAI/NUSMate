@@ -119,8 +119,8 @@ export default function Chat(prop) {
   }, [currentFriend]);
 
   return (
-    <Box sx={{ display: "flex", height: "calc(100vh - 75px)", margin: "0px" }}>
-      <Box sx={{ display: "flex", width: "20%" }}>
+    <Box sx={{ display: "flex", height: "calc(100vh - 75px)", width: "100%", margin: "0px" }}>
+      <Box sx={{ display: "flex", width: "20vw" }}>
         <ChatFriendMenu
           profile={profile}
           friends={friends}
@@ -128,7 +128,7 @@ export default function Chat(prop) {
           setCurrentFriend={setCurrentFriend}
         />
       </Box>
-      <Box component="main" sx={{ width: "100%", p: 3 }}>
+      <Box component="main" sx={{ width: "80vw", p: 3 }}>
         <Box
           sx={{
             display: "flex",
@@ -143,7 +143,7 @@ export default function Chat(prop) {
             display: "flex",
             position: "fixed",
             bottom: "5%",
-            width: "80%",
+            width: "76.3%",
           }}
         >
           <TextField

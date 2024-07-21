@@ -23,7 +23,7 @@ export default function Message(prop) {
         boxShadow: 3
       }}
     >
-      <Typography>{text}</Typography>
+      <Typography sx={{fontSize: "18px"}}>{text}</Typography>
     </Box>
   );
 }
