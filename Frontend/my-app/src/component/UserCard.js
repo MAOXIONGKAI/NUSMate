@@ -306,7 +306,11 @@ export default function UserCard(prop) {
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ fontSize: "16px" }}
+              sx={{
+                fontSize: "16px",
+                textWrap: "wrap",
+                wordBreak: "break-word",
+              }}
             >
               {description
                 ? description

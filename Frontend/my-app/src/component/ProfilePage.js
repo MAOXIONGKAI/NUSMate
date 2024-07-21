@@ -282,6 +282,7 @@ export default function ProfilePage(prop) {
                   name="username"
                   value={editedProfile.username}
                   onChange={handleChange}
+                  inputProps={{maxLength: 30}}
                 >
                   Username
                 </TextField>
@@ -326,6 +327,7 @@ export default function ProfilePage(prop) {
                 value={editedProfile.description}
                 sx={{ width: "75%", margin: "10px" }}
                 onChange={handleChange}
+                inputProps={{maxLength: 350}}
               >
                 Description
               </TextField>
@@ -337,6 +339,8 @@ export default function ProfilePage(prop) {
                   fontWeight: "lighter",
                   maxWidth: "75%",
                   textAlign: "center",
+                  textWrap: "wrap",
+                  wordBreak: "break-word"
                 }}
               >
                 {description}

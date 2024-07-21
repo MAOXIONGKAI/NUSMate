@@ -176,7 +176,14 @@ export default function CardDetail(prop) {
               width: "100%",
             }}
           >
-            <Typography color="gray" sx={{ marginBlock: "15px" }}>
+            <Typography
+              color="gray"
+              sx={{
+                marginBlock: "15px",
+                textWrap: "wrap",
+                wordBreak: "break-word",
+              }}
+            >
               {description}
             </Typography>
             <Box
@@ -264,11 +271,12 @@ export default function CardDetail(prop) {
                             textAlign: "left",
                           }}
                         >
-                          {interests && interests.map((interest, index) => (
-                            <li key={index} style={{ fontWeight: "lighter" }}>
-                              {interest}
-                            </li>
-                          ))}
+                          {interests &&
+                            interests.map((interest, index) => (
+                              <li key={index} style={{ fontWeight: "lighter" }}>
+                                {interest}
+                              </li>
+                            ))}
                         </ul>
                       </TableCell>
                     </TableRow>

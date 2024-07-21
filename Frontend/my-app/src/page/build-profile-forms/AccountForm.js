@@ -58,6 +58,7 @@ export default function AccountForm(prop) {
                   name="username"
                   value={prop.formData.username}
                   onChange={prop.handleChange}
+                  inputProps={{ maxLength: 30 }}
                 />
               </Grid>
               <Grid item xs={12}>
