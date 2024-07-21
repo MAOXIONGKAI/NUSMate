@@ -1,9 +1,11 @@
 import React from "react";
+import "../index.css";
 import { Typography, Box } from "@mui/material";
 import NoMessage from "../image/NoMessage.jpg";
+import Message from "./Message";
 
 export default function ChatMessages(prop) {
-  const { messages } = prop;
+  const { messages, userID } = prop;
   return (
     <>
       {messages.length === 0 ? (
@@ -13,7 +15,7 @@ export default function ChatMessages(prop) {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            textAlign: "center"
+            textAlign: "center",
           }}
         >
           <img
@@ -28,12 +30,24 @@ export default function ChatMessages(prop) {
               fontSize: "24px",
             }}
           >
-            No Messages found at the moment<br/>
+            No messages found at the moment
+            <br />
             Try send a message or visit later
           </Typography>
         </Box>
       ) : (
-        messages.map((message) => <Typography>{message.text}</Typography>)
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            overflowY: "auto",
+            height: "100%",
+          }}
+        >
+          {messages.map((message) => (
+            <Message text={message.text} isSender={message.sender === userID} />
+          ))}
+        </Box>
       )}
     </>
   );

@@ -50,14 +50,14 @@ export default function Chat(prop) {
       setFriends(result);
     };
     getFriendProfiles();
-  }, [userID]);
+  }, []);
 
   React.useEffect(() => {
     if (friends.length === 0) return;
     if (!targetUser) {
       setCurrentFriend(friends[0]._id);
     }
-  }, [friends, targetUser]);
+  }, []);
 
   const handleChange = (event) => {
     setNewMessages(event.target.value);
@@ -77,6 +77,19 @@ export default function Chat(prop) {
     };
     await addDoc(messagesRef, message);
     setNewMessages("");
+  };
+
+  const handlePressEnter = async (event) => {
+    if (event.key === "Enter" && newMessage.trim()) {
+      const message = {
+        text: newMessage,
+        sender: profile._id,
+        user: [profile._id, currentFriend],
+        createdAt: serverTimestamp(),
+      };
+      await addDoc(messagesRef, message);
+      setNewMessages("");
+    }
   };
 
   React.useEffect(() => {
@@ -103,7 +116,7 @@ export default function Chat(prop) {
       }
     );
     return () => unsubscribe();
-  }, [messagesRef, userID, friends, currentFriend]);
+  }, [currentFriend]);
 
   return (
     <Box sx={{ display: "flex", height: "calc(100vh - 75px)", margin: "0px" }}>
@@ -123,7 +136,7 @@ export default function Chat(prop) {
             height: "65vh",
           }}
         >
-          <ChatMessages messages={messages} />
+          <ChatMessages messages={messages} userID={userID} />
         </Box>
         <Box
           sx={{
@@ -135,12 +148,14 @@ export default function Chat(prop) {
         >
           <TextField
             fullWidth
+            autoComplete="off"
             sx={{ marginRight: "20px" }}
             size="small"
             placeholder="Type your message here..."
             name="newMessage"
             value={newMessage}
             onChange={handleChange}
+            onKeyDown={handlePressEnter}
           />
           <StyledButton
             text="Send"

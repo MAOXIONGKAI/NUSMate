@@ -17,7 +17,6 @@ export default function ChatFriendMenu(prop) {
 
   const handleSwitchFriend = (ID) => {
     setCurrentFriend(ID);
-    console.log("Switched to chat with user: " + ID);
   };
 
   return (
@@ -28,7 +27,8 @@ export default function ChatFriendMenu(prop) {
         margin: "0px",
         padding: "0px",
         borderRight: "lightgray 2px solid",
-        boxShadow: "2px 0px 2px 0px lightgray"
+        boxShadow: "2px 0px 2px 0px lightgray",
+        overflow: "hidden",
       }}
     >
       {friends.length === 0 ? (
@@ -50,9 +50,9 @@ export default function ChatFriendMenu(prop) {
         friends.map((friend) => {
           const labelId = `checkbox-list-secondary-label-${friend._id}`;
           return (
-            <React.Fragment>
+            <div key={profile._id + friend._id}>
               <ListItem
-                key={profile._id + friend._id}
+                
                 disablePadding
                 sx={{
                   backgroundColor:
@@ -93,7 +93,7 @@ export default function ChatFriendMenu(prop) {
                 </ListItemButton>
               </ListItem>
               <Divider />
-            </React.Fragment>
+            </div>
           );
         })
       )}
