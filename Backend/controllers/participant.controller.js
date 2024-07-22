@@ -1,4 +1,5 @@
 const Participant = require("../models/participant.model");
+const {getIo} = require("../socketManager");
 
 const readAllParticipants = async (req, res) => {
   try {
@@ -35,10 +36,16 @@ const readAllSentRequests = async (req, res) => {
 const readAllJoinedActivities = async (req, res) => {
   try {
     const { userID } = req.params;
-    const response = await Participant.find({
-      participantID: userID,
-      status: "Approved",
-    });
+    const query = {
+      $or: [
+        {
+          participantID: userID,
+          status: "Approved",
+        },
+        { participantID: userID, status: "Invite-Accepted" },
+      ],
+    };
+    const response = await Participant.find(query).sort({ updatedAt: -1 });
     if (!response) {
       return res.status(404).json({ message: "No joined activity found" });
     }
@@ -51,12 +58,23 @@ const readAllJoinedActivities = async (req, res) => {
 const readAllJoinedParticipants = async (req, res) => {
   try {
     const { activityID } = req.params;
-    const response = await Participant.find({
-      activityID: activityID,
-      status: "Approved",
-    }).sort({updatedAt: -1});
+    const query = {
+      $or: [
+        {
+          activityID: activityID,
+          status: "Approved",
+        },
+        {
+          activityID: activityID,
+          status: "Invite-Accepted",
+        },
+      ],
+    };
+    const response = await Participant.find(query).sort({ updatedAt: -1 });
     if (!response) {
-      return res.status(404).json({message: "No participant found for this activity"})
+      return res
+        .status(404)
+        .json({ message: "No participant found for this activity" });
     }
     res.status(200).json(response);
   } catch (error) {
@@ -67,10 +85,16 @@ const readAllJoinedParticipants = async (req, res) => {
 const readAllPendingRequests = async (req, res) => {
   try {
     const { hostID } = req.params;
-    const response = await Participant.find({
-      hostID: hostID,
-      status: "Pending",
-    }).sort({ updatedAt: -1 });
+    const query = {
+      $or: [
+        {
+          hostID: hostID,
+          status: "Pending",
+        },
+        { participantID: hostID, status: "Invited" },
+      ],
+    };
+    const response = await Participant.find(query).sort({ updatedAt: -1 });
     if (!response) {
       return res
         .status(404)
@@ -88,8 +112,11 @@ const readAllAssociatedParticipation = async (req, res) => {
     const query = {
       $or: [
         { hostID: userID, status: "Pending" },
+        { hostID: userID, status: "Invite-Accepted" },
+        { hostID: userID, status: "Invite-Rejected" },
         { participantID: userID, status: "Approved" },
         { participantID: userID, status: "Declined" },
+        { participantID: userID, status: "Invited" },
       ],
     };
     const response = await Participant.find(query).sort({ updatedAt: -1 });
@@ -130,9 +157,25 @@ const checkIfJoined = async (req, res) => {
   }
 };
 
+const checkIfInvited = async (req, res) => {
+  try {
+    const response = await Participant.findOne(req.body);
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "User has not been invited to the activity" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const createParticipant = async (req, res) => {
   try {
     const response = await Participant.create(req.body);
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -148,6 +191,8 @@ const approveParticipant = async (req, res) => {
         .status(404)
         .json({ message: "No pending activity request found to be approved" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -163,8 +208,46 @@ const declineParticipant = async (req, res) => {
         .status(404)
         .json({ message: "No pending activity request found to be declined" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const acceptInvitation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await Participant.findByIdAndUpdate(id, req.body);
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No invitation found to accept from the database" });
+    }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const rejectInvitation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await Participant.findByIdAndUpdate(id, req.body);
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No invitation found to reject from the database" });
+    }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 const removeParticipant = async (req, res) => {
@@ -176,6 +259,44 @@ const removeParticipant = async (req, res) => {
         .status(404)
         .json({ message: "No participants found to delete from the database" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const removeAllParticipantsbyActivity = async (req, res) => {
+  try {
+    const { activityID } = req.params;
+    const response = await Participant.deleteMany({ activityID: activityID });
+    if (!response) {
+      return res.status(404).json({
+        message: "No participants associated with the activity to remove",
+      });
+    }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const markAsRead = async (req, res) => {
+  try {
+    const { requestID } = req.params;
+    const response = await Participant.findByIdAndUpdate(requestID, req.body, {
+      timestamps: false,
+    });
+    if (!response) {
+      return res.status(404).json({
+        message: "No participation found in database to mark as read",
+      });
+    }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -190,9 +311,14 @@ module.exports = {
   readAllJoinedParticipants,
   readAllAssociatedParticipation,
   checkIfJoined,
+  checkIfInvited,
   readParticipant,
   createParticipant,
   approveParticipant,
   declineParticipant,
+  acceptInvitation,
+  rejectInvitation,
   removeParticipant,
+  removeAllParticipantsbyActivity,
+  markAsRead,
 };

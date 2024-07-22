@@ -19,6 +19,11 @@ export default function Friend(prop) {
   const userID = prop.profile._id;
   const backendURL = process.env.REACT_APP_BACKEND_URL;
 
+  const [refresh, setRefresh] = React.useState(false);
+  const refreshPage = () => {
+    setRefresh((prev) => !prev);
+  };
+
   const getMyFriends = async () => {
     try {
       const response = await axios.get(
@@ -98,9 +103,8 @@ export default function Friend(prop) {
   const getMyFriendProfiles = async () => {
     try {
       const profilePromises = currentResult.map((request) => {
-        const ID = request.fromUserID !== userID
-        ? request.fromUserID
-        : request.toUserID;
+        const ID =
+          request.fromUserID !== userID ? request.fromUserID : request.toUserID;
 
         return axios.get(`${backendURL}/api/profiles/${ID}`, {
           headers: {
@@ -149,11 +153,18 @@ export default function Friend(prop) {
   const getPendingRequestProfiles = async () => {
     try {
       const profilePromises = currentResult.map((request) => {
-        return axios.get(`${backendURL}/api/profiles/${request.fromUserID}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        return axios.get(
+          `${backendURL}/api/profiles/${
+            request.fromUserID === userID
+              ? request.toUserID
+              : request.fromUserID
+          }`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       });
       const responses = await Promise.all(profilePromises);
       const responsesData = responses
@@ -171,11 +182,16 @@ export default function Friend(prop) {
   const getMyFriendRequestProfiles = async () => {
     try {
       const profilePromises = currentResult.map((request) => {
-        return axios.get(`${backendURL}/api/profiles/${request.toUserID}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        return axios.get(
+          `${backendURL}/api/profiles/${
+            request.toUserID === userID ? request.fromUserID : request.toUserID
+          }`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       });
       const responses = await Promise.all(profilePromises);
       const responsesData = responses
@@ -206,7 +222,7 @@ export default function Friend(prop) {
     } else if (currentGroup === "My Friend") {
       getMyFriendProfiles();
     }
-  }, [currentResult, currentGroup]);
+  }, [currentResult, currentGroup, refresh]);
 
   React.useEffect(() => {
     resetPaginationSetting();
@@ -221,7 +237,7 @@ export default function Friend(prop) {
     } else {
       setCurrentResult([]);
     }
-  }, [currentGroup]);
+  }, [currentGroup, refresh]);
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const profilesPerPage = 9;
@@ -318,6 +334,7 @@ export default function Friend(prop) {
                         profile={profile}
                         userID={userID}
                         sx={{ flexGrow: 1 }}
+                        refreshPage={refreshPage}
                       />
                     </Box>
                   </Grid>

@@ -15,9 +15,6 @@ export default async function SendFriendRequest(profileID, friendID) {
         headers: { "Content-Type": "application/json" },
       }
     );
-    await console.log(
-      "Successfully send friend request from: " + profileID + " to " + friendID
-    );
     return response.data;
   } catch (error) {
     console.log(

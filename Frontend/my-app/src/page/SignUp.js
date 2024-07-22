@@ -130,7 +130,7 @@ export default function SignUp(prop) {
             },
           }
         );
-        console.log("Data successfully send to database: " + response.data);
+        //console.log("Data successfully send to database: " + response.data);
 
         //Reset form and relevant stored status after successful form submission
         window.localStorage.removeItem("signUpFormData");

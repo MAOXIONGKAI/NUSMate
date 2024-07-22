@@ -16,6 +16,7 @@ const {
   getSentFriendRequest,
   getFriends,
   getUserFriendStatus,
+  markAsRead,
 } = require("../controllers/friend.controller.js");
 
 router.get("/", getAllFriendships);
@@ -36,7 +37,9 @@ router.post("/check_if_friend", checkIfFriend);
 
 router.put("/approve_request/:requestID", approvePendingFriendRequest);
 
-router.put("/decline_request/:requestID", declinePendingFriendRequest)
+router.put("/decline_request/:requestID", declinePendingFriendRequest);
+
+router.put("/mark_as_read/:requestID", markAsRead);
 
 router.delete("/withdraw_request/:requestID", withdrawSentRequest);
 

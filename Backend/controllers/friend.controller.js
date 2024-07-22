@@ -1,6 +1,7 @@
 const Friend = require("../models/friend.model");
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types;
+const {getIo} = require("../socketManager")
 
 const getAllFriendships = async (req, res) => {
   try {
@@ -22,7 +23,7 @@ const getUserFriendStatus = async (req, res) => {
     const query = {
       $or: [
         { fromUserID: userID, status: "Approved" },
-        { fromUserID: userID, status: "Declined"},
+        { fromUserID: userID, status: "Declined" },
         { toUserID: userID, status: "Pending" },
       ],
     };
@@ -41,6 +42,8 @@ const getUserFriendStatus = async (req, res) => {
 const createFriendship = async (req, res) => {
   try {
     const response = await Friend.create(req.body);
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -127,6 +130,8 @@ const withdrawSentRequest = async (req, res) => {
         .status(404)
         .json({ message: "No pending request to delete in database" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -135,19 +140,26 @@ const withdrawSentRequest = async (req, res) => {
 
 const checkIfFriend = async (req, res) => {
   try {
-    let response = await Friend.findOne(req.body);
+    const { fromUserID, toUserID } = req.body;
+    const query = {
+      $or: [
+        {
+          fromUserID: fromUserID,
+          toUserID: toUserID,
+          status: "Approved",
+        },
+        {
+          fromUserID: toUserID,
+          toUserID: fromUserID,
+          status: "Approved",
+        },
+      ],
+    };
+    const response = await Friend.findOne(query);
     if (!response) {
-      response = await Friend.findOne({
-        fromUserID: req.body.toUserID,
-        toUserID: req.body.fromUserID,
-        status: "Approved",
-      });
-
-      if (!response) {
-        return res
-          .status(404)
-          .json({ message: "The two users are not friends..." });
-      }
+      return res
+        .status(404)
+        .json({ message: "The two users are not friends..." });
     }
     res.status(200).json(response);
   } catch (error) {
@@ -164,6 +176,8 @@ const approvePendingFriendRequest = async (req, res) => {
         .status(404)
         .json({ message: "No pending friend request to approve in database" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -179,6 +193,8 @@ const declinePendingFriendRequest = async (req, res) => {
         .status(404)
         .json({ message: "No pending friend request to decline in database" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -194,6 +210,27 @@ const removeFriend = async (req, res) => {
         .status(404)
         .json({ message: "No friendship found in database for deletion" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const markAsRead = async (req, res) => {
+  try {
+    const { requestID } = req.params;
+    const response = await Friend.findByIdAndUpdate(requestID, req.body, {
+      timestamps: false,
+    });
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "No friendship found in database to mark as read" });
+    }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -213,4 +250,5 @@ module.exports = {
   approvePendingFriendRequest,
   declinePendingFriendRequest,
   removeFriend,
+  markAsRead,
 };

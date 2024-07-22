@@ -1,4 +1,4 @@
-import React, { act } from "react";
+import React from "react";
 import dayjs from "dayjs";
 import {
   Typography,
@@ -9,15 +9,20 @@ import {
   CardActionArea,
   IconButton,
   Tooltip,
+  Grid,
 } from "@mui/material";
 import ColorNameAvatar from "../component/ColorNameAvatar";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
+import GroupsIcon from "@mui/icons-material/Groups";
+import AddReactionIcon from "@mui/icons-material/AddReaction";
 import ShareIcon from "@mui/icons-material/Share";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout";
+import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlined from "@mui/icons-material/CancelOutlined";
 import DeleteActivity from "../data/Activity/DeleteActivity";
 import CustomizedSnackbar from "./CustomizedSnackbar";
 import ActivityDetail from "./ActivityDetail";
@@ -28,6 +33,13 @@ import CheckIfJoined from "../data/Participant/CheckIfJoined";
 import GetUserProfile from "../data/GetUserProfile";
 import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
 import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
+import EditActivityForm from "./EditActivityForm";
+import ManageParticipantMenu from "./MangeParticipantMenu";
+import FriendInviteMenu from "./FriendInviteMenu";
+import CheckIfInvited from "../data/Participant/CheckIfInvited";
+import AcceptInvitation from "../data/Participant/AcceptInvitation";
+import RejectInvitation from "../data/Participant/RejectInvitation";
+import GetInvitationRequest from "../data/Participant/GetInvitationRequest";
 
 export default function ActivityCard(prop) {
   const { profile, activity, setHasModified } = prop;
@@ -47,12 +59,28 @@ export default function ActivityCard(prop) {
   endDate = dayjs(endDate).format("ddd, MMM D, YYYY h:mm A");
 
   const [openDetail, setOpenDetail] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const [openParticipantMenu, setOpenParticipantMenu] = React.useState(false);
+  const [openInviteMenu, setOpenInviteMenu] = React.useState(false);
   const [hasRequestedToJoin, setHasRequestedToJoin] = React.useState(false);
   const [hasJoined, setHasJoined] = React.useState(false);
+  const [hasBeenInvited, setHasBeenInvited] = React.useState(false);
   const [openDeleteSuccess, setOpenDeleteSuccess] = React.useState(false);
+  const [openEditSuccess, setOpenEditSuccess] = React.useState(false);
+  const [openEditFail, setOpenEditFail] = React.useState(false);
   const [openDeleteFail, setOpenDeleteFail] = React.useState(false);
+  const [openRemoveSuccess, setOpenRemoveSuccess] = React.useState(false);
+  const [openRemoveFail, setOpenRemoveFail] = React.useState(false);
+  const [openInviteSuccess, setOpenInviteSuccess] = React.useState(false);
+  const [openInviteFail, setOpenInviteFail] = React.useState(false);
 
   const [participants, setParticipants] = React.useState([]);
+
+  // Refresh activity card info after certain actions
+  const [refresh, setRefresh] = React.useState(false);
+  const handleRefresh = () => {
+    setRefresh((prev) => !prev);
+  };
 
   React.useEffect(() => {
     const getParticipants = async () => {
@@ -61,13 +89,14 @@ export default function ActivityCard(prop) {
         return GetUserProfile(participation.participantID);
       });
       const hostProfile = await GetUserProfile(hostID);
-      const result = hostProfile && profilePromises
-        ? await Promise.all([hostProfile, ...profilePromises])
-        : [];
+      const result =
+        hostProfile && profilePromises
+          ? await Promise.all([hostProfile, ...profilePromises])
+          : [];
       setParticipants(result);
     };
     getParticipants();
-  }, [_id]);
+  }, [_id, hostID, refresh]);
 
   //Check with database about whether the user has requested to join this activity
   React.useEffect(() => {
@@ -79,7 +108,7 @@ export default function ActivityCard(prop) {
       }
     };
     checkRequested();
-  }, []);
+  }, [_id, profile._id, refresh]);
 
   //Check with database about whether the user has joined this activity
   React.useEffect(() => {
@@ -92,6 +121,20 @@ export default function ActivityCard(prop) {
   const handleOpenDetail = () => {
     setOpenDetail(true);
   };
+
+  //Check with database about whether the user has been invited to this activity
+  React.useEffect(() => {
+    const checkInviteStatus = async () => {
+      setHasBeenInvited(await CheckIfInvited(profile._id, hostID, _id));
+    };
+    checkInviteStatus();
+  }, []);
+
+  React.useEffect(() => {
+    if (!openDeleteSuccess) {
+      setHasModified((prev) => !prev);
+    }
+  }, [openDeleteSuccess, setHasModified]);
 
   const handleDeleteActivity = (ID) => {
     const sendDeleteRequest = async () => {
@@ -106,7 +149,8 @@ export default function ActivityCard(prop) {
     const sendJoinRequest = async () => {
       if (await CreateParticipant(participantID, hostID, activityID)) {
         setHasRequestedToJoin(true);
-        setHasModified(prev => !prev);
+        setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendJoinRequest();
@@ -121,7 +165,8 @@ export default function ActivityCard(prop) {
       const requestID = await requestData._id;
       if (await RemoveParticipant(requestID)) {
         setHasRequestedToJoin(false);
-        setHasModified(prev => !prev);
+        setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendWithdrawRequest();
@@ -137,10 +182,60 @@ export default function ActivityCard(prop) {
       if (await RemoveParticipant(requestID)) {
         setHasJoined(false);
         setHasRequestedToJoin(false);
-        setHasModified(prev => !prev);
+        setHasModified((prev) => !prev);
+        handleRefresh();
       }
     };
     sendWithdrawRequest();
+  };
+
+  const handleAcceptActivityInvitation = (participantID, activityID) => {
+    const sendAcceptRequest = async () => {
+      const requestData = await GetInvitationRequest(participantID, activityID);
+      if (!requestData) {
+        return;
+      }
+      const requestID = await requestData._id;
+      if (await AcceptInvitation(requestID)) {
+        setHasBeenInvited(false);
+        setHasJoined(true);
+        setHasModified((prev) => !prev);
+        handleRefresh();
+      }
+    };
+    sendAcceptRequest();
+  };
+
+  const handleRejectActivityInvitation = (participantID, activityID) => {
+    const sendRejectRequest = async () => {
+      const requestData = await GetInvitationRequest(participantID, activityID);
+      if (!requestData) {
+        return;
+      }
+      const requestID = await requestData._id;
+      if (await RejectInvitation(requestID)) {
+        setHasBeenInvited(false);
+        setHasBeenInvited(false);
+        setHasModified((prev) => !prev);
+        handleRefresh();
+      }
+    };
+    sendRejectRequest();
+  };
+
+  const handleEditActivity = () => {
+    setOpenEdit(true);
+    handleRefresh();
+  };
+
+  const handleManageParticipant = () => {
+    setOpenParticipantMenu(true);
+    handleRefresh();
+  };
+
+  const handleFrinedInvite = () => {
+    setOpenInviteMenu(true);
+    handleRefresh();
   };
 
   return (
@@ -152,12 +247,47 @@ export default function ActivityCard(prop) {
       />
       <CustomizedSnackbar
         text="Delete Activity Failed: Unknown Server Error"
+        severity="error"
         open={openDeleteFail}
         setOpen={setOpenDeleteFail}
+      />
+      <CustomizedSnackbar
+        text="Edit Activity Successfully"
+        open={openEditSuccess}
+        setOpen={setOpenEditSuccess}
+      />
+      <CustomizedSnackbar
+        text="Edit Activity Failed: Unknown Server Error"
+        open={openEditFail}
+        severity="error"
+        setOpen={setOpenEditFail}
+      />
+      <CustomizedSnackbar
+        text="Successfully removed participant from the activity"
+        open={openRemoveSuccess}
+        setOpen={setOpenRemoveSuccess}
+      />
+      <CustomizedSnackbar
+        text="Removed Participant Failed: Unknown Server Error"
+        severity="error"
+        open={openRemoveFail}
+        setOpen={setOpenRemoveFail}
+      />
+      <CustomizedSnackbar
+        text="Successfully update invitations to friends"
+        open={openInviteSuccess}
+        setOpen={setOpenInviteSuccess}
+      />
+      <CustomizedSnackbar
+        text="Send Invitation Failed: Unknown Server Error"
+        severity="error"
+        open={openInviteFail}
+        setOpen={setOpenInviteFail}
       />
       <ActivityDetail
         open={openDetail}
         setOpen={setOpenDetail}
+        refresh={refresh}
         profile={profile}
         _id={_id}
         hostID={hostID}
@@ -168,6 +298,42 @@ export default function ActivityCard(prop) {
         endDate={endDate}
         location={location}
         description={description}
+      />
+      <EditActivityForm
+        open={openEdit}
+        setOpen={setOpenEdit}
+        setOpenEditSuccess={setOpenEditSuccess}
+        setOpenEditFail={setOpenEditFail}
+        setHasModified={setHasModified}
+        handleRefresh={handleRefresh}
+        activity={activity}
+        currentPax={participants?.length}
+      />
+      <ManageParticipantMenu
+        open={openParticipantMenu}
+        setOpen={setOpenParticipantMenu}
+        refresh={refresh}
+        handleRefresh={handleRefresh}
+        openRemoveSuccess={openRemoveSuccess}
+        setOpenRemoveSuccess={setOpenRemoveSuccess}
+        openRemoveFail={openRemoveFail}
+        setOpenRemoveFail={setOpenRemoveFail}
+        profile={profile}
+        _id={_id}
+        hostID={hostID}
+        hostName={hostName}
+        activityName={activityName}
+        pax={pax}
+      />
+      <FriendInviteMenu
+        open={openInviteMenu}
+        setOpen={setOpenInviteMenu}
+        profile={profile}
+        activity={activity}
+        refresh={refresh}
+        handleRefresh={handleRefresh}
+        setOpenInviteSuccess={setOpenInviteSuccess}
+        setOpenInviteFail={setOpenInviteFail}
       />
       <Card
         sx={{
@@ -269,14 +435,16 @@ export default function ActivityCard(prop) {
                 <Box
                   sx={{
                     display: "flex",
-                    color: "green",
+                    color: participants.length === pax ? "red" : "green",
                     margin: "0px",
                     marginLeft: "auto",
                     padding: "0px",
                   }}
                 >
                   <PersonIcon />
-                  <Typography variant="body2">({participants.length}/{pax})</Typography>
+                  <Typography variant="body2">
+                    ({participants.length}/{pax})
+                  </Typography>
                 </Box>
               </Box>
               <Typography
@@ -308,51 +476,93 @@ export default function ActivityCard(prop) {
             backgroundColor: "#EFF9FF",
           }}
         >
-          {profile._id === hostID ? (
-            <>
-              <Tooltip title="Edit this activity">
+          <Grid
+            container
+            sx={{ alignItems: "center", justifyContent: "center" }}
+          >
+            {profile._id === hostID ? (
+              <>
+                <Tooltip title="Edit this activity">
+                  <IconButton onClick={handleEditActivity}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Manage Participants">
+                  <IconButton onClick={handleManageParticipant}>
+                    <GroupsIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Invite friends to the activity">
+                  <IconButton
+                    disabled={participants.length === pax}
+                    onClick={handleFrinedInvite}
+                  >
+                    <AddReactionIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete this activity">
+                  <IconButton onClick={() => handleDeleteActivity(_id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : hasJoined ? (
+              <Tooltip title="Withdraw from this activity">
                 <IconButton
-                  onClick={() => {
-                    console.log("Editing: " + activityName);
-                  }}
+                  onClick={() => handleWithdrawFromActivity(profile._id, _id)}
                 >
-                  <EditIcon />
+                  <LogoutIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete this activity">
-                <IconButton onClick={() => handleDeleteActivity(_id)}>
-                  <DeleteIcon />
+            ) : hasRequestedToJoin ? (
+              <Tooltip title="Withdraw join request for this activity">
+                <IconButton
+                  onClick={() =>
+                    handleWithdrawActivityRequest(profile._id, _id)
+                  }
+                >
+                  <GroupRemoveIcon />
                 </IconButton>
               </Tooltip>
-            </>
-          ) : hasJoined ? (
-            <Tooltip title="Withdraw from this activity">
-              <IconButton onClick={() => handleWithdrawFromActivity(profile._id, _id)}>
-                <LogoutIcon />
+            ) : hasBeenInvited ? (
+              <>
+                <Tooltip title={`Accept Invitation from ${activity.hostName}`}>
+                  <IconButton
+                    sx={{ color: "#32CD32" }}
+                    onClick={() =>
+                      handleAcceptActivityInvitation(profile._id, _id)
+                    }
+                  >
+                    <CheckCircleOutline />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip
+                  title={`Reject invitation from ${activity.hostName}`}
+                  onClick={() =>
+                    handleRejectActivityInvitation(profile._id, _id)
+                  }
+                >
+                  <IconButton sx={{ color: "red" }}>
+                    <CancelOutlined />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : (
+              <Tooltip title="Request to join this activity">
+                <IconButton
+                  disabled={participants.length === pax}
+                  onClick={() => handleJoinActivity(profile._id, hostID, _id)}
+                >
+                  <GroupAddIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+            <Tooltip title="Share this activity">
+              <IconButton>
+                <ShareIcon />
               </IconButton>
             </Tooltip>
-          ) : hasRequestedToJoin ? (
-            <Tooltip title="Withdraw join request for this activity">
-              <IconButton
-                onClick={() => handleWithdrawActivityRequest(profile._id, _id)}
-              >
-                <GroupRemoveIcon />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            <Tooltip title="Request to join this activity">
-              <IconButton
-                onClick={() => handleJoinActivity(profile._id, hostID, _id)}
-              >
-                <GroupAddIcon />
-              </IconButton>
-            </Tooltip>
-          )}
-          <Tooltip title="Share this activity">
-            <IconButton>
-              <ShareIcon />
-            </IconButton>
-          </Tooltip>
+          </Grid>
         </CardActions>
       </Card>
     </React.Fragment>

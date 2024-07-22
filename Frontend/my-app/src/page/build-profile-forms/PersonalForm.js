@@ -40,7 +40,6 @@ export default function PersonalForm(prop) {
 
   function deleteInterest(index) {
     const interestArr = prop.formData.interests;
-    console.log(index);
     const newInterests = [
       ...interestArr.slice(0, index),
       ...interestArr.slice(index + 1),
@@ -196,6 +195,7 @@ export default function PersonalForm(prop) {
           name="description"
           value={prop.formData.description}
           onChange={prop.handleChange}
+          inputProps={{maxLength: 350}}
         />
       </FormControl>
     </Box>

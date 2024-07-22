@@ -2,6 +2,7 @@ import React from "react";
 import dayjs from "dayjs";
 import CreateActivity from "../data/Activity/CreateActivity";
 import { Box, FormHelperText } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -13,6 +14,7 @@ import { Divider } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function FormDialog(prop) {
   const { open, setOpen } = prop;
@@ -63,7 +65,7 @@ export default function FormDialog(prop) {
     fieldsToValidate.forEach((field) => {
       const input = document.querySelector(`[name="${field}"]`);
       const value =
-        field === "startDate" || field === "endDate"
+        field === "startDate" || field === "endDate" || field === "pax"
           ? formData[field]
           : formData[field]?.trim();
 
@@ -113,6 +115,7 @@ export default function FormDialog(prop) {
         }}
         sx={{
           textAlign: "center",
+          
         }}
       >
         <DialogTitle
@@ -125,6 +128,18 @@ export default function FormDialog(prop) {
         >
           {prop.title}
         </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: "white",
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
         <DialogContentText>{prop.content}</DialogContentText>
         <DialogContent
           sx={{
@@ -232,7 +247,7 @@ export default function FormDialog(prop) {
               onChange={handleChange}
               type="number"
               sx={{ flex: 1 }}
-              inputProps={{ min: 1, max: 999 }}
+              inputProps={{ min: 1, max: 50 }}
             />
           </Box>
           <TextField
@@ -257,11 +272,11 @@ export default function FormDialog(prop) {
             onChange={handleChange}
             type="text"
             multiline
-            maxRows={2}
+            maxRows={3}
             fullWidth
             variant="standard"
             sx={{ marginTop: "20px" }}
-            inputProps={{ maxLength: 300 }}
+            inputProps={{ maxLength: 500 }}
           />
         </DialogContent>
         <DialogActions

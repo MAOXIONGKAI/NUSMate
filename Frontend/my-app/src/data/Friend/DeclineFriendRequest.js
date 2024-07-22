@@ -6,14 +6,14 @@ export default async function DeclineFriendRequest(requestID) {
   try {
     const response = await axios.put(
       `${backendURL}/api/friends/decline_request/${requestID}`,
-      { status: "Declined" },
+      { status: "Declined", notified: false },
       { headers: { "Content-Type": "application/json" } }
     );
     return response.data;
   } catch (error) {
     console.log(
       "Error when declining friend request: " +
-        JSON.stringify(error.response?.data)
+        JSON.stringify(error.response?.data) || error.message
     );
   }
 }

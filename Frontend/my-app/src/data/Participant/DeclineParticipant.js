@@ -6,7 +6,7 @@ export default async function DeclineParticipant(id) {
   try {
     const response = await axios.put(
       `${backendURL}/api/participants/decline_request/${id}`,
-      { status: "Declined" },
+      { status: "Declined", notified: false },
       { headers: { "Content-Type": "application/json" } }
     );
     return response.data;

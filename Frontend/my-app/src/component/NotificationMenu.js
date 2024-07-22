@@ -2,15 +2,30 @@ import React from "react";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
 import Badge from "@mui/material/Badge";
+import CircleIcon from "@mui/icons-material/Circle";
+import ChecklistRtlOutlinedIcon from "@mui/icons-material/ChecklistRtlOutlined";
+import MarkAsUnreadOutlinedIcon from "@mui/icons-material/MarkAsUnreadOutlined";
+import MarkEmailReadOutlinedIcon from "@mui/icons-material/MarkEmailReadOutlined";
+import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
 import ColorNameAvatar from "../component/ColorNameAvatar";
 import NotificationsNone from "@mui/icons-material/NotificationsNone";
-import { Divider, IconButton, MenuList, Typography } from "@mui/material";
+import {
+  Divider,
+  IconButton,
+  ListItem,
+  ListSubheader,
+  MenuList,
+  Typography,
+} from "@mui/material";
 import NoNotification from "../image/NoNotification.jpg";
 import CalculateTimesAgo from "../data/CalculateTimesAgo";
 
+import MarkAsRead from "../data/Notification/MarkAsRead";
+import MarkAsUnread from "../data/Notification/MarkAsUnread";
+import MarkAllAsRead from "../data/Notification/MarkAllAsRead";
+import MarkAllAsUnread from "../data/Notification/MarkAllAsUnread";
 import GetNotifications from "../data/Notification/GetNotifications";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
@@ -25,7 +40,7 @@ export default function NotificationMenu(prop) {
     setAnchorEl(null);
   };
 
-  const { profile, notifications, setNotifications, messages, setMessages } =
+  const { profile, notifications, messages, setMessages, setNotifications } =
     prop;
 
   React.useEffect(() => {
@@ -33,29 +48,41 @@ export default function NotificationMenu(prop) {
       setMessages(await GetNotifications(profile._id));
     };
     getData();
-  }, [open, profile._id, setMessages]);
+  }, [open]);
 
   React.useEffect(() => {
     const getRequestInfo = async () => {
       const requestPromises = messages.map(async (message) => {
-        const profileResponse = await axios.get(
-          `${backendURL}/api/profiles/${
-            message.activityID
-              ? message.participantID === profile._id
-                ? message.hostID
-                : message.participantID
-              : message.fromUserID === profile._id
-              ? message.toUserID
-              : message.fromUserID
-          }`,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        const profileResponse = await axios
+          .get(
+            `${backendURL}/api/profiles/${
+              message.activityID
+                ? message.participantID === profile._id
+                  ? message.hostID
+                  : message.participantID
+                : message.fromUserID === profile._id
+                ? message.toUserID
+                : message.fromUserID
+            }`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          )
+          .catch((error) => {
+            console.log(
+              "Error when fetching profile data contained in the notification through axios: " +
+                JSON.stringify(error.response?.data) || error.message
+            );
+          });
         const activityResponse = message.activityID
-          ? await axios.get(
-              `${backendURL}/api/activities/${message.activityID}`
-            )
+          ? await axios
+              .get(`${backendURL}/api/activities/${message.activityID}`)
+              .catch((error) => {
+                console.log(
+                  "Error when fetching activity info contained in the notification through axios: " +
+                    JSON.stringify(error.response?.data) || error.message
+                );
+              })
           : null;
 
         const profileData = await profileResponse.data;
@@ -72,7 +99,7 @@ export default function NotificationMenu(prop) {
       setNotifications(result);
     };
     getRequestInfo();
-  }, [open, messages, setNotifications, profile._id]);
+  }, [messages]);
 
   const getUserActionMessage = (notification) => {
     if (notification.fromUserID) {
@@ -92,16 +119,52 @@ export default function NotificationMenu(prop) {
         return `has declined your request to join`;
       } else if (notification.status === "Pending") {
         return `has requested to join`;
+      } else if (notification.status === "Invited") {
+        return `has invited you to join`;
+      } else if (notification.status === "Invite-Accepted") {
+        return `has accepted your invitation to`;
+      } else if (notification.status === "Invite-Rejected") {
+        return `has rejected your invitation to`;
       } else {
         return "";
       }
     }
   };
 
+  const handleMarkAsRead = (notification) => {
+    const sendMarkRequest = async () => {
+      await MarkAsRead(notification);
+    };
+    sendMarkRequest();
+  };
+
+  const handleMarkAsUnread = (notification) => {
+    const sendMarkRequest = async () => {
+      await MarkAsUnread(notification);
+    };
+    sendMarkRequest();
+  };
+
+  const handleMarkAllAsRead = (notifications) => {
+    const sendMarkRequests = async () => {
+      await MarkAllAsRead(notifications);
+    };
+    sendMarkRequests();
+  };
+
+  const handleMarkAllAsUnread = (notifications) => {
+    const sendMarkRequests = async () => {
+      await MarkAllAsUnread(notifications);
+    };
+    sendMarkRequests();
+  };
+
   return (
     <React.Fragment>
       <Badge
-        badgeContent={notifications.length}
+        badgeContent={
+          notifications.filter((notification) => !notification.notified).length
+        }
         overlap="circular"
         color="primary"
       >
@@ -127,6 +190,9 @@ export default function NotificationMenu(prop) {
           open={open}
           onClose={handleClose}
           onClick={handleClose}
+          slotProps={{
+            root: { sx: { ".MuiList-root": { padding: 0 } } },
+          }}
           PaperProps={{
             elevation: 0,
             sx: {
@@ -165,8 +231,46 @@ export default function NotificationMenu(prop) {
               },
             }}
           >
+            {notifications.length !== 0 && (
+              <>
+                <ListSubheader
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "right",
+                    background:
+                      "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <Tooltip title="Mark all as read">
+                    <IconButton
+                      size="small"
+                      sx={{ color: "white" }}
+                      onClick={() => handleMarkAllAsRead(notifications)}
+                    >
+                      <ChecklistRtlOutlinedIcon
+                        sx={{ width: "20px", height: "20px" }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Mark all as unread">
+                    <IconButton
+                      size="small"
+                      sx={{ color: "white" }}
+                      onClick={() => handleMarkAllAsUnread(notifications)}
+                    >
+                      <MarkAsUnreadOutlinedIcon
+                        sx={{ width: "20px", height: "20px" }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                </ListSubheader>
+              </>
+            )}
             {notifications.length === 0 ? (
-              <MenuItem disabled>
+              <ListItem>
                 <Box
                   sx={{
                     display: "flex",
@@ -180,7 +284,7 @@ export default function NotificationMenu(prop) {
                     alt="No Notification Background"
                   />
                 </Box>
-              </MenuItem>
+              </ListItem>
             ) : (
               notifications.map((notification) => (
                 <React.Fragment
@@ -197,7 +301,7 @@ export default function NotificationMenu(prop) {
                     notification._id
                   }
                 >
-                  <MenuItem>
+                  <ListItem>
                     <Box
                       sx={{
                         display: "flex",
@@ -219,6 +323,7 @@ export default function NotificationMenu(prop) {
                       >
                         <Typography
                           sx={{
+                            display: "inline",
                             color: "black",
                             fontSize: "14px",
                             lineHeight: "18px",
@@ -232,6 +337,17 @@ export default function NotificationMenu(prop) {
                               lineHeight: "18px",
                             }}
                           >
+                            {!notification.notified && (
+                              <CircleIcon
+                                sx={{
+                                  display: "inline",
+                                  height: "8px",
+                                  width: "8px",
+                                  color: "red",
+                                }}
+                                style={{ verticalAlign: "middle" }}
+                              />
+                            )}{" "}
                             {notification.username}
                           </Typography>{" "}
                           {getUserActionMessage(notification)}{" "}
@@ -250,18 +366,50 @@ export default function NotificationMenu(prop) {
                             <></>
                           )}
                         </Typography>
-                        <Typography
+                        <Box
                           sx={{
-                            color: "gray",
-                            fontSize: "12px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                           }}
                         >
-                          {CalculateTimesAgo(notification.requestTime)}
-                        </Typography>
+                          <Typography
+                            sx={{
+                              color: "gray",
+                              fontSize: "12px",
+                            }}
+                          >
+                            {CalculateTimesAgo(notification.requestTime)}
+                          </Typography>
+                          <Box sx={{ display: "flex" }}>
+                            <Tooltip title="Mark as read">
+                              <IconButton
+                                size="small"
+                                sx={{ color: "#5b93f8" }}
+                                onClick={() => handleMarkAsRead(notification)}
+                              >
+                                <MarkEmailReadOutlinedIcon
+                                  sx={{ width: "20px", height: "20px" }}
+                                />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Mark as unread">
+                              <IconButton
+                                size="small"
+                                sx={{ color: "#5b93f8" }}
+                                onClick={() => handleMarkAsUnread(notification)}
+                              >
+                                <MarkEmailUnreadOutlinedIcon
+                                  sx={{ width: "20px", height: "20px" }}
+                                />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </Box>
                       </Box>
                     </Box>
-                  </MenuItem>
-                  <Divider />
+                  </ListItem>
+                  <Divider sx={{ marginBottom: "5px" }} />
                 </React.Fragment>
               ))
             )}

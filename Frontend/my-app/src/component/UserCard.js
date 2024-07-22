@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Card from "@mui/material/Card";
 import {
@@ -48,6 +49,8 @@ export default function UserCard(prop) {
     interests,
     description,
   } = prop.profile;
+
+  const { refreshPage } = prop;
 
   // Get the view user's profile ID
   const userID = prop.userID;
@@ -127,10 +130,10 @@ export default function UserCard(prop) {
           },
         }
       );
-      console.log(
-        `${username} successfully added to favorite: ` +
-          JSON.stringify(response.data)
-      );
+      // console.log(
+      //   `${username} successfully added to favorite: ` +
+      //     JSON.stringify(response.data)
+      // );
     } catch (error) {
       console.log("Error when setting user profile as favorite: " + error);
     }
@@ -152,10 +155,10 @@ export default function UserCard(prop) {
           },
         }
       );
-      console.log(
-        `${username} successfully removed from your favorite: ` +
-          JSON.stringify(response.data)
-      );
+      // console.log(
+      //   `${username} successfully removed from your favorite: ` +
+      //     JSON.stringify(response.data)
+      // );
     } catch (error) {
       console.log(
         "Error when deleting favorite from user collection: " + error
@@ -166,11 +169,13 @@ export default function UserCard(prop) {
   const handleAddFavorite = () => {
     setIsFavorite(true);
     createFavorite();
+    refreshPage();
   };
 
   const handleDeleteFavorite = () => {
     setIsFavorite(false);
     deleteFavorite();
+    refreshPage();
   };
 
   const handleSendFriendRequest = () => {
@@ -178,9 +183,10 @@ export default function UserCard(prop) {
       if (await SendFriendRequest(userID, _id)) {
         setHasSentRequest(true);
       }
-    }
+    };
     sendFriendRequest();
-  }
+    refreshPage();
+  };
 
   const handleWithdrawFriendRequest = () => {
     const sendWithdrawRequest = async () => {
@@ -188,10 +194,11 @@ export default function UserCard(prop) {
       const requestID = await requestData._id;
       if (await WithdrawFriendRequest(requestID)) {
         setHasSentRequest(false);
+        refreshPage();
       }
-    }
+    };
     sendWithdrawRequest();
-  }
+  };
 
   const handleApproveFriendRequest = () => {
     const sendApproveRequest = async () => {
@@ -200,6 +207,7 @@ export default function UserCard(prop) {
       if (await ApproveFriendRequest(requestID)) {
         setIsFriend(true);
         setHasIncomingRequest(false);
+        refreshPage();
       }
     };
     sendApproveRequest();
@@ -211,6 +219,7 @@ export default function UserCard(prop) {
       const requestID = await requestData._id;
       if (await DeclineFriendRequest(requestID)) {
         setHasIncomingRequest(false);
+        refreshPage();
       }
     };
     sendDeclineRequest();
@@ -222,10 +231,16 @@ export default function UserCard(prop) {
       const friendshipID = await friendshipData._id;
       if (await RemoveFriend(friendshipID)) {
         setIsFriend(false);
+        refreshPage();
       }
-    }
+    };
     sendRemoveRequest();
-  }
+  };
+
+  const navigate = useNavigate();
+  const handleMessageFriend = () => {
+    navigate("/chat", { state: { data: _id } });
+  };
 
   return (
     <React.Fragment>
@@ -291,7 +306,11 @@ export default function UserCard(prop) {
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ fontSize: "16px" }}
+              sx={{
+                fontSize: "16px",
+                textWrap: "wrap",
+                wordBreak: "break-word",
+              }}
             >
               {description
                 ? description
@@ -352,7 +371,7 @@ export default function UserCard(prop) {
                 <Tooltip title={`Message ${username}`}>
                   <IconButton
                     aria-label="Message user"
-                    onClick={() => console.log("Message " + username)}
+                    onClick={handleMessageFriend}
                   >
                     <MailOutlineIcon aria-label="Message User" />
                   </IconButton>

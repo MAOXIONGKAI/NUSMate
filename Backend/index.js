@@ -1,5 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const http = require("http");
+const { initSocket } = require("./socketManager");
 require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
 });
@@ -19,6 +21,8 @@ const cors = require("cors");
 
 // Initialize App
 const app = express();
+const server = http.createServer(app);
+const io = initSocket(server);
 
 // Middleware
 app.use(express.json());
@@ -55,7 +59,7 @@ mongoose
   .connect(MONGO_URI)
   .then(() => {
     console.log("Connected to database!");
-    app.listen(5000, () => {
+    server.listen(5000, () => {
       console.log("Server is running on port 5000");
     });
   })

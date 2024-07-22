@@ -9,7 +9,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 
 import PersonIcon from "@mui/icons-material/Person";
-import { List, ListItem, ListSubheader, Paper } from "@mui/material";
+import { List, ListItem, Paper } from "@mui/material";
 import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
 import MiniUserCard from "./MiniUserCard";
 import GetUserProfile from "../data/GetUserProfile";
@@ -33,6 +33,7 @@ export default function ActivityDetail(prop) {
   const {
     open,
     setOpen,
+    refresh,
     profile,
     _id,
     hostID,
@@ -65,7 +66,7 @@ export default function ActivityDetail(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [_id]);
+  }, [hostID, _id, refresh]);
 
   return (
     <React.Fragment>
@@ -153,7 +154,7 @@ export default function ActivityDetail(prop) {
                 <Box
                   sx={{
                     display: "flex",
-                    color: "green",
+                    color: participants.length === pax ? "red" : "green",
                     margin: "0px",
                     padding: "0px",
                   }}
@@ -170,7 +171,7 @@ export default function ActivityDetail(prop) {
                   maxHeight: "400px",
                   backgroundColor: "#F5F5F5",
                   overflow: "auto",
-                  borderRadius: "20px"
+                  borderRadius: "20px",
                 }}
               >
                 <List
@@ -181,12 +182,13 @@ export default function ActivityDetail(prop) {
                 >
                   {participants &&
                     participants.map((participant, index) => (
-                      <ListItem>
+                      <ListItem key={profile._id + participant._id + _id}>
                         <MiniUserCard
                           isHost={index === 0}
                           profile={participant}
                           userID={profile._id}
                           participantID={participant._id}
+                          activityID={_id}
                         />
                       </ListItem>
                     ))}
