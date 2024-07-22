@@ -160,7 +160,7 @@ export default function Activity(prop) {
     };
     getData();
     resetPaginationSetting();
-  }, [currentGroup]);
+  }, [currentGroup, hasModified]);
 
   React.useEffect(() => {
     if (!openSuccess) {

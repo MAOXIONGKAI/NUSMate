@@ -1,4 +1,5 @@
 import React from "react";
+import io from "socket.io-client";
 import axios from "axios";
 import MainLogo from "../image/Main-Logo.png";
 import { Button } from "@mui/material";
@@ -13,14 +14,34 @@ const backendURL = process.env.REACT_APP_BACKEND_URL;
 function LoggedInHeader(prop) {
   const [messages, setMessages] = React.useState([]);
   const [notifications, setNotifications] = React.useState([]);
-  const { profile } = prop;
+  const [triggerNotification, setTriggerNotification] = React.useState(false);
+  const { profile, setConnectedSockets } = prop;
+
+  React.useEffect(() => {
+    const socket = io(backendURL);
+    socket.on("connect", () => {
+      setConnectedSockets((prev) => {
+        let sockets = [...prev, socket];
+        return sockets;
+      });
+    });
+
+    socket.on("receiveNotification", (notification) => {
+      setTriggerNotification((prev) => !prev);
+    });
+
+    return () => {
+      socket.off("receiveNotification");
+      socket.off("connect");
+    };
+  }, []);
 
   React.useEffect(() => {
     const getData = async () => {
       setMessages(await GetNotifications(profile._id));
     };
     getData();
-  }, []);
+  }, [triggerNotification]);
 
   React.useEffect(() => {
     const getRequestInfo = async () => {
@@ -107,9 +128,9 @@ function LoggedInHeader(prop) {
             <li>
               <NotificationMenu
                 profile={profile}
+                notifications={notifications}
                 messages={messages}
                 setMessages={setMessages}
-                notifications={notifications}
                 setNotifications={setNotifications}
               />
             </li>
@@ -126,7 +147,16 @@ function LoggedInHeader(prop) {
   );
 }
 
-function LandingHeader() {
+function LandingHeader(prop) {
+  const { connectedSockets } = prop;
+  if (connectedSockets.length !== 0) {
+    connectedSockets.forEach((socket) => {
+      if (socket.connected) {
+        socket.disconnect();
+      }
+    });
+  }
+
   return (
     <header className="header">
       <a component={Link} to="/" href="/">
@@ -153,12 +183,20 @@ function LandingHeader() {
 }
 
 export default function Header(prop) {
+  const [connectedSockets, setConnectedSockets] = React.useState([]);
   return (
     <>
       {prop.loggedIn ? (
-        <LoggedInHeader setLoggedIn={prop.setLoggedIn} profile={prop.profile} />
+        <LoggedInHeader
+          setLoggedIn={prop.setLoggedIn}
+          profile={prop.profile}
+          setConnectedSockets={setConnectedSockets}
+        />
       ) : (
-        <LandingHeader setLoggedIn={prop.setLoggedIn} />
+        <LandingHeader
+          setLoggedIn={prop.setLoggedIn}
+          connectedSockets={connectedSockets}
+        />
       )}
     </>
   );

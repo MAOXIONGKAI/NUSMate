@@ -22,11 +22,11 @@ import {
 import NoNotification from "../image/NoNotification.jpg";
 import CalculateTimesAgo from "../data/CalculateTimesAgo";
 
-import GetNotifications from "../data/Notification/GetNotifications";
 import MarkAsRead from "../data/Notification/MarkAsRead";
 import MarkAsUnread from "../data/Notification/MarkAsUnread";
 import MarkAllAsRead from "../data/Notification/MarkAllAsRead";
 import MarkAllAsUnread from "../data/Notification/MarkAllAsUnread";
+import GetNotifications from "../data/Notification/GetNotifications";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -40,7 +40,7 @@ export default function NotificationMenu(prop) {
     setAnchorEl(null);
   };
 
-  const { profile, notifications, setNotifications, messages, setMessages } =
+  const { profile, notifications, messages, setMessages, setNotifications } =
     prop;
 
   React.useEffect(() => {
@@ -48,7 +48,7 @@ export default function NotificationMenu(prop) {
       setMessages(await GetNotifications(profile._id));
     };
     getData();
-  }, [open, profile._id, setMessages]);
+  }, [open]);
 
   React.useEffect(() => {
     const getRequestInfo = async () => {
@@ -70,11 +70,10 @@ export default function NotificationMenu(prop) {
           )
           .catch((error) => {
             console.log(
-              "Error when fetching user profile data contained in the notification through axios: " +
+              "Error when fetching profile data contained in the notification through axios: " +
                 JSON.stringify(error.response?.data) || error.message
             );
           });
-
         const activityResponse = message.activityID
           ? await axios
               .get(`${backendURL}/api/activities/${message.activityID}`)
@@ -100,7 +99,7 @@ export default function NotificationMenu(prop) {
       setNotifications(result);
     };
     getRequestInfo();
-  }, [open, messages, setNotifications, profile._id]);
+  }, [messages]);
 
   const getUserActionMessage = (notification) => {
     if (notification.fromUserID) {
@@ -192,7 +191,7 @@ export default function NotificationMenu(prop) {
           onClose={handleClose}
           onClick={handleClose}
           slotProps={{
-            root: { sx: { '.MuiList-root': { padding: 0 } } },
+            root: { sx: { ".MuiList-root": { padding: 0 } } },
           }}
           PaperProps={{
             elevation: 0,
@@ -240,7 +239,8 @@ export default function NotificationMenu(prop) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "right",
-                    background: "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
+                    background:
+                      "linear-gradient(90deg, rgba(83,207,255,1) 0%, rgba(100,85,240,1) 100%)",
                     marginBottom: "8px",
                   }}
                 >
