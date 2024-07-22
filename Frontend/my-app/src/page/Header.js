@@ -45,6 +45,7 @@ function LoggedInHeader(prop) {
 
   React.useEffect(() => {
     const getRequestInfo = async () => {
+      if (!messages || messages.length === 0) return;
       const requestPromises = messages.map(async (message) => {
         const profileResponse = await axios
           .get(

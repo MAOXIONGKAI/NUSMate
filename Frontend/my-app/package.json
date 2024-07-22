@@ -29,7 +29,7 @@
     "start": "cross-env REACT_APP_ENV=prod react-scripts start",
     "build": "cross-env REACT_APP_ENV=prod react-scripts build",
     "build:dev": "cross-env REACT_APP_ENV=local react-scripts build",
-    "dev": "cross-env REACT_APP=local react-scripts start",
+    "dev": "cross-env REACT_APP_ENV=local react-scripts start",
     "test": "react-scripts test test --transformIgnorePatterns \"node_modules/(?!axios)/\" --testPathPattern=src/test",
     "eject": "react-scripts eject"
   },

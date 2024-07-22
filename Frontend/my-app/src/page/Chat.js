@@ -73,7 +73,7 @@ export default function Chat(prop) {
 
   const handleSendMessage = async (event) => {
     event.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !currentFriend) return;
 
     const message = {
       text: newMessage,
@@ -86,6 +86,7 @@ export default function Chat(prop) {
   };
 
   const handlePressEnter = async (event) => {
+    if (!currentFriend) return;
     if (event.key === "Enter" && newMessage.trim()) {
       const message = {
         text: newMessage,
@@ -184,6 +185,8 @@ export default function Chat(prop) {
           <StyledButton
             text="Send"
             style={{ color: "white", margin: "0px" }}
+            background= {currentFriend === "" ? "gray" : null }
+            disabled={currentFriend === ""}
             onClick={handleSendMessage}
           />
         </Box>
