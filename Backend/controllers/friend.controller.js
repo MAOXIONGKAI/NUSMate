@@ -1,6 +1,7 @@
 const Friend = require("../models/friend.model");
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types;
+const {getIo} = require("../socketManager")
 
 const getAllFriendships = async (req, res) => {
   try {
@@ -41,6 +42,8 @@ const getUserFriendStatus = async (req, res) => {
 const createFriendship = async (req, res) => {
   try {
     const response = await Friend.create(req.body);
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -127,6 +130,8 @@ const withdrawSentRequest = async (req, res) => {
         .status(404)
         .json({ message: "No pending request to delete in database" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -171,6 +176,8 @@ const approvePendingFriendRequest = async (req, res) => {
         .status(404)
         .json({ message: "No pending friend request to approve in database" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -186,6 +193,8 @@ const declinePendingFriendRequest = async (req, res) => {
         .status(404)
         .json({ message: "No pending friend request to decline in database" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -201,6 +210,8 @@ const removeFriend = async (req, res) => {
         .status(404)
         .json({ message: "No friendship found in database for deletion" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -218,6 +229,8 @@ const markAsRead = async (req, res) => {
         .status(404)
         .json({ message: "No friendship found in database to mark as read" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });

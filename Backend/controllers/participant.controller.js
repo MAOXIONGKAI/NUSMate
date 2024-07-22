@@ -1,4 +1,5 @@
 const Participant = require("../models/participant.model");
+const {getIo} = require("../socketManager");
 
 const readAllParticipants = async (req, res) => {
   try {
@@ -173,6 +174,8 @@ const checkIfInvited = async (req, res) => {
 const createParticipant = async (req, res) => {
   try {
     const response = await Participant.create(req.body);
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -188,6 +191,8 @@ const approveParticipant = async (req, res) => {
         .status(404)
         .json({ message: "No pending activity request found to be approved" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -203,6 +208,8 @@ const declineParticipant = async (req, res) => {
         .status(404)
         .json({ message: "No pending activity request found to be declined" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -218,6 +225,8 @@ const acceptInvitation = async (req, res) => {
         .status(404)
         .json({ message: "No invitation found to accept from the database" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -233,6 +242,8 @@ const rejectInvitation = async (req, res) => {
         .status(404)
         .json({ message: "No invitation found to reject from the database" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -248,6 +259,8 @@ const removeParticipant = async (req, res) => {
         .status(404)
         .json({ message: "No participants found to delete from the database" });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -263,6 +276,8 @@ const removeAllParticipantsbyActivity = async (req, res) => {
         message: "No participants associated with the activity to remove",
       });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -280,6 +295,8 @@ const markAsRead = async (req, res) => {
         message: "No participation found in database to mark as read",
       });
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
