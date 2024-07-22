@@ -32,10 +32,13 @@ export default function Chat(prop) {
   const [newMessage, setNewMessages] = React.useState("");
   const [messages, setMessages] = React.useState([]);
 
+  const latestMsg = React.useRef();
+
   React.useEffect(() => {
     UpdateLocalUserProfile(prop.profile, prop.setProfile);
   }, []);
 
+  // Getting user's friends data when user enter the chat page
   React.useEffect(() => {
     const getFriendProfiles = async () => {
       const friendships = await GetFriends(userID);
@@ -52,6 +55,9 @@ export default function Chat(prop) {
     getFriendProfiles();
   }, []);
 
+  // If user has friends, and the user does not come to
+  // this page by clicking someone's user card,
+  // automatically focus on the first friend
   React.useEffect(() => {
     if (friends.length === 0) return;
     if (!targetUser) {
@@ -92,6 +98,7 @@ export default function Chat(prop) {
     }
   };
 
+  // Fetch Chat Messages from Firebase
   React.useEffect(() => {
     const queryMessages = query(
       messagesRef,
@@ -118,8 +125,21 @@ export default function Chat(prop) {
     return () => unsubscribe();
   }, [currentFriend]);
 
+  React.useEffect(() => {
+    if (latestMsg.current) {
+      latestMsg.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   return (
-    <Box sx={{ display: "flex", height: "calc(100vh - 75px)", width: "100%", margin: "0px" }}>
+    <Box
+      sx={{
+        display: "flex",
+        height: "calc(100vh - 75px)",
+        width: "100%",
+        margin: "0px",
+      }}
+    >
       <Box sx={{ display: "flex", width: "20vw" }}>
         <ChatFriendMenu
           profile={profile}
@@ -136,7 +156,11 @@ export default function Chat(prop) {
             height: "65vh",
           }}
         >
-          <ChatMessages messages={messages} userID={userID} />
+          <ChatMessages
+            messages={messages}
+            userID={userID}
+            latestMsg={latestMsg}
+          />
         </Box>
         <Box
           sx={{

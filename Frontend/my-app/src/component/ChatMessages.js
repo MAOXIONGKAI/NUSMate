@@ -5,7 +5,8 @@ import NoMessage from "../image/NoMessage.jpg";
 import Message from "./Message";
 
 export default function ChatMessages(prop) {
-  const { messages, userID } = prop;
+  const { messages, userID, latestMsg } = prop;
+
   return (
     <>
       {messages.length === 0 ? (
@@ -45,8 +46,9 @@ export default function ChatMessages(prop) {
           }}
         >
           {messages.map((message) => (
-            <Message text={message.text} isSender={message.sender === userID} />
+            <Message key={message.id} text={message.text} isSender={message.sender === userID} />
           ))}
+          <div ref={latestMsg}></div>
         </Box>
       )}
     </>
