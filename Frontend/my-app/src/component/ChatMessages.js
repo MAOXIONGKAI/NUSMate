@@ -24,7 +24,7 @@ export default function ChatMessages(prop) {
           <img
             src={NoChatSelected}
             alt="No Chat Selected Background"
-            style={{ width: "35%" }}
+            style={{ width: "40%" }}
           />
           <Typography
             sx={{
@@ -33,8 +33,6 @@ export default function ChatMessages(prop) {
               fontSize: "24px",
             }}
           >
-            No message appearing?
-            <br />
             Select a Friend and start chatting!
           </Typography>
         </Box>
