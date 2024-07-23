@@ -161,6 +161,7 @@ export default function ActivityCard(prop) {
         participantID,
         activityID
       );
+      if (!requestData) return;
       const requestID = await requestData._id;
       if (await RemoveParticipant(requestID)) {
         setHasRequestedToJoin(false);
@@ -177,6 +178,7 @@ export default function ActivityCard(prop) {
         participantID,
         activityID
       );
+      if (!approvedRequest) return;
       const requestID = await approvedRequest._id;
       if (await RemoveParticipant(requestID)) {
         setHasJoined(false);

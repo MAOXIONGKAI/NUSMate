@@ -198,6 +198,7 @@ export default function UserCard(prop) {
   const handleWithdrawFriendRequest = () => {
     const sendWithdrawRequest = async () => {
       const requestData = await GetFriendRequestData(userID, _id);
+      if (!requestData) return;
       const requestID = await requestData._id;
       if (await WithdrawFriendRequest(requestID)) {
         setHasSentRequest(false);
@@ -210,6 +211,7 @@ export default function UserCard(prop) {
   const handleApproveFriendRequest = () => {
     const sendApproveRequest = async () => {
       const requestData = await GetFriendRequestData(_id, userID);
+      if (!requestData) return;
       const requestID = await requestData._id;
       if (await ApproveFriendRequest(requestID)) {
         setIsFriend(true);
@@ -223,6 +225,7 @@ export default function UserCard(prop) {
   const handleDeclineFriendRequest = () => {
     const sendDeclineRequest = async () => {
       const requestData = await GetFriendRequestData(_id, userID);
+      if (!requestData) return;
       const requestID = await requestData._id;
       if (await DeclineFriendRequest(requestID)) {
         setHasIncomingRequest(false);
@@ -250,6 +253,7 @@ export default function UserCard(prop) {
     };
     const sendRemoveRequest = async () => {
       const friendshipData = await GetFriendshipData(userID, _id);
+      if (!friendshipData) return;
       const friendshipID = await friendshipData._id;
       if (await RemoveFriend(friendshipID)) {
         deleteChatHistory(userID, _id);
