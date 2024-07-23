@@ -26,7 +26,9 @@ const readAll = async (req, res) => {
 const readByUserID = async (req, res) => {
   try {
     const { userID } = req.params;
-    const favorites = await FavoriteActivity.find({ userID: userID });
+    const favorites = await FavoriteActivity.find({ userID: userID }).sort({
+      createdAt: -1,
+    });
     if (!favorites) {
       return res
         .status(404)
