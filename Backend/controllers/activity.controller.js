@@ -1,4 +1,5 @@
 const Activity = require("../models/activity.model");
+const {getIo} = require("../socketManager");
 
 const createActivity = async (req, res) => {
   try {
@@ -43,6 +44,8 @@ const editActivity = async (req, res) => {
     if (!activity) {
       return res.status(404).json({message: "No activity found for edit"})
     }
+    const io = getIo();
+    io.sockets.emit('receiveNotification', "Data")
     res.status(200).json(activity);
   } catch (error) {
     res.status(500).json({ message: error.message });

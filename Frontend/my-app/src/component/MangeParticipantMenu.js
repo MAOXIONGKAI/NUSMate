@@ -45,6 +45,7 @@ export default function ManageParticipantMenu(prop) {
     setOpenRemoveSuccess,
     openRemoveFail,
     setOpenRemoveFail,
+    triggerNotification,
   } = prop;
 
   const handleClose = () => {
@@ -67,7 +68,7 @@ export default function ManageParticipantMenu(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [_id, hostID, refresh]);
+  }, [_id, hostID, refresh, triggerNotification]);
 
   return (
     <React.Fragment>
@@ -156,7 +157,11 @@ export default function ManageParticipantMenu(prop) {
                 >
                   {participants &&
                     participants.map((participant, index) => (
-                      <ListItem>
+                      <ListItem
+                        key={
+                          profile._id + participant._id + hostID + activityName
+                        }
+                      >
                         <MiniUserCard
                           isHost={index === 0}
                           isEditMode={true}
@@ -166,6 +171,7 @@ export default function ManageParticipantMenu(prop) {
                           handleRefresh={handleRefresh}
                           setOpenRemoveSuccess={setOpenRemoveSuccess}
                           setOpenRemoveFail={setOpenRemoveFail}
+                          triggerNotification={triggerNotification}
                         />
                       </ListItem>
                     ))}

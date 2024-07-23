@@ -41,6 +41,7 @@ import RejectInvitation from "../data/Participant/RejectInvitation";
 import GetFavoriteActivities from "../data/Activity/GetFavoriteActivities";
 
 export default function Activity(prop) {
+  const { triggerNotification } = prop;
   const groupOptions = [
     { value: "All Activities" },
     { value: "Requested Activities" },
@@ -356,6 +357,7 @@ export default function Activity(prop) {
                           <UserButton
                             request={request}
                             userID={prop.profile._id}
+                            triggerNotification={triggerNotification}
                           />
                           <TableCell sx={{ textAlign: "center" }}>
                             <Typography>
@@ -473,6 +475,7 @@ export default function Activity(prop) {
                     activity={activity}
                     profile={prop.profile}
                     setHasModified={setHasModified}
+                    triggerNotification={triggerNotification}
                   />
                 ))
               )}

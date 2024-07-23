@@ -43,6 +43,7 @@ export default function FriendInviteMenu(prop) {
     setOpenInviteFail,
     refresh,
     handleRefresh,
+    triggerNotification
   } = prop;
   const { activityName } = activity;
 
@@ -110,7 +111,7 @@ export default function FriendInviteMenu(prop) {
       setFriends(results.filter((result) => result._id));
     };
     checkFriends();
-  }, [profile._id, activity._id, refresh]);
+  }, [profile._id, activity._id, refresh, triggerNotification]);
 
   // Check with database to see who have already been invited
   // but hasn't accepted/rejected the invitation
@@ -132,7 +133,7 @@ export default function FriendInviteMenu(prop) {
       setChecked(invitedFriends);
     };
     getCheckedStatus();
-  }, [friends, friends._id, activity._id, profile._id, refresh]);
+  }, [friends, refresh]);
 
   return (
     <React.Fragment>

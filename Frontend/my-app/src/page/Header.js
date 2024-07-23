@@ -13,8 +13,12 @@ const backendURL = process.env.REACT_APP_BACKEND_URL;
 function LoggedInHeader(prop) {
   const [messages, setMessages] = React.useState([]);
   const [notifications, setNotifications] = React.useState([]);
-  const [triggerNotification, setTriggerNotification] = React.useState(false);
-  const { profile, setConnectedSockets } = prop;
+  const {
+    profile,
+    setConnectedSockets,
+    triggerNotification,
+    setTriggerNotification,
+  } = prop;
 
   React.useEffect(() => {
     const socket = io(backendURL);
@@ -40,7 +44,7 @@ function LoggedInHeader(prop) {
       setMessages(await GetNotifications(profile._id));
     };
     getData();
-  }, [triggerNotification]);
+  }, []);
 
   React.useEffect(() => {
     const getRequestInfo = async () => {
@@ -180,6 +184,7 @@ function LandingHeader(prop) {
 }
 
 export default function Header(prop) {
+  const { triggerNotification, setTriggerNotification } = prop;
   const [connectedSockets, setConnectedSockets] = React.useState([]);
   return (
     <>
@@ -188,6 +193,8 @@ export default function Header(prop) {
           setLoggedIn={prop.setLoggedIn}
           profile={prop.profile}
           setConnectedSockets={setConnectedSockets}
+          triggerNotification={triggerNotification}
+          setTriggerNotification={setTriggerNotification}
         />
       ) : (
         <LandingHeader

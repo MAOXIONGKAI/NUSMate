@@ -74,6 +74,7 @@ export default function Discover(prop) {
   }, []);
 
   const userID = prop.profile._id;
+  const {triggerNotification} = prop;
 
   const [searchTags, setSearchTags] = React.useState({
     searcherID: prop.profile._id,
@@ -825,6 +826,7 @@ export default function Discover(prop) {
                         userID={userID}
                         sx={{ flexGrow: 1 }}
                         refreshPage={() => {}}
+                        triggerNotification={triggerNotification}
                       />
                     </Box>
                   </Grid>

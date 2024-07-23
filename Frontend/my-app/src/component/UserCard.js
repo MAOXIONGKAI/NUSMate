@@ -7,7 +7,7 @@ import {
   query,
   where,
   getDocs,
-  writeBatch
+  writeBatch,
 } from "firebase/firestore";
 import Card from "@mui/material/Card";
 import {
@@ -57,7 +57,7 @@ export default function UserCard(prop) {
     description,
   } = prop.profile;
 
-  const { refreshPage } = prop;
+  const { refreshPage, triggerNotification } = prop;
 
   // Get the view user's profile ID
   const userID = prop.userID;
@@ -101,7 +101,7 @@ export default function UserCard(prop) {
       setHasSentRequest(await CheckIfPendingRequest(userID, _id));
     };
     checkSendRequestStatus();
-  }, [userID, _id]);
+  }, [userID, _id, triggerNotification]);
 
   // Check database to see if there is incoming request from target user
   React.useEffect(() => {
@@ -109,7 +109,7 @@ export default function UserCard(prop) {
       setHasIncomingRequest(await CheckIfPendingRequest(_id, userID));
     };
     checkIncomingRequestStatus();
-  }, [userID, _id]);
+  }, [userID, _id, triggerNotification]);
 
   // Check database to see if the user is a friend
   React.useEffect(() => {
@@ -117,7 +117,7 @@ export default function UserCard(prop) {
       setIsFriend(await CheckIfFriend(userID, _id));
     };
     checkFriendship();
-  }, [userID, _id]);
+  }, [userID, _id, triggerNotification]);
 
   const handleCheckProfile = () => {
     setOpenCard(true);

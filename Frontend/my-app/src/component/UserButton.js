@@ -16,7 +16,7 @@ import RemoveFriend from "../data/Friend/RemoveFriend";
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export default function UserButton(prop) {
-  const { request, userID } = prop;
+  const { request, userID, triggerNotification } = prop;
   const { requestUserID } = request;
   const userProfile = {
     ...request,
@@ -64,7 +64,7 @@ export default function UserButton(prop) {
       setHasSentRequest(await CheckIfPendingRequest(userID, requestUserID));
     };
     checkSendRequestStatus();
-  }, [userID, requestUserID]);
+  }, [userID, requestUserID, triggerNotification]);
 
   // Check database to see if there is incoming request from target user
   React.useEffect(() => {
@@ -72,7 +72,7 @@ export default function UserButton(prop) {
       setHasIncomingRequest(await CheckIfPendingRequest(requestUserID, userID));
     };
     checkIncomingRequestStatus();
-  }, [userID, requestUserID]);
+  }, [userID, requestUserID, triggerNotification]);
 
   // Check database to see if the user is a friend
   React.useEffect(() => {
@@ -80,7 +80,7 @@ export default function UserButton(prop) {
       setIsFriend(await CheckIfFriend(userID, requestUserID));
     };
     checkFriendship();
-  }, [userID, requestUserID]);
+  }, [userID, requestUserID, triggerNotification]);
 
   const handleCheckProfile = () => {
     setOpenCard(true);
@@ -220,6 +220,7 @@ export default function UserButton(prop) {
         handleApproveFriendRequest={handleApproveFriendRequest}
         handleDeclineFriendRequest={handleDeclineFriendRequest}
         handleRemoveFriend={handleRemoveFriend}
+        triggerNotification={triggerNotification}
       />
       <Button
         sx={{

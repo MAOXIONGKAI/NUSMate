@@ -30,6 +30,7 @@ export default function MiniUserCard(prop) {
     setOpenRemoveSuccess,
     setOpenRemoveFail,
     handleRefresh,
+    triggerNotification,
   } = prop;
 
   const { username } = profile;
@@ -72,7 +73,7 @@ export default function MiniUserCard(prop) {
       setHasSentRequest(await CheckIfPendingRequest(userID, participantID));
     };
     checkSendRequestStatus();
-  }, [userID, participantID]);
+  }, [userID, participantID, triggerNotification]);
 
   // Check database to see if there is incoming request from target user
   React.useEffect(() => {
@@ -80,7 +81,7 @@ export default function MiniUserCard(prop) {
       setHasIncomingRequest(await CheckIfPendingRequest(participantID, userID));
     };
     checkIncomingRequestStatus();
-  }, [userID, participantID]);
+  }, [userID, participantID, triggerNotification]);
 
   // Check database to see if the user is a friend
   React.useEffect(() => {
@@ -88,7 +89,7 @@ export default function MiniUserCard(prop) {
       setIsFriend(await CheckIfFriend(userID, participantID));
     };
     checkFriendship();
-  }, [userID, participantID]);
+  }, [userID, participantID, triggerNotification]);
 
   const handleCheckProfile = () => {
     setOpenCard(true);
@@ -260,6 +261,7 @@ export default function MiniUserCard(prop) {
         handleApproveFriendRequest={handleApproveFriendRequest}
         handleDeclineFriendRequest={handleDeclineFriendRequest}
         handleRemoveFriend={handleRemoveFriend}
+        triggerNotification={triggerNotification}
       />
 
       <ColorNameAvatar

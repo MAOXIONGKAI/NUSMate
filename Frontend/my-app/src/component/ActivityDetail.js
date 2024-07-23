@@ -44,6 +44,7 @@ export default function ActivityDetail(prop) {
     endDate,
     location,
     description,
+    triggerNotification,
   } = prop;
 
   const handleClose = () => {
@@ -66,7 +67,7 @@ export default function ActivityDetail(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [hostID, _id, refresh]);
+  }, [hostID, _id, refresh, triggerNotification]);
 
   return (
     <React.Fragment>

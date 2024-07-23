@@ -47,7 +47,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export default function ActivityCard(prop) {
-  const { profile, activity, setHasModified } = prop;
+  const { profile, activity, setHasModified, triggerNotification } = prop;
   let {
     _id,
     hostID,
@@ -128,7 +128,7 @@ export default function ActivityCard(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [_id, hostID, refresh]);
+  }, [_id, hostID, refresh, triggerNotification]);
 
   //Check with database about whether the user has requested to join this activity
   React.useEffect(() => {
@@ -140,7 +140,7 @@ export default function ActivityCard(prop) {
       }
     };
     checkRequested();
-  }, [_id, profile._id, refresh]);
+  }, [_id, profile._id, refresh, triggerNotification]);
 
   //Check with database about whether the user has joined this activity
   React.useEffect(() => {
@@ -148,7 +148,7 @@ export default function ActivityCard(prop) {
       setHasJoined(await CheckIfJoined(profile._id, _id));
     };
     checkJoinedStatus();
-  }, []);
+  }, [triggerNotification]);
 
   const handleOpenDetail = () => {
     setOpenDetail(true);
@@ -160,7 +160,7 @@ export default function ActivityCard(prop) {
       setHasBeenInvited(await CheckIfInvited(profile._id, hostID, _id));
     };
     checkInviteStatus();
-  }, []);
+  }, [triggerNotification]);
 
   React.useEffect(() => {
     if (!openDeleteSuccess) {
@@ -386,6 +386,7 @@ export default function ActivityCard(prop) {
         endDate={endDate}
         location={location}
         description={description}
+        triggerNotification={triggerNotification}
       />
       <EditActivityForm
         open={openEdit}
@@ -412,6 +413,7 @@ export default function ActivityCard(prop) {
         hostName={hostName}
         activityName={activityName}
         pax={pax}
+        triggerNotification={triggerNotification}
       />
       <FriendInviteMenu
         open={openInviteMenu}
@@ -422,6 +424,7 @@ export default function ActivityCard(prop) {
         handleRefresh={handleRefresh}
         setOpenInviteSuccess={setOpenInviteSuccess}
         setOpenInviteFail={setOpenInviteFail}
+        triggerNotification={triggerNotification}
       />
       <Card
         sx={{
