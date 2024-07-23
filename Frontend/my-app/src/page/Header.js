@@ -4,7 +4,6 @@ import axios from "axios";
 import MainLogo from "../image/Main-Logo.png";
 import { Button } from "@mui/material";
 import NotificationMenu from "../component/NotificationMenu";
-import ChatMenu from "../component/ChatMenu";
 import AccountMenu from "../component/AccountMenu";
 import { Link } from "react-router-dom";
 import StyledButton from "../component/StyledButton";
@@ -134,9 +133,6 @@ function LoggedInHeader(prop) {
                 setMessages={setMessages}
                 setNotifications={setNotifications}
               />
-            </li>
-            <li>
-              <ChatMenu />
             </li>
             <li>
               <AccountMenu setLoggedIn={prop.setLoggedIn} profile={profile} />
