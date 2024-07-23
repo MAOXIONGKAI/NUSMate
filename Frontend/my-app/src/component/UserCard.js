@@ -1,6 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { db } from "../data/Firebase/firebase-config";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  writeBatch
+} from "firebase/firestore";
 import Card from "@mui/material/Card";
 import {
   Table,
@@ -226,10 +234,26 @@ export default function UserCard(prop) {
   };
 
   const handleRemoveFriend = () => {
+    const deleteChatHistory = async (userID1, userID2) => {
+      const messagesCollection = collection(db, "messages");
+      const q = query(
+        messagesCollection,
+        where("user", "array-contains", userID1)
+      );
+      const querySnapshot = await getDocs(q);
+      const batch = writeBatch(db);
+      querySnapshot.forEach((doc) => {
+        if (doc.data().user.includes(userID2)) {
+          batch.delete(doc.ref);
+        }
+      });
+      await batch.commit();
+    };
     const sendRemoveRequest = async () => {
       const friendshipData = await GetFriendshipData(userID, _id);
       const friendshipID = await friendshipData._id;
       if (await RemoveFriend(friendshipID)) {
+        deleteChatHistory(userID, _id);
         setIsFriend(false);
         refreshPage();
       }

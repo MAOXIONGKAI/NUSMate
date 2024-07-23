@@ -29,7 +29,6 @@ const CreatePersonalityTest = (username, redirect) => {
             },
           }
         );
-        console.log(JSON.stringify(response.data));
         setTestURL(response.data.data.test_url);
         setTestID(response.data.data.test_id);
       } catch (error) {
