@@ -161,6 +161,7 @@ export default function Chat(prop) {
             messages={messages}
             userID={userID}
             latestMsg={latestMsg}
+            currentFriend={currentFriend}
           />
         </Box>
         <Box
