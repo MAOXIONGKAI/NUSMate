@@ -79,7 +79,6 @@ export default function ActivityCard(prop) {
   const [openRemoveFail, setOpenRemoveFail] = React.useState(false);
   const [openInviteSuccess, setOpenInviteSuccess] = React.useState(false);
   const [openInviteFail, setOpenInviteFail] = React.useState(false);
-  const [openFullActivity, setOpenFullActivity] = React.useState(false);
 
   const [participants, setParticipants] = React.useState([]);
 
@@ -225,10 +224,6 @@ export default function ActivityCard(prop) {
   };
 
   const handleAcceptActivityInvitation = (participantID, activityID) => {
-    if (participants && participants.length === pax) {
-      setOpenFullActivity(true);
-      return;
-    }
     const sendAcceptRequest = async () => {
       const requestData = await GetInvitationRequest(participantID, activityID);
       if (!requestData) {
@@ -376,12 +371,6 @@ export default function ActivityCard(prop) {
         severity="error"
         open={openInviteFail}
         setOpen={setOpenInviteFail}
-      />
-      <CustomizedSnackbar
-        text="Participate Fail: The activity is already full"
-        severity="error"
-        open={openFullActivity}
-        setOpen={setOpenFullActivity}
       />
       <ActivityDetail
         open={openDetail}
@@ -627,7 +616,6 @@ export default function ActivityCard(prop) {
               <>
                 <Tooltip title={`Accept Invitation from ${activity.hostName}`}>
                   <IconButton
-                    disabled={participants.length === pax}
                     sx={{ color: "#32CD32" }}
                     onClick={() =>
                       handleAcceptActivityInvitation(profile._id, _id)
