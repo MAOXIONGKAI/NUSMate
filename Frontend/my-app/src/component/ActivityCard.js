@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import dayjs from "dayjs";
 import {
   Typography,
@@ -40,6 +41,11 @@ import AcceptInvitation from "../data/Participant/AcceptInvitation";
 import RejectInvitation from "../data/Participant/RejectInvitation";
 import GetInvitationRequest from "../data/Participant/GetInvitationRequest";
 
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+
+const backendURL = process.env.REACT_APP_BACKEND_URL;
+
 export default function ActivityCard(prop) {
   const { profile, activity, setHasModified } = prop;
   let {
@@ -58,6 +64,7 @@ export default function ActivityCard(prop) {
   endDate = dayjs(endDate).format("ddd, MMM D, YYYY h:mm A");
 
   const [openDetail, setOpenDetail] = React.useState(false);
+  const [isFavorite, setIsFavorite] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
   const [openParticipantMenu, setOpenParticipantMenu] = React.useState(false);
   const [openInviteMenu, setOpenInviteMenu] = React.useState(false);
@@ -80,6 +87,32 @@ export default function ActivityCard(prop) {
   const handleRefresh = () => {
     setRefresh((prev) => !prev);
   };
+
+  // Check database to see if the activity has been added to favorite
+  React.useEffect(() => {
+    const getFavStatus = async () => {
+      try {
+        const response = await axios.post(
+          `${backendURL}/api/favorite_activities/check_relationship`,
+          {
+            userID: profile._id,
+            favoriteActivityID: _id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setIsFavorite(response.data.length !== 0);
+      } catch (error) {
+        console.log(
+          `Error when getting favorite status of ${activityName}: ` + error
+        );
+      }
+    };
+    getFavStatus();
+  }, []);
 
   React.useEffect(() => {
     const getParticipants = async () => {
@@ -237,6 +270,60 @@ export default function ActivityCard(prop) {
   const handleFrinedInvite = () => {
     setOpenInviteMenu(true);
     handleRefresh();
+  };
+
+  const createFavorite = async () => {
+    try {
+      const response = await axios.post(
+        `${backendURL}/api/favorite_activities`,
+        {
+          userID: profile._id,
+          favoriteActivityID: _id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      console.log("Error when setting user profile as favorite: " + error);
+    }
+  };
+
+  const deleteFavorite = async () => {
+    try {
+      const response = await axios.delete(
+        `${backendURL}/api/favorite_activities`,
+        {
+          data: {
+            userID: profile._id,
+            favoriteActivityID: _id,
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      console.log(
+        "Error when deleting favorite activity from user collection: " + error
+      );
+    }
+  };
+
+  const handleAddFavorite = () => {
+    setIsFavorite(true);
+    createFavorite();
+    setHasModified((prev) => !prev);
+  };
+
+  const handleDeleteFavorite = () => {
+    setIsFavorite(false);
+    deleteFavorite();
+    setHasModified((prev) => !prev);
   };
 
   return (
@@ -555,6 +642,19 @@ export default function ActivityCard(prop) {
                   onClick={() => handleJoinActivity(profile._id, hostID, _id)}
                 >
                   <GroupAddIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+            {isFavorite ? (
+              <Tooltip title={`Remove ${activityName} from Favorite`}>
+                <IconButton onClick={handleDeleteFavorite}>
+                  <FavoriteIcon sx={{ color: "red" }} />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title={`Add ${activityName} to Favorite`}>
+                <IconButton onClick={handleAddFavorite}>
+                  <FavoriteBorderIcon />
                 </IconButton>
               </Tooltip>
             )}
