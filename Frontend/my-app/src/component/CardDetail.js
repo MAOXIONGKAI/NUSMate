@@ -372,9 +372,6 @@ export default function CardDetail(prop) {
               </IconButton>
             </Tooltip>
           )}
-          <IconButton aria-label="share">
-            <ShareIcon />
-          </IconButton>
         </DialogActions>
       </BootstrapDialog>
     </React.Fragment>

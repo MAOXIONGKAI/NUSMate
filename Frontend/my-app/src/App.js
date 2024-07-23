@@ -11,7 +11,6 @@ import ForgotPassword from "./page/ForgotPassword";
 import Activity from "./page/Activity";
 import SignUp from "./page/SignUp";
 import Chat from "./page/Chat";
-import zIndex from "@mui/material/styles/zIndex";
 
 function App() {
   //Reading data from online source (database, server, API, etc.)

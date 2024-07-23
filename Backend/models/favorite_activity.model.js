@@ -1,26 +1,26 @@
 const { Timestamp } = require("mongodb");
 const mongoose = require("mongoose");
 
-const FavoriteSchema = mongoose.Schema(
+const FavoriteActivitySchema = mongoose.Schema(
   {
     userID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Profile",
       required: true,
     },
-    favoriteUserID: {
+    favoriteActivityID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Profile",
+      ref: "Activity",
       required: true,
     },
   },
-  { timestamps: true,}
+  { timestamps: true }
 );
 
 // Create unique index based on the two user's ID to ensure that the database
 // does not contain multiple entries of same favorite relationship
-FavoriteSchema.index({ userID: 1, favoriteUserID: 1 }, { unique: true });
+FavoriteActivitySchema.index({ userID: 1, favoriteActivityID: 1 }, { unique: true });
 
-const Favorite = mongoose.model("Favorite", FavoriteSchema);
+const FavoriteActivity = mongoose.model("FavoriteActivity", FavoriteActivitySchema);
 
-module.exports = Favorite;
+module.exports = FavoriteActivity;

@@ -1,6 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { db } from "../data/Firebase/firebase-config";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  writeBatch
+} from "firebase/firestore";
 import Card from "@mui/material/Card";
 import {
   Table,
@@ -16,7 +24,6 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
@@ -191,6 +198,7 @@ export default function UserCard(prop) {
   const handleWithdrawFriendRequest = () => {
     const sendWithdrawRequest = async () => {
       const requestData = await GetFriendRequestData(userID, _id);
+      if (!requestData) return;
       const requestID = await requestData._id;
       if (await WithdrawFriendRequest(requestID)) {
         setHasSentRequest(false);
@@ -203,6 +211,7 @@ export default function UserCard(prop) {
   const handleApproveFriendRequest = () => {
     const sendApproveRequest = async () => {
       const requestData = await GetFriendRequestData(_id, userID);
+      if (!requestData) return;
       const requestID = await requestData._id;
       if (await ApproveFriendRequest(requestID)) {
         setIsFriend(true);
@@ -216,6 +225,7 @@ export default function UserCard(prop) {
   const handleDeclineFriendRequest = () => {
     const sendDeclineRequest = async () => {
       const requestData = await GetFriendRequestData(_id, userID);
+      if (!requestData) return;
       const requestID = await requestData._id;
       if (await DeclineFriendRequest(requestID)) {
         setHasIncomingRequest(false);
@@ -226,10 +236,27 @@ export default function UserCard(prop) {
   };
 
   const handleRemoveFriend = () => {
+    const deleteChatHistory = async (userID1, userID2) => {
+      const messagesCollection = collection(db, "messages");
+      const q = query(
+        messagesCollection,
+        where("user", "array-contains", userID1)
+      );
+      const querySnapshot = await getDocs(q);
+      const batch = writeBatch(db);
+      querySnapshot.forEach((doc) => {
+        if (doc.data().user.includes(userID2)) {
+          batch.delete(doc.ref);
+        }
+      });
+      await batch.commit();
+    };
     const sendRemoveRequest = async () => {
       const friendshipData = await GetFriendshipData(userID, _id);
+      if (!friendshipData) return;
       const friendshipID = await friendshipData._id;
       if (await RemoveFriend(friendshipID)) {
+        deleteChatHistory(userID, _id);
         setIsFriend(false);
         refreshPage();
       }
@@ -425,9 +452,6 @@ export default function UserCard(prop) {
                 </IconButton>
               </Tooltip>
             )}
-            <IconButton aria-label="share">
-              <ShareIcon />
-            </IconButton>
           </Box>
         </CardActions>
       </Card>

@@ -1,8 +1,8 @@
-const Favorite = require("../models/favorite.model");
+const FavoriteActivity = require("../models/favorite_activity.model");
 
 const createFavorite = async (req, res) => {
   try {
-    const relationship = await Favorite.create(req.body);
+    const relationship = await FavoriteActivity.create(req.body);
     res.status(200).json(relationship);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -11,11 +11,11 @@ const createFavorite = async (req, res) => {
 
 const readAll = async (req, res) => {
   try {
-    const favorites = await Favorite.find({});
+    const favorites = await FavoriteActivity.find({});
     if (!favorites) {
       return res
         .status(404)
-        .json({ message: "No favorite users found in database" });
+        .json({ message: "No favorite activities found in database" });
     }
     res.status(200).json(favorites);
   } catch (error) {
@@ -26,13 +26,13 @@ const readAll = async (req, res) => {
 const readByUserID = async (req, res) => {
   try {
     const { userID } = req.params;
-    const favorites = await Favorite.find({ userID: userID }).sort({
+    const favorites = await FavoriteActivity.find({ userID: userID }).sort({
       createdAt: -1,
     });
     if (!favorites) {
       return res
         .status(404)
-        .json({ message: "No favorite collection found in database" });
+        .json({ message: "No favorite activity collection found in database" });
     }
     res.status(200).json(favorites);
   } catch (error) {
@@ -42,7 +42,7 @@ const readByUserID = async (req, res) => {
 
 const readFavoriteStatus = async (req, res) => {
   try {
-    const relationship = await Favorite.find(req.body);
+    const relationship = await FavoriteActivity.find(req.body);
 
     if (!relationship) {
       return res
@@ -57,7 +57,7 @@ const readFavoriteStatus = async (req, res) => {
 
 const deleteFavorite = async (req, res) => {
   try {
-    const relationship = await Favorite.findOneAndDelete(req.body);
+    const relationship = await FavoriteActivity.findOneAndDelete(req.body);
     if (!relationship) {
       return res
         .status(404)

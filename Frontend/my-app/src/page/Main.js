@@ -70,7 +70,7 @@ const Footer = styled(Box)(({ theme }) => ({
   textAlign: "center",
 }));
 
-function LandingPage() {
+function LandingPage(prop) {
   useEffect(() => {
     const handleScroll = () => {
       const elements = document.querySelectorAll(".fade-in");
@@ -120,12 +120,12 @@ function LandingPage() {
             >
               Fostering Lifelong Friendships for the New Generations of NUS!
             </Typography>
-            <StyledButton
+            { !prop.loggedIn && <StyledButton
               text="Get Started"
               variant="contained"
               component={Link}
               to="/login"
-            />
+            />}
           </Container>
         </HeroContent>
         <Box className="fade-in" sx={{ textAlign: "center" }}>
@@ -295,22 +295,8 @@ function LandingPage() {
   );
 }
 
-function HomePage(prop) {
-  return (
-    <div className="tobeCompleted">
-      <h1>Welcome!</h1>
-      {prop.profile && <h1>{prop.profile.username}</h1>}
-      <h2>
-        The home page for logged in users is meant <br />
-        to be finished in the future milestones
-      </h2>
-      <p>Please stay tunned to our new wonderful features!</p>
-    </div>
-  );
-}
-
 export default function Main(prop) {
   return (
-    <>{prop.loggedIn ? <HomePage profile={prop.profile} /> : <LandingPage />}</>
+    <LandingPage loggedIn={prop.loggedIn} />
   );
 }

@@ -18,6 +18,8 @@ import StyledButton from "../component/StyledButton";
 import { db } from "../data/Firebase/firebase-config";
 import ChatMessages from "../component/ChatMessages";
 import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
+import CheckIfFriend from "../data/Friend/CheckIfFriend";
+import CustomizedSnackbar from "../component/CustomizedSnackbar";
 
 export default function Chat(prop) {
   const { profile } = prop;
@@ -29,6 +31,7 @@ export default function Chat(prop) {
 
   const [friends, setFriends] = React.useState([]);
   const [currentFriend, setCurrentFriend] = React.useState(targetUser);
+  const [openFriendRemoved, setOpenFriendRemoved] = React.useState(false);
   const [newMessage, setNewMessages] = React.useState("");
   const [messages, setMessages] = React.useState([]);
 
@@ -74,7 +77,10 @@ export default function Chat(prop) {
   const handleSendMessage = async (event) => {
     event.preventDefault();
     if (!newMessage.trim() || !currentFriend) return;
-
+    if (!(await CheckIfFriend(userID, currentFriend))) {
+      setOpenFriendRemoved(true);
+      return;
+    }
     const message = {
       text: newMessage,
       sender: profile._id,
@@ -88,6 +94,10 @@ export default function Chat(prop) {
   const handlePressEnter = async (event) => {
     if (!currentFriend) return;
     if (event.key === "Enter" && newMessage.trim()) {
+      if (!(await CheckIfFriend(userID, currentFriend))) {
+        setOpenFriendRemoved(true);
+        return;
+      }
       const message = {
         text: newMessage,
         sender: profile._id,
@@ -141,6 +151,12 @@ export default function Chat(prop) {
         margin: "0px",
       }}
     >
+      <CustomizedSnackbar
+        text="Oops...Seems like you are sending message to someone who is not your friend anymore..."
+        severity="error"
+        open={openFriendRemoved}
+        setOpen={setOpenFriendRemoved}
+      />
       <Box sx={{ display: "flex", width: "20vw" }}>
         <ChatFriendMenu
           profile={profile}
@@ -161,6 +177,7 @@ export default function Chat(prop) {
             messages={messages}
             userID={userID}
             latestMsg={latestMsg}
+            currentFriend={currentFriend}
           />
         </Box>
         <Box
@@ -185,7 +202,7 @@ export default function Chat(prop) {
           <StyledButton
             text="Send"
             style={{ color: "white", margin: "0px" }}
-            background= {currentFriend === "" ? "gray" : null }
+            background={currentFriend === "" ? "gray" : null}
             disabled={currentFriend === ""}
             onClick={handleSendMessage}
           />

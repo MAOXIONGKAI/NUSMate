@@ -38,6 +38,7 @@ import GetAllJoinedActivities from "../data/Participant/GetAllJoinedActivities";
 import UserButton from "../component/UserButton";
 import AcceptInvitation from "../data/Participant/AcceptInvitation";
 import RejectInvitation from "../data/Participant/RejectInvitation";
+import GetFavoriteActivities from "../data/Activity/GetFavoriteActivities";
 
 export default function Activity(prop) {
   const groupOptions = [
@@ -46,6 +47,7 @@ export default function Activity(prop) {
     { value: "Joined Activities" },
     { value: "My Hosted Activities" },
     { value: "Pending Request" },
+    { value: "Favorite" },
   ];
   const [currentGroup, setCurrentGroup] = React.useState("All Activities");
   const [currentResult, setCurrentResult] = React.useState([]);
@@ -154,6 +156,15 @@ export default function Activity(prop) {
           })
         );
         setCurrentResult(requests);
+      } else if (currentGroup === "Favorite") {
+        const favorite_activities = await GetFavoriteActivities(
+          prop.profile._id
+        );
+        const promises = favorite_activities.map((activity) =>
+          GetActivity(activity.favoriteActivityID)
+        );
+        const results = await Promise.all(promises);
+        setCurrentResult(results);
       } else {
         setCurrentResult([]);
       }
