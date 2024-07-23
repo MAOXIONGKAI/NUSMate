@@ -17,7 +17,6 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import GroupsIcon from "@mui/icons-material/Groups";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
-import ShareIcon from "@mui/icons-material/Share";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -557,11 +556,6 @@ export default function ActivityCard(prop) {
                 </IconButton>
               </Tooltip>
             )}
-            <Tooltip title="Share this activity">
-              <IconButton>
-                <ShareIcon />
-              </IconButton>
-            </Tooltip>
           </Grid>
         </CardActions>
       </Card>

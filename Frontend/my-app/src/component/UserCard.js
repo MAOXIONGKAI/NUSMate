@@ -425,9 +425,6 @@ export default function UserCard(prop) {
                 </IconButton>
               </Tooltip>
             )}
-            <IconButton aria-label="share">
-              <ShareIcon />
-            </IconButton>
           </Box>
         </CardActions>
       </Card>
