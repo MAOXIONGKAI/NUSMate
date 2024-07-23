@@ -16,6 +16,7 @@ function App() {
   //Reading data from online source (database, server, API, etc.)
   const savedProfile = JSON.parse(window.localStorage.getItem("profileData"));
   const isLoggedIn = JSON.parse(window.localStorage.getItem("loggedInStatus"));
+  const [triggerNotification, setTriggerNotification] = React.useState(false);
 
   //Keep track of user info using states
   const [loggedIn, setLoggedIn] = React.useState(isLoggedIn);
@@ -56,6 +57,8 @@ function App() {
           loggedIn={loggedIn}
           setLoggedIn={setLoggedIn}
           profile={profile}
+          triggerNotification={triggerNotification}
+          setTriggerNotification={setTriggerNotification}
         />
         <Routes>
           <Route
@@ -71,7 +74,13 @@ function App() {
           />
           <Route
             path="/discover"
-            element={<Discover profile={profile} setProfile={setProfile} />}
+            element={
+              <Discover
+                profile={profile}
+                setProfile={setProfile}
+                setTriggerNotification={setTriggerNotification}
+              />
+            }
           />
           <Route
             path="/profile"
