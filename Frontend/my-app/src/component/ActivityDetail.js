@@ -190,6 +190,7 @@ export default function ActivityDetail(prop) {
                           userID={profile._id}
                           participantID={participant._id}
                           activityID={_id}
+                          triggerNotification={triggerNotification}
                         />
                       </ListItem>
                     ))}
