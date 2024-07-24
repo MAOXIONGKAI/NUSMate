@@ -37,6 +37,7 @@ import EditActivityForm from "./EditActivityForm";
 import ManageParticipantMenu from "./MangeParticipantMenu";
 import FriendInviteMenu from "./FriendInviteMenu";
 import CheckIfInvited from "../data/Participant/CheckIfInvited";
+import GetActivity from "../data/Activity/GetActivity"
 import AcceptInvitation from "../data/Participant/AcceptInvitation";
 import RejectInvitation from "../data/Participant/RejectInvitation";
 import GetInvitationRequest from "../data/Participant/GetInvitationRequest";
@@ -179,6 +180,7 @@ export default function ActivityCard(prop) {
 
   const handleJoinActivity = (participantID, hostID, activityID) => {
     const sendJoinRequest = async () => {
+      if (! await (GetActivity(activityID))) return;
       if (await CreateParticipant(participantID, hostID, activityID)) {
         setHasRequestedToJoin(true);
         setHasModified((prev) => !prev);
@@ -274,6 +276,7 @@ export default function ActivityCard(prop) {
 
   const createFavorite = async () => {
     try {
+      if (!(await (GetActivity(_id)))) return;
       const response = await axios.post(
         `${backendURL}/api/favorite_activities`,
         {
