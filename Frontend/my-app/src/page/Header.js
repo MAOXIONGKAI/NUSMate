@@ -44,7 +44,7 @@ function LoggedInHeader(prop) {
       setMessages(await GetNotifications(profile._id));
     };
     getData();
-  }, []);
+  }, [triggerNotification]);
 
   React.useEffect(() => {
     const getRequestInfo = async () => {
