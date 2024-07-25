@@ -14,7 +14,7 @@ const readAll = async (req, res) => {
   try {
     const profile = await Profile.find({});
     if (!profile) {
-      return;
+      return res.status(404).json({ message: "No profile found in database" });
     }
     res.status(200).json(profile);
   } catch (error) {
@@ -27,7 +27,7 @@ const readByID = async (req, res) => {
     const { id } = req.params;
     const profile = await Profile.findById(id);
     if (!profile) {
-      return;
+      return res.status(400).json({ message: "Profile not found" });
     }
     res.status(200).json(profile);
   } catch (error) {
@@ -40,7 +40,9 @@ const readByEmail = async (req, res) => {
     const { email } = req.params;
     const profile = await Profile.findOne({ email: email });
     if (!profile) {
-      return;
+      return res
+        .status(404)
+        .json({ message: "Invalid Email - Profile not found" });
     }
     res.status(200).json(profile);
   } catch (error) {
@@ -53,7 +55,9 @@ const readByUsername = async (req, res) => {
     const { username } = req.params;
     const profile = await Profile.findOne({ username: username });
     if (!profile) {
-      return;
+      return res
+        .status(404)
+        .json({ message: "Invalid Username - Profile not found" });
     }
     res.status(200).json(profile);
   } catch (error) {
@@ -76,7 +80,7 @@ const updateByID = async (req, res) => {
     const { id } = req.params;
     const profile = await Profile.findByIdAndUpdate(id, req.body);
     if (!profile) {
-      return;
+      return res.status(404).json({ message: "Profile not found" });
     }
     const updatedProfile = await Profile.findById(id);
     res.status(200).json(updatedProfile);
@@ -90,7 +94,9 @@ const updateByEmail = async (req, res) => {
     const { email } = req.params;
     const profile = await Profile.findOneAndUpdate({ email: email }, req.body);
     if (!profile) {
-      return;
+      return res
+        .status(404)
+        .json({ message: "Invalid Email - Profile not found" });
     }
     const updatedProfile = await Profile.findOne({ email: email });
     res.status(200).json(updatedProfile);
@@ -107,7 +113,9 @@ const updateByUsername = async (req, res) => {
       req.body
     );
     if (!profile) {
-      return;
+      return res
+        .status(404)
+        .json({ message: "Invalid Username - Profile not found" });
     }
     const updatedProfile = await Profile.findOne({ username: username });
     res.status(200).json(updatedProfile);
@@ -121,7 +129,7 @@ const deleteByID = async (req, res) => {
     const { id } = req.params;
     const profile = await Profile.findByIdAndDelete(id);
     if (!profile) {
-      return;
+      return res.status(404).json({ message: "Profile not found" });
     }
     res.status(200).json(profile);
   } catch (error) {
