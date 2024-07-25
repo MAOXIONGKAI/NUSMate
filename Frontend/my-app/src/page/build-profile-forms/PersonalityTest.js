@@ -42,12 +42,14 @@ export default function PersonalityTest(prop) {
   const result = GetTestResult(testID);
   const complete = result !== undefined;
 
-  if (complete) {
-    prop.setFormData((prev) => ({
-      ...prev,
-      personality: result.prediction,
-    }));
-  }
+  React.useEffect(() => {
+    if (complete) {
+      prop.setFormData((prev) => ({
+        ...prev,
+        personality: result.prediction,
+      }));
+    }
+  }, [complete]);
 
   React.useEffect(() => {
     window.localStorage.setItem("testID", testID);
@@ -178,8 +180,7 @@ export default function PersonalityTest(prop) {
             For accuracy of test result, please fill up majority of the
             questions.
             <br />
-            However, it is not compulsory to finish all the
-            questions.
+            However, it is not compulsory to finish all the questions.
             <br />
             As long as the form is not empty, a test result can be generated.
             <br />

@@ -261,6 +261,7 @@ export default function SignUp(prop) {
 
   // Handle action when user jump page by clicking the step icon directly
   const handleStep = (step) => () => {
+    if (step === activeStep) return;
     if (validateStep(activeStep)) {
       setCompleted((prev) => ({ ...prev, [activeStep]: true }));
     } else {
