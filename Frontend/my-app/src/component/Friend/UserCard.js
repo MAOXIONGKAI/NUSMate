@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { db } from "../data/Firebase/firebase-config";
+import { db } from "../../data/Firebase/firebase-config";
 import {
   collection,
   query,
@@ -30,18 +30,18 @@ import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import ColorNameAvatar from "./ColorNameAvatar";
+import ColorNameAvatar from "../ColorNameAvatar";
 import { Tooltip } from "@mui/material";
 import CardDetail from "./CardDetail";
-import SendFriendRequest from "../data/Friend/SendFriendRequest";
-import CheckIfPendingRequest from "../data/Friend/CheckIfPendingRequest";
-import WithdrawFriendRequest from "../data/Friend/WithdrawFriendRequest";
-import ApproveFriendRequest from "../data/Friend/ApproveFriendRequest";
-import GetFriendRequestData from "../data/Friend/GetFriendRequestData";
-import CheckIfFriend from "../data/Friend/CheckIfFriend";
-import DeclineFriendRequest from "../data/Friend/DeclineFriendRequest";
-import GetFriendshipData from "../data/Friend/GetFriendshipData";
-import RemoveFriend from "../data/Friend/RemoveFriend";
+import SendFriendRequest from "../../data/Friend/SendFriendRequest";
+import CheckIfPendingRequest from "../../data/Friend/CheckIfPendingRequest";
+import WithdrawFriendRequest from "../../data/Friend/WithdrawFriendRequest";
+import ApproveFriendRequest from "../../data/Friend/ApproveFriendRequest";
+import GetFriendRequestData from "../../data/Friend/GetFriendRequestData";
+import CheckIfFriend from "../../data/Friend/CheckIfFriend";
+import DeclineFriendRequest from "../../data/Friend/DeclineFriendRequest";
+import GetFriendshipData from "../../data/Friend/GetFriendshipData";
+import RemoveFriend from "../../data/Friend/RemoveFriend";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -326,7 +326,9 @@ export default function UserCard(prop) {
                 : "Alum"
             })`}
             subheader={`${first_major} ${
-              second_major ? `/ ${second_major}` : ""
+              second_major && second_major !== first_major
+                ? `/ ${second_major}`
+                : ""
             }`}
           />
           <CardContent sx={{ height: "100%" }}>

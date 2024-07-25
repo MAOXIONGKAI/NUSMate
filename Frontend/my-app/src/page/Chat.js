@@ -11,12 +11,12 @@ import {
 } from "firebase/firestore";
 import GetFriends from "../data/Friend/GetFriends";
 import GetUserProfile from "../data/GetUserProfile";
-import ChatFriendMenu from "../component/ChatFriendMenu";
+import ChatFriendMenu from "../component/Chat/ChatFriendMenu";
 import Box from "@mui/material/Box";
 import { TextField } from "@mui/material";
 import StyledButton from "../component/StyledButton";
 import { db } from "../data/Firebase/firebase-config";
-import ChatMessages from "../component/ChatMessages";
+import ChatMessages from "../component/Chat/ChatMessages";
 import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
 import CheckIfFriend from "../data/Friend/CheckIfFriend";
 import CustomizedSnackbar from "../component/CustomizedSnackbar";

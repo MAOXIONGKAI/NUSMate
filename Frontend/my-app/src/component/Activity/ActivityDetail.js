@@ -10,9 +10,9 @@ import Typography from "@mui/material/Typography";
 
 import PersonIcon from "@mui/icons-material/Person";
 import { List, ListItem, Paper } from "@mui/material";
-import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
+import GetAllJoinedParticipants from "../../data/Participant/GetAllJoinedParticipants";
 import MiniUserCard from "./MiniUserCard";
-import GetUserProfile from "../data/GetUserProfile";
+import GetUserProfile from "../../data/GetUserProfile";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -29,22 +29,21 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function ManageParticipantMenu(prop) {
+export default function ActivityDetail(prop) {
   const {
     open,
     setOpen,
+    refresh,
     profile,
     _id,
     hostID,
     hostName,
     activityName,
     pax,
-    refresh,
-    handleRefresh,
-    openRemoveSuccess,
-    setOpenRemoveSuccess,
-    openRemoveFail,
-    setOpenRemoveFail,
+    startDate,
+    endDate,
+    location,
+    description,
     triggerNotification,
   } = prop;
 
@@ -68,7 +67,7 @@ export default function ManageParticipantMenu(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [_id, hostID, refresh, triggerNotification]);
+  }, [hostID, _id, refresh, triggerNotification]);
 
   return (
     <React.Fragment>
@@ -78,15 +77,35 @@ export default function ManageParticipantMenu(prop) {
         open={open}
       >
         <DialogTitle
-          sx={{ m: 0, p: 2, backgroundColor: "#EFF9FF", textAlign: "center" }}
+          sx={{ m: 0, p: 2, backgroundColor: "#EFF9FF" }}
           id="customized-dialog-title"
         >
-          <Typography
-            sx={{ display: "inline", color: "gray", fontSize: "24px" }}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            Manage Participants in
-          </Typography>{" "}
-          {activityName}
+            <Box sx={{ display: "flex", gap: "0px 10px" }}>
+              <Typography variant="h6" sx={{ lineHeight: "32px" }}>
+                {activityName}
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{ color: "dimgray", lineHeight: "32px" }}
+              >
+                @{location}
+              </Typography>
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{ color: "gray", fontSize: "16px" }}
+            >
+              {startDate} - {endDate}
+            </Typography>
+          </Box>
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -112,6 +131,13 @@ export default function ManageParticipantMenu(prop) {
               gap: "30px",
             }}
           >
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ width: "90%", wordWrap: "break-word" }}
+            >
+              {description}
+            </Typography>
             <Box
               sx={{
                 width: "90%",
@@ -157,20 +183,13 @@ export default function ManageParticipantMenu(prop) {
                 >
                   {participants &&
                     participants.map((participant, index) => (
-                      <ListItem
-                        key={
-                          profile._id + participant._id + hostID + activityName
-                        }
-                      >
+                      <ListItem key={profile._id + participant._id + _id}>
                         <MiniUserCard
                           isHost={index === 0}
-                          isEditMode={true}
                           profile={participant}
                           userID={profile._id}
                           participantID={participant._id}
-                          handleRefresh={handleRefresh}
-                          setOpenRemoveSuccess={setOpenRemoveSuccess}
-                          setOpenRemoveFail={setOpenRemoveFail}
+                          activityID={_id}
                           triggerNotification={triggerNotification}
                         />
                       </ListItem>

@@ -1,17 +1,17 @@
 import React from "react";
 import axios from "axios";
 import { Button, TableCell, Typography, Skeleton } from "@mui/material";
-import ColorNameAvatar from "./ColorNameAvatar";
-import CardDetail from "./CardDetail";
-import CheckIfPendingRequest from "../data/Friend/CheckIfPendingRequest";
-import CheckIfFriend from "../data/Friend/CheckIfFriend";
-import SendFriendRequest from "../data/Friend/SendFriendRequest";
-import GetFriendRequestData from "../data/Friend/GetFriendRequestData";
-import WithdrawFriendRequest from "../data/Friend/WithdrawFriendRequest";
-import ApproveFriendRequest from "../data/Friend/ApproveFriendRequest";
-import DeclineFriendRequest from "../data/Friend/DeclineFriendRequest";
-import GetFriendshipData from "../data/Friend/GetFriendshipData";
-import RemoveFriend from "../data/Friend/RemoveFriend";
+import ColorNameAvatar from "../ColorNameAvatar";
+import CardDetail from "../Friend/CardDetail";
+import CheckIfPendingRequest from "../../data/Friend/CheckIfPendingRequest";
+import CheckIfFriend from "../../data/Friend/CheckIfFriend";
+import SendFriendRequest from "../../data/Friend/SendFriendRequest";
+import GetFriendRequestData from "../../data/Friend/GetFriendRequestData";
+import WithdrawFriendRequest from "../../data/Friend/WithdrawFriendRequest";
+import ApproveFriendRequest from "../../data/Friend/ApproveFriendRequest";
+import DeclineFriendRequest from "../../data/Friend/DeclineFriendRequest";
+import GetFriendshipData from "../../data/Friend/GetFriendshipData";
+import RemoveFriend from "../../data/Friend/RemoveFriend";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 

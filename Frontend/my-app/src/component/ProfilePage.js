@@ -55,6 +55,7 @@ export default function ProfilePage(prop) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [editedProfile, setEditedProfile] = React.useState(prop.profile);
   const {
+    _id,
     username,
     first_major,
     second_major,
@@ -173,15 +174,17 @@ export default function ProfilePage(prop) {
       setInvalidUsername(true);
       return;
     }
-
-    if (
-      await axios.get(
+    try {
+      const usernameProfile = await axios.get(
         `${backendURL}/api/profiles/username/${editedProfile.username}`
-      )
-    ) {
-      setUsernameTaken(true);
-      return;
-    }
+      );
+      if ((await usernameProfile.data._id) !== _id) {
+        setUsernameTaken(true);
+        return;
+      } else {
+        setUsernameTaken(false);
+      }
+    } catch (error) {}
 
     if (dayjs().isBefore(dayjs(editedProfile.birthday))) {
       setInvalidBirthday(true);
