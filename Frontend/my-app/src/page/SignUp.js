@@ -207,9 +207,6 @@ export default function SignUp(prop) {
     setError((prev) => ({ ...prev, birthday: !validBirthday }));
   }, [validBirthday]);
 
-  // Keep track of whether user has finished the personality test
-  const [finishTest, setFinishTest] = React.useState(true);
-
   // Form handling (Validation & Submission)
   // Validating whether each step is completed with valid data
   const validateStep = (step) => {
@@ -411,14 +408,12 @@ export default function SignUp(prop) {
     ];
 
     const firstInvalidField = requiredFields.find((field) => !field.condition);
-    setFinishTest(formData.personality !== "");
 
     if (
       !firstInvalidField &&
       passwordMatch &&
       validEmailFormat &&
-      validBirthday &&
-      finishTest
+      validBirthday 
     ) {
 
       // Check if email or username has already been registered, if yes then do not
@@ -544,11 +539,6 @@ export default function SignUp(prop) {
               <Alert severity="error">
                 The field {submissionStatus.invalidField} in step{" "}
                 {submissionStatus.invalidStep} is required but is not filled.
-              </Alert>
-            )}
-            {!finishTest && (
-              <Alert severity="error">
-                The personality test is required but not finished.
               </Alert>
             )}
             {usernameTaken && (
