@@ -9,15 +9,15 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import FriendInviteList from "./FriendInviteList";
-import GetFriends from "../data/Friend/GetFriends";
-import GetUserProfile from "../data/GetUserProfile";
-import InviteParticipant from "../data/Participant/InviteParticipant";
-import CheckIfInvited from "../data/Participant/CheckIfInvited";
-import RemoveParticipant from "../data/Participant/RemoveParticipant";
-import GetInvitationRequest from "../data/Participant/GetInvitationRequest";
+import GetFriends from "../../data/Friend/GetFriends";
+import GetUserProfile from "../../data/GetUserProfile";
+import InviteParticipant from "../../data/Participant/InviteParticipant";
+import CheckIfInvited from "../../data/Participant/CheckIfInvited";
+import RemoveParticipant from "../../data/Participant/RemoveParticipant";
+import GetInvitationRequest from "../../data/Participant/GetInvitationRequest";
 import { Typography } from "@mui/material";
-import CheckCanInvite from "../data/Participant/CheckCanInvite";
-import NoFriendToInvite from "../image/NoFriendToInvite.jpg";
+import CheckCanInvite from "../../data/Participant/CheckCanInvite";
+import NoFriendToInvite from "../../image/NoFriendToInvite.jpg";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {

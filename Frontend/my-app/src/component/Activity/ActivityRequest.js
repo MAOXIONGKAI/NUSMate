@@ -7,13 +7,12 @@ import {
   Button,
   Tooltip,
   IconButton,
-  Skeleton
 } from "@mui/material";
 import UserButton from "./UserButton";
-import CalculateTimesAgo from "../data/CalculateTimesAgo";
+import CalculateTimesAgo from "../../data/CalculateTimesAgo";
 import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
 import CancelOutlined from "@mui/icons-material/CancelOutlined";
-import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
+import GetAllJoinedParticipants from "../../data/Participant/GetAllJoinedParticipants";
 
 export default function ActivityRequest(prop) {
   const {

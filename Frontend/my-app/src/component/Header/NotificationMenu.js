@@ -9,7 +9,7 @@ import ChecklistRtlOutlinedIcon from "@mui/icons-material/ChecklistRtlOutlined";
 import MarkAsUnreadOutlinedIcon from "@mui/icons-material/MarkAsUnreadOutlined";
 import MarkEmailReadOutlinedIcon from "@mui/icons-material/MarkEmailReadOutlined";
 import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
-import ColorNameAvatar from "../component/ColorNameAvatar";
+import ColorNameAvatar from "../ColorNameAvatar";
 import NotificationsNone from "@mui/icons-material/NotificationsNone";
 import {
   Divider,
@@ -19,14 +19,14 @@ import {
   MenuList,
   Typography,
 } from "@mui/material";
-import NoNotification from "../image/NoNotification.jpg";
-import CalculateTimesAgo from "../data/CalculateTimesAgo";
+import NoNotification from "../../image/NoNotification.jpg";
+import CalculateTimesAgo from "../../data/CalculateTimesAgo";
 
-import MarkAsRead from "../data/Notification/MarkAsRead";
-import MarkAsUnread from "../data/Notification/MarkAsUnread";
-import MarkAllAsRead from "../data/Notification/MarkAllAsRead";
-import MarkAllAsUnread from "../data/Notification/MarkAllAsUnread";
-import GetNotifications from "../data/Notification/GetNotifications";
+import MarkAsRead from "../../data/Notification/MarkAsRead";
+import MarkAsUnread from "../../data/Notification/MarkAsUnread";
+import MarkAllAsRead from "../../data/Notification/MarkAllAsRead";
+import MarkAllAsUnread from "../../data/Notification/MarkAllAsUnread";
+import GetNotifications from "../../data/Notification/GetNotifications";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -52,6 +52,7 @@ export default function NotificationMenu(prop) {
 
   React.useEffect(() => {
     const getRequestInfo = async () => {
+      if (!messages) return;
       const requestPromises = messages.map(async (message) => {
         const profileResponse = await axios
           .get(
@@ -231,7 +232,7 @@ export default function NotificationMenu(prop) {
               },
             }}
           >
-            {notifications.length !== 0 && (
+            {notifications && notifications.length !== 0 && (
               <>
                 <ListSubheader
                   sx={{

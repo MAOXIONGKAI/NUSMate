@@ -1,21 +1,21 @@
 import React from "react";
 import axios from "axios";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
-import ColorNameAvatar from "./ColorNameAvatar";
+import ColorNameAvatar from "../ColorNameAvatar";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CardDetail from "./CardDetail";
-import CheckIfPendingRequest from "../data/Friend/CheckIfPendingRequest";
-import CheckIfFriend from "../data/Friend/CheckIfFriend";
-import SendFriendRequest from "../data/Friend/SendFriendRequest";
-import GetFriendRequestData from "../data/Friend/GetFriendRequestData";
-import WithdrawFriendRequest from "../data/Friend/WithdrawFriendRequest";
-import ApproveFriendRequest from "../data/Friend/ApproveFriendRequest";
-import DeclineFriendRequest from "../data/Friend/DeclineFriendRequest";
-import GetFriendshipData from "../data/Friend/GetFriendshipData";
-import RemoveFriend from "../data/Friend/RemoveFriend";
-import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
-import RemoveParticipant from "../data/Participant/RemoveParticipant";
+import CardDetail from "../Friend/CardDetail";
+import CheckIfPendingRequest from "../../data/Friend/CheckIfPendingRequest";
+import CheckIfFriend from "../../data/Friend/CheckIfFriend";
+import SendFriendRequest from "../../data/Friend/SendFriendRequest";
+import GetFriendRequestData from "../../data/Friend/GetFriendRequestData";
+import WithdrawFriendRequest from "../../data/Friend/WithdrawFriendRequest";
+import ApproveFriendRequest from "../../data/Friend/ApproveFriendRequest";
+import DeclineFriendRequest from "../../data/Friend/DeclineFriendRequest";
+import GetFriendshipData from "../../data/Friend/GetFriendshipData";
+import RemoveFriend from "../../data/Friend/RemoveFriend";
+import GetJoinedParticipant from "../../data/Participant/GetJoinedParticipant";
+import RemoveParticipant from "../../data/Participant/RemoveParticipant";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 

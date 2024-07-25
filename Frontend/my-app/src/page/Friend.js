@@ -3,7 +3,7 @@ import React from "react";
 import axios from "axios";
 import ToggleMenu from "../component/ToggleMenu";
 import { Container, Grid, Pagination } from "@mui/material";
-import UserCard from "../component/UserCard";
+import UserCard from "../component/Friend/UserCard";
 import NoFriendPage from "../image/NoFriendPage.png";
 
 export default function Friend(prop) {

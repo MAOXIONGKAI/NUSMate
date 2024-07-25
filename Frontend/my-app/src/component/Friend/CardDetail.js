@@ -7,7 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
-import ColorNameAvatar from "./ColorNameAvatar";
+import ColorNameAvatar from "../ColorNameAvatar";
 import {
   Tooltip,
   TableContainer,
@@ -150,7 +150,10 @@ export default function CardDetail(prop) {
                 color="gray"
                 sx={{ margin: "0px", padding: "0px", fontSize: "14px" }}
               >
-                {first_major + (second_major ? ` / ${second_major}` : "")}
+                {first_major +
+                  (second_major && second_major !== first_major
+                    ? ` / ${second_major}`
+                    : "")}
               </Typography>
             </Box>
             <IconButton

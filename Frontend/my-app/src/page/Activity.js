@@ -1,8 +1,6 @@
 import React from "react";
-import dayjs from "dayjs";
 import {
   Box,
-  Button,
   IconButton,
   Table,
   TableCell,
@@ -18,28 +16,23 @@ import Pagination from "@mui/material/Pagination";
 import ToggleMenu from "../component/ToggleMenu";
 import NoActivityPage from "../image/NoActivityPage.jpg";
 import AddIcon from "@mui/icons-material/Add";
-import FormDialog from "../component/FormDialog";
+import FormDialog from "../component/Activity/FormDialog";
 import CustomizedSnackbar from "../component/CustomizedSnackbar";
 import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
 import GetActivities from "../data/Activity/GetActivities";
-import ActivityCard from "../component/ActivityCard";
-import ActivityDetail from "../component/ActivityDetail";
+import ActivityCard from "../component/Activity/ActivityCard";
+import ActivityDetail from "../component/Activity/ActivityDetail";
 import GetAllSentRequests from "../data/Participant/GetAllSentRequests";
 import GetActivity from "../data/Activity/GetActivity";
 import GetPendingActivityRequests from "../data/Activity/GetPendingActivityRequests";
 import GetUserProfile from "../data/GetUserProfile";
-import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
-import CancelOutlined from "@mui/icons-material/CancelOutlined";
-
-import CalculateTimesAgo from "../data/CalculateTimesAgo";
 import ApproveParticipant from "../data/Participant/ApproveParticipant";
 import DeclineParticipant from "../data/Participant/DeclineParticipant";
 import GetAllJoinedActivities from "../data/Participant/GetAllJoinedActivities";
-import UserButton from "../component/UserButton";
 import AcceptInvitation from "../data/Participant/AcceptInvitation";
 import RejectInvitation from "../data/Participant/RejectInvitation";
 import GetFavoriteActivities from "../data/Activity/GetFavoriteActivities";
-import ActivityRequest from "../component/ActivityRequest";
+import ActivityRequest from "../component/Activity/ActivityRequest";
 
 export default function Activity(prop) {
   const { triggerNotification } = prop;

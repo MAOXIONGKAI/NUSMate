@@ -10,7 +10,7 @@ import {
   Pagination,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import UserCard from "../component/UserCard";
+import UserCard from "../component/Friend/UserCard";
 import DiscoverNoResult from "../image/DiscoverNoResult.png";
 import {
   Box,

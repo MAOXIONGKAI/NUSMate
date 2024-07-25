@@ -1,8 +1,7 @@
 import React from "react";
-import "../index.css";
 import { Typography, Box } from "@mui/material";
-import NoMessage from "../image/NoMessage.jpg";
-import NoChatSelected from "../image/NoChatSelected.jpg";
+import NoMessage from "../../image/NoMessage.jpg";
+import NoChatSelected from "../../image/NoChatSelected.jpg";
 import Message from "./Message";
 
 export default function ChatMessages(prop) {

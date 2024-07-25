@@ -12,7 +12,7 @@ import {
   Tooltip,
   Grid,
 } from "@mui/material";
-import ColorNameAvatar from "../component/ColorNameAvatar";
+import ColorNameAvatar from "../ColorNameAvatar";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
@@ -23,24 +23,24 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
 import CancelOutlined from "@mui/icons-material/CancelOutlined";
-import DeleteActivity from "../data/Activity/DeleteActivity";
-import CustomizedSnackbar from "./CustomizedSnackbar";
+import DeleteActivity from "../../data/Activity/DeleteActivity";
+import CustomizedSnackbar from "../CustomizedSnackbar";
 import ActivityDetail from "./ActivityDetail";
-import CreateParticipant from "../data/Participant/CreateParticipant";
-import RemoveParticipant from "../data/Participant/RemoveParticipant";
-import GetParticipantRequest from "../data/Participant/GetParticipantRequest";
-import CheckIfJoined from "../data/Participant/CheckIfJoined";
-import GetUserProfile from "../data/GetUserProfile";
-import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
-import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
+import CreateParticipant from "../../data/Participant/CreateParticipant";
+import RemoveParticipant from "../../data/Participant/RemoveParticipant";
+import GetParticipantRequest from "../../data/Participant/GetParticipantRequest";
+import CheckIfJoined from "../../data/Participant/CheckIfJoined";
+import GetUserProfile from "../../data/GetUserProfile";
+import GetJoinedParticipant from "../../data/Participant/GetJoinedParticipant";
+import GetAllJoinedParticipants from "../../data/Participant/GetAllJoinedParticipants";
 import EditActivityForm from "./EditActivityForm";
 import ManageParticipantMenu from "./MangeParticipantMenu";
 import FriendInviteMenu from "./FriendInviteMenu";
-import CheckIfInvited from "../data/Participant/CheckIfInvited";
-import GetActivity from "../data/Activity/GetActivity";
-import AcceptInvitation from "../data/Participant/AcceptInvitation";
-import RejectInvitation from "../data/Participant/RejectInvitation";
-import GetInvitationRequest from "../data/Participant/GetInvitationRequest";
+import CheckIfInvited from "../../data/Participant/CheckIfInvited";
+import GetActivity from "../../data/Activity/GetActivity";
+import AcceptInvitation from "../../data/Participant/AcceptInvitation";
+import RejectInvitation from "../../data/Participant/RejectInvitation";
+import GetInvitationRequest from "../../data/Participant/GetInvitationRequest";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";

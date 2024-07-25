@@ -1,37 +1,55 @@
 import React from "react";
 import dayjs from "dayjs";
-import CreateActivity from "../data/Activity/CreateActivity";
+import EditActivity from "../../data/Activity/EditActivity";
 import { Box, FormHelperText } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Divider } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import CloseIcon from "@mui/icons-material/Close";
 
 export default function FormDialog(prop) {
-  const { open, setOpen } = prop;
+  const {
+    open,
+    setOpen,
+    handleRefresh,
+    activity,
+    setOpenEditSuccess,
+    setOpenEditFail,
+    setHasModified,
+    currentPax,
+  } = prop;
+  let {
+    _id,
+    hostID,
+    hostName,
+    activityName,
+    pax,
+    startDate,
+    endDate,
+    location,
+    description,
+  } = activity;
 
   const handleClose = () => {
     setOpen(false);
+    handleRefresh();
   };
 
   const [formData, setFormData] = React.useState({
-    hostID: prop.profile._id,
-    hostName: prop.profile.username,
-    activityName: "",
-    pax: "",
-    startDate: null,
-    endDate: null,
-    location: "",
-    description: "",
+    hostID: hostID,
+    hostName: hostName,
+    activityName: activityName,
+    pax: pax,
+    startDate: dayjs(startDate),
+    endDate: dayjs(endDate),
+    location: location,
+    description: description,
   });
 
   const handleChange = (event) => {
@@ -62,6 +80,10 @@ export default function FormDialog(prop) {
       isValid = false;
     }
 
+    if (formData.pax < currentPax) {
+      isValid = false;
+    }
+
     fieldsToValidate.forEach((field) => {
       const input = document.querySelector(`[name="${field}"]`);
       const value =
@@ -86,11 +108,12 @@ export default function FormDialog(prop) {
     event.preventDefault();
     const isValid = validateForm(formData);
     if (isValid) {
-      if (CreateActivity(formData)) {
-        prop.setOpenSuccess(true);
+      if (EditActivity(_id, formData)) {
+        setOpenEditSuccess(true);
         handleClose();
+        setHasModified((prev) => !prev);
       } else {
-        prop.setOpenFail(true);
+        setOpenEditFail(true);
       }
     }
   };
@@ -115,7 +138,6 @@ export default function FormDialog(prop) {
         }}
         sx={{
           textAlign: "center",
-          
         }}
       >
         <DialogTitle
@@ -126,21 +148,8 @@ export default function FormDialog(prop) {
             marginBottom: "20px",
           }}
         >
-          {prop.title}
+          Edit - {activityName}
         </DialogTitle>
-        <IconButton
-          aria-label="close"
-          onClick={handleClose}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: "white",
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <DialogContentText>{prop.content}</DialogContentText>
         <DialogContent
           sx={{
             display: "flex",
@@ -234,22 +243,39 @@ export default function FormDialog(prop) {
               onChange={handleChange}
               type="text"
               variant="standard"
-              sx={{ flex: 2 }}
+              sx={{ flex: 3 }}
               inputProps={{ maxLength: 60 }}
             />
-            <TextField
-              required
-              margin="none"
-              size="small"
-              name="pax"
-              label="Number of Participants"
-              value={formData.pax}
-              onChange={handleChange}
-              type="number"
-              sx={{ flex: 1 }}
-              inputProps={{ min: 1, max: 50 }}
-            />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                flexWrap: "wrap",
+                flex: 2,
+              }}
+            >
+              <TextField
+                required
+                margin="none"
+                size="small"
+                name="pax"
+                label="Number of Participants"
+                value={formData.pax}
+                onChange={handleChange}
+                type="number"
+                inputProps={{ min: 1, max: 50 }}
+              />
+              {formData.pax && formData.pax < currentPax && (
+                <FormHelperText
+                  sx={{ margin: "none", marginLeft: "auto", color: "red" }}
+                >
+                  New limit must be at least the number of people who joined the
+                  activity now
+                </FormHelperText>
+              )}
+            </Box>
           </Box>
+
           <TextField
             required
             margin="dense"
@@ -301,7 +327,7 @@ export default function FormDialog(prop) {
               "&:hover": { background: "rgba(50,50,50, 0.1)" },
             }}
           >
-            Create
+            Edit
           </Button>
         </DialogActions>
       </Dialog>
