@@ -14,7 +14,7 @@ const getActvities = async (req, res) => {
   try {
     const activity = await Activity.find({}).sort({ updatedAt: -1 });
     if (!activity) {
-      return res.status(404).json({ message: "No activity found in database" });
+      return;
     }
     res.status(200).json(activity);
   } catch (error) {
@@ -27,9 +27,7 @@ const getActivity = async (req, res) => {
     const { id } = req.params;
     const activity = await Activity.findById(id);
     if (!activity) {
-      return res
-        .status(404)
-        .json({ message: "No activity associated with this id" });
+      return;
     }
     res.status(200).json(activity);
   } catch (error) {
@@ -42,7 +40,7 @@ const editActivity = async (req, res) => {
     const { activityID } = req.params;
     const activity = await Activity.findByIdAndUpdate(activityID, req.body);
     if (!activity) {
-      return res.status(404).json({message: "No activity found for edit"})
+      return;
     }
     const io = getIo();
     io.sockets.emit('receiveNotification', "Data")
@@ -57,7 +55,7 @@ const deleteActivity = async (req, res) => {
     const { id } = req.params;
     const activity = await Activity.findByIdAndDelete(id);
     if (!activity) {
-      return res.status(404).json({ message: "Activity not found" });
+      return;
     }
     return res.status(200).json(activity);
   } catch (error) {

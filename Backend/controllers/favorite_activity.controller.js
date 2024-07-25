@@ -13,9 +13,7 @@ const readAll = async (req, res) => {
   try {
     const favorites = await FavoriteActivity.find({});
     if (!favorites) {
-      return res
-        .status(404)
-        .json({ message: "No favorite activities found in database" });
+      return;
     }
     res.status(200).json(favorites);
   } catch (error) {
@@ -30,9 +28,7 @@ const readByUserID = async (req, res) => {
       createdAt: -1,
     });
     if (!favorites) {
-      return res
-        .status(404)
-        .json({ message: "No favorite activity collection found in database" });
+      return;
     }
     res.status(200).json(favorites);
   } catch (error) {
@@ -45,9 +41,7 @@ const readFavoriteStatus = async (req, res) => {
     const relationship = await FavoriteActivity.find(req.body);
 
     if (!relationship) {
-      return res
-        .status(404)
-        .json({ message: "No such relationship in database" });
+      return;
     }
     res.status(200).json(relationship);
   } catch (error) {
@@ -59,9 +53,7 @@ const deleteFavorite = async (req, res) => {
   try {
     const relationship = await FavoriteActivity.findOneAndDelete(req.body);
     if (!relationship) {
-      return res
-        .status(404)
-        .json({ message: "No relationship found to delete" });
+      return;
     }
     res.status(200).json(relationship);
   } catch (error) {

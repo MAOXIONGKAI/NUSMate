@@ -5,9 +5,7 @@ const readAllParticipants = async (req, res) => {
   try {
     const response = await Participant.find({});
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "No participants found in the database" });
+      return;
     }
     res.status(200).json(response);
   } catch (error) {
@@ -23,9 +21,7 @@ const readAllSentRequests = async (req, res) => {
       status: "Pending",
     });
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "No sent activity request for the user: " });
+      return;
     }
     res.status(200).json(response);
   } catch (error) {
@@ -47,7 +43,7 @@ const readAllJoinedActivities = async (req, res) => {
     };
     const response = await Participant.find(query).sort({ updatedAt: -1 });
     if (!response) {
-      return res.status(404).json({ message: "No joined activity found" });
+      return;
     }
     res.status(200).json(response);
   } catch (error) {
@@ -72,9 +68,7 @@ const readAllJoinedParticipants = async (req, res) => {
     };
     const response = await Participant.find(query).sort({ updatedAt: -1 });
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "No participant found for this activity" });
+      return;
     }
     res.status(200).json(response);
   } catch (error) {
@@ -96,9 +90,7 @@ const readAllPendingRequests = async (req, res) => {
     };
     const response = await Participant.find(query).sort({ updatedAt: -1 });
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "No pending activity request for the user" });
+      return;
     }
     res.status(200).json(response);
   } catch (error) {
@@ -121,9 +113,7 @@ const readAllAssociatedParticipation = async (req, res) => {
     };
     const response = await Participant.find(query).sort({ updatedAt: -1 });
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "No associated Participation found in database" });
+      return;
     }
     res.status(200).json(response);
   } catch (error) {
@@ -135,7 +125,7 @@ const readParticipant = async (req, res) => {
   try {
     const response = await Participant.findOne(req.body);
     if (!response) {
-      return res.status(404).json({ message: "Participant not found" });
+      return;
     }
     res.status(200).json(response);
   } catch (error) {
@@ -147,9 +137,7 @@ const checkIfJoined = async (req, res) => {
   try {
     const response = await Participant.findOne(req.body);
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "User has not joined the activity" });
+      return;
     }
     res.status(200).json(response);
   } catch (error) {
@@ -161,9 +149,7 @@ const checkIfInvited = async (req, res) => {
   try {
     const response = await Participant.findOne(req.body);
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "User has not been invited to the activity" });
+      return;
     }
     res.status(200).json(response);
   } catch (error) {
@@ -187,9 +173,7 @@ const approveParticipant = async (req, res) => {
     const { id } = req.params;
     const response = await Participant.findByIdAndUpdate(id, req.body);
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "No pending activity request found to be approved" });
+      return;
     }
     const io = getIo();
     io.sockets.emit('receiveNotification', "Data")
@@ -204,9 +188,7 @@ const declineParticipant = async (req, res) => {
     const { id } = req.params;
     const response = await Participant.findByIdAndUpdate(id, req.body);
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "No pending activity request found to be declined" });
+      return;
     }
     const io = getIo();
     io.sockets.emit('receiveNotification', "Data")
@@ -221,9 +203,7 @@ const acceptInvitation = async (req, res) => {
     const { id } = req.params;
     const response = await Participant.findByIdAndUpdate(id, req.body);
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "No invitation found to accept from the database" });
+      return;
     }
     const io = getIo();
     io.sockets.emit('receiveNotification', "Data")
@@ -238,9 +218,7 @@ const rejectInvitation = async (req, res) => {
     const { id } = req.params;
     const response = await Participant.findByIdAndUpdate(id, req.body);
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "No invitation found to reject from the database" });
+      return;
     }
     const io = getIo();
     io.sockets.emit('receiveNotification', "Data")
@@ -255,9 +233,7 @@ const removeParticipant = async (req, res) => {
     const { requestID } = req.params;
     const response = await Participant.findByIdAndDelete(requestID);
     if (!response) {
-      return res
-        .status(404)
-        .json({ message: "No participants found to delete from the database" });
+      return;
     }
     const io = getIo();
     io.sockets.emit('receiveNotification', "Data")
@@ -272,9 +248,7 @@ const removeAllParticipantsbyActivity = async (req, res) => {
     const { activityID } = req.params;
     const response = await Participant.deleteMany({ activityID: activityID });
     if (!response) {
-      return res.status(404).json({
-        message: "No participants associated with the activity to remove",
-      });
+      return;
     }
     const io = getIo();
     io.sockets.emit('receiveNotification', "Data")
@@ -291,9 +265,7 @@ const markAsRead = async (req, res) => {
       timestamps: false,
     });
     if (!response) {
-      return res.status(404).json({
-        message: "No participation found in database to mark as read",
-      });
+      return;
     }
     const io = getIo();
     io.sockets.emit('receiveNotification', "Data")
