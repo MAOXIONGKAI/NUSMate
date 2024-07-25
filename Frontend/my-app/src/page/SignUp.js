@@ -119,6 +119,7 @@ export default function SignUp(prop) {
   // Update user's profile data when sign up form is submitted successfully
   const sendData = () => {
     const backendURL = process.env.REACT_APP_BACKEND_URL;
+    if (!formData) return;
     const send = async () => {
       try {
         const response = await axios.post(
@@ -297,6 +298,7 @@ export default function SignUp(prop) {
 
   // Check if the sign up form email is already registered
   async function emailRegistered() {
+    if (!formData.email) return;
     const backendURL = process.env.REACT_APP_BACKEND_URL;
     try {
       const response = await axios.get(
@@ -315,6 +317,7 @@ export default function SignUp(prop) {
 
   // Check if the sign up form username is already registered
   async function usernameRegistered() {
+    if (!formData.username) return;
     const backendURL = process.env.REACT_APP_BACKEND_URL;
     try {
       const response = await axios.get(
@@ -343,25 +346,25 @@ export default function SignUp(prop) {
         key: "username",
         name: "Username",
         step: 1,
-        condition: formData.username.trim() !== "",
+        condition: formData.username?.trim() !== "",
       },
       {
         key: "email",
         name: "Email",
         step: 1,
-        condition: formData.email.trim() !== "",
+        condition: formData.email?.trim() !== "",
       },
       {
         key: "password",
         name: "Password",
         step: 1,
-        condition: formData.password.trim() !== "",
+        condition: formData.password?.trim() !== "",
       },
       {
         key: "confirmPassword",
         name: "Confirm_Password",
         step: 1,
-        condition: formData.confirmPassword.trim() !== "",
+        condition: formData.confirmPassword?.trim() !== "",
       },
       {
         key: "first_major",
@@ -413,9 +416,8 @@ export default function SignUp(prop) {
       !firstInvalidField &&
       passwordMatch &&
       validEmailFormat &&
-      validBirthday 
+      validBirthday
     ) {
-
       // Check if email or username has already been registered, if yes then do not
       // create account in the database
       // The code is written like this because the operations are asynchronous,
@@ -435,7 +437,7 @@ export default function SignUp(prop) {
       formData.description = formData.description.trim();
 
       //Then proceeds to send data to database
-      if (sendData()) {
+      if (await sendData()) {
         //If data successfully sent, save local profiel and logged in status
         // Prompt user to his/her profile page
         prop.setProfile(formData);
