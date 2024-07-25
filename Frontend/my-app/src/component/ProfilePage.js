@@ -80,6 +80,7 @@ export default function ProfilePage(prop) {
 
   const [interest, setInterest] = React.useState("");
   const [invalidUsername, setInvalidUsername] = React.useState(false);
+  const [usernameTaken, setUsernameTaken] = React.useState(false);
   const [invalidBirthday, setInvalidBirthday] = React.useState(false);
   const [openSuccess, setOpenSuccess] = React.useState(false);
   const [openFail, setOpenFail] = React.useState(false);
@@ -166,10 +167,19 @@ export default function ProfilePage(prop) {
     setOpenDialog(true);
   };
 
-  const handleSave = (event) => {
+  const handleSave = async (event) => {
     // Tidying up of info + input validation
     if (editedProfile.username.trim() === "") {
       setInvalidUsername(true);
+      return;
+    }
+
+    if (
+      await axios.get(
+        `${backendURL}/api/profiles/username/${editedProfile.username}`
+      )
+    ) {
+      setUsernameTaken(true);
       return;
     }
 
@@ -221,6 +231,11 @@ export default function ProfilePage(prop) {
           Invalid Username: Username cannot be empty string
         </Alert>
       )}
+      {usernameTaken && (
+        <Alert sx={{ marginBottom: "20px" }} severity="error">
+          Invalid Username: Username has been taken
+        </Alert>
+      )}
       {invalidBirthday && (
         <Alert sx={{ marginBottom: "20px" }} severity="error">
           Invalid Birthday: Birthday cannot be in the future
@@ -238,7 +253,7 @@ export default function ProfilePage(prop) {
         setOpen={setOpenFail}
       />
       <CustomizedSnackbar
-        text= {`Test Result Generated: Your new personality is ${personality}`}
+        text={`Test Result Generated: Your new personality is ${personality}`}
         open={openChange}
         setOpen={setOpenChange}
       />
@@ -282,7 +297,7 @@ export default function ProfilePage(prop) {
                   name="username"
                   value={editedProfile.username}
                   onChange={handleChange}
-                  inputProps={{maxLength: 30}}
+                  inputProps={{ maxLength: 30 }}
                 >
                   Username
                 </TextField>
@@ -327,7 +342,7 @@ export default function ProfilePage(prop) {
                 value={editedProfile.description}
                 sx={{ width: "75%", margin: "10px" }}
                 onChange={handleChange}
-                inputProps={{maxLength: 350}}
+                inputProps={{ maxLength: 350 }}
               >
                 Description
               </TextField>
@@ -340,7 +355,7 @@ export default function ProfilePage(prop) {
                   maxWidth: "75%",
                   textAlign: "center",
                   textWrap: "wrap",
-                  wordBreak: "break-word"
+                  wordBreak: "break-word",
                 }}
               >
                 {description}
