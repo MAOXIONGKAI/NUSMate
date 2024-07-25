@@ -7,6 +7,7 @@ import {
   Button,
   Tooltip,
   IconButton,
+  Skeleton
 } from "@mui/material";
 import UserButton from "./UserButton";
 import CalculateTimesAgo from "../data/CalculateTimesAgo";
@@ -35,11 +36,11 @@ export default function ActivityRequest(prop) {
 
   return (
     <TableRow key={request._id + prop.profile._id}>
-      <UserButton
+      {<UserButton
         request={request}
         userID={prop.profile._id}
         triggerNotification={triggerNotification}
-      />
+      />}
       <TableCell sx={{ textAlign: "center" }}>
         <Typography>
           <Typography
@@ -96,7 +97,7 @@ export default function ActivityRequest(prop) {
         >
           <IconButton
             sx={{ color: "#32CD32" }}
-            disabled={request.pax <= participants.length + 1}
+            disabled={request.pax <= participants?.length + 1}
             onClick={
               request.hostID === prop.profile._id
                 ? () => {

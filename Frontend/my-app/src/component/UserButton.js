@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { Button, TableCell, Typography } from "@mui/material";
+import { Button, TableCell, Typography, Skeleton } from "@mui/material";
 import ColorNameAvatar from "./ColorNameAvatar";
 import CardDetail from "./CardDetail";
 import CheckIfPendingRequest from "../data/Friend/CheckIfPendingRequest";
@@ -240,13 +240,24 @@ export default function UserButton(prop) {
             gap: "8px",
           }}
         >
-          <ColorNameAvatar
-            username={username}
-            sx={{ size: "14px", fontSize: "10px" }}
-          />
-          <Typography variant="body2" sx={{ color: "gray", fontSize: "10px" }}>
-            {username}
-          </Typography>
+          {username ? (
+            <ColorNameAvatar
+              username={username}
+              sx={{ size: "14px", fontSize: "10px" }}
+            />
+          ) : (
+            <Skeleton variant="rectangular" width={50} height={50} />
+          )}
+          {username ? (
+            <Typography
+              variant="body2"
+              sx={{ color: "gray", fontSize: "10px" }}
+            >
+              {username}
+            </Typography>
+          ) : (
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          )}
         </TableCell>
       </Button>
     </>

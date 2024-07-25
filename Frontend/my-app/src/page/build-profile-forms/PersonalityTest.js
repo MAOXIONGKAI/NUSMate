@@ -36,7 +36,7 @@ export default function PersonalityTest(prop) {
   const [testID, setTestID] = React.useState(savedID ? savedID : "");
 
   // Keep track of whether the page is loading the personality test
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false);
 
   // Evaluate whether the user has completed based on the content of the result
   const result = GetTestResult(testID);
@@ -178,7 +178,13 @@ export default function PersonalityTest(prop) {
             For accuracy of test result, please fill up majority of the
             questions.
             <br />
-            Too many missing field may cause the test result to be voided.
+            However, it is not compulsory to finish all the
+            questions.
+            <br />
+            As long as the form is not empty, a test result can be generated.
+            <br />
+            If you are unsatisfied with the test result, you can always retake
+            test in edit profile section.
           </Typography>
         </>
       )}
