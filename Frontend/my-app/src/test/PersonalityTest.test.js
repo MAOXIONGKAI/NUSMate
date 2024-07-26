@@ -42,7 +42,7 @@ describe("Personality Test Page in Sign Up Page", () => {
       ).toBeInTheDocument();
       expect(
         screen.getByText(
-          /Please take note this quiz takes around 20 mins to finish.For accuracy of test result, please fill up majority of the questions.Too many missing field may cause the test result to be voided./i
+          /Please take note this quiz takes around 20 mins to finish.For accuracy of test result, please fill up majority of the questions.However, it is not compulsory to finish all the questions.As long as the form is not empty, a test result can be generated.If you are unsatisfied with the test result, you can always retake test in edit profile section./i
         )
       ).toBeInTheDocument();
       expect(screen.getByText(/START THE TEST/i)).toBeInTheDocument();

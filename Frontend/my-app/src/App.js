@@ -11,12 +11,12 @@ import ForgotPassword from "./page/ForgotPassword";
 import Activity from "./page/Activity";
 import SignUp from "./page/SignUp";
 import Chat from "./page/Chat";
-import zIndex from "@mui/material/styles/zIndex";
 
 function App() {
   //Reading data from online source (database, server, API, etc.)
   const savedProfile = JSON.parse(window.localStorage.getItem("profileData"));
   const isLoggedIn = JSON.parse(window.localStorage.getItem("loggedInStatus"));
+  const [triggerNotification, setTriggerNotification] = React.useState(false);
 
   //Keep track of user info using states
   const [loggedIn, setLoggedIn] = React.useState(isLoggedIn);
@@ -57,6 +57,8 @@ function App() {
           loggedIn={loggedIn}
           setLoggedIn={setLoggedIn}
           profile={profile}
+          triggerNotification={triggerNotification}
+          setTriggerNotification={setTriggerNotification}
         />
         <Routes>
           <Route
@@ -72,7 +74,13 @@ function App() {
           />
           <Route
             path="/discover"
-            element={<Discover profile={profile} setProfile={setProfile} />}
+            element={
+              <Discover
+                profile={profile}
+                setProfile={setProfile}
+                triggerNotification={triggerNotification}
+              />
+            }
           />
           <Route
             path="/profile"
@@ -80,11 +88,23 @@ function App() {
           />
           <Route
             path="/friend"
-            element={<Friend profile={profile} setProfile={setProfile} />}
+            element={
+              <Friend
+                profile={profile}
+                setProfile={setProfile}
+                triggerNotification={triggerNotification}
+              />
+            }
           />
           <Route
             path="/activity"
-            element={<Activity profile={profile} setProfile={setProfile} />}
+            element={
+              <Activity
+                profile={profile}
+                setProfile={setProfile}
+                triggerNotification={triggerNotification}
+              />
+            }
           />
           <Route
             path="/chat"

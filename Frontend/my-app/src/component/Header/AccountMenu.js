@@ -11,7 +11,7 @@ import Diversity2Icon from "@mui/icons-material/Diversity2";
 import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 import { Link } from "react-router-dom";
-import ColorNameAvatar from "./ColorNameAvatar";
+import ColorNameAvatar from "../ColorNameAvatar";
 
 export default function AccountMenu(prop) {
   const [anchorEl, setAnchorEl] = React.useState(null);

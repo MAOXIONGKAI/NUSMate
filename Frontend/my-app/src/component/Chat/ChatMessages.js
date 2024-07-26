@@ -1,15 +1,41 @@
 import React from "react";
-import "../index.css";
 import { Typography, Box } from "@mui/material";
-import NoMessage from "../image/NoMessage.jpg";
+import NoMessage from "../../image/NoMessage.jpg";
+import NoChatSelected from "../../image/NoChatSelected.jpg";
 import Message from "./Message";
 
 export default function ChatMessages(prop) {
-  const { messages, userID, latestMsg } = prop;
+  const { messages, userID, latestMsg, currentFriend } = prop;
 
   return (
     <>
-      {messages.length === 0 ? (
+      {!currentFriend ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            gap: "20px"
+          }}
+        >
+          <img
+            src={NoChatSelected}
+            alt="No Chat Selected Background"
+            style={{ width: "40%" }}
+          />
+          <Typography
+            sx={{
+              fontFamily: "Handlee, sans-serif",
+              fontWeight: 500,
+              fontSize: "24px",
+            }}
+          >
+            Select a Friend and start chatting!
+          </Typography>
+        </Box>
+      ) : messages.length === 0 ? (
         <Box
           sx={{
             display: "flex",
@@ -46,7 +72,11 @@ export default function ChatMessages(prop) {
           }}
         >
           {messages.map((message) => (
-            <Message key={message.id} text={message.text} isSender={message.sender === userID} />
+            <Message
+              key={message.id}
+              text={message.text}
+              isSender={message.sender === userID}
+            />
           ))}
           <div ref={latestMsg}></div>
         </Box>

@@ -3,7 +3,7 @@ import React from "react";
 import axios from "axios";
 import ToggleMenu from "../component/ToggleMenu";
 import { Container, Grid, Pagination } from "@mui/material";
-import UserCard from "../component/UserCard";
+import UserCard from "../component/Friend/UserCard";
 import NoFriendPage from "../image/NoFriendPage.png";
 
 export default function Friend(prop) {
@@ -18,6 +18,7 @@ export default function Friend(prop) {
 
   const userID = prop.profile._id;
   const backendURL = process.env.REACT_APP_BACKEND_URL;
+  const { triggerNotification } = prop;
 
   const [refresh, setRefresh] = React.useState(false);
   const refreshPage = () => {
@@ -237,7 +238,7 @@ export default function Friend(prop) {
     } else {
       setCurrentResult([]);
     }
-  }, [currentGroup, refresh]);
+  }, [currentGroup, refresh, triggerNotification]);
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const profilesPerPage = 9;
@@ -335,6 +336,7 @@ export default function Friend(prop) {
                         userID={userID}
                         sx={{ flexGrow: 1 }}
                         refreshPage={refreshPage}
+                        triggerNotification={triggerNotification}
                       />
                     </Box>
                   </Grid>

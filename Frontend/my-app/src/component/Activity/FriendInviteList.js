@@ -6,7 +6,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Checkbox from "@mui/material/Checkbox";
-import ColorNameAvatar from "./ColorNameAvatar";
+import ColorNameAvatar from "../ColorNameAvatar";
 import { ListSubheader } from "@mui/material";
 
 export default function FriendInviteList(prop) {

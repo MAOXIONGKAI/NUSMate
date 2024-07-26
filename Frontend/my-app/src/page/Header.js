@@ -3,9 +3,8 @@ import io from "socket.io-client";
 import axios from "axios";
 import MainLogo from "../image/Main-Logo.png";
 import { Button } from "@mui/material";
-import NotificationMenu from "../component/NotificationMenu";
-import ChatMenu from "../component/ChatMenu";
-import AccountMenu from "../component/AccountMenu";
+import NotificationMenu from "../component/Header/NotificationMenu";
+import AccountMenu from "../component/Header/AccountMenu";
 import { Link } from "react-router-dom";
 import StyledButton from "../component/StyledButton";
 import GetNotifications from "../data/Notification/GetNotifications";
@@ -14,8 +13,12 @@ const backendURL = process.env.REACT_APP_BACKEND_URL;
 function LoggedInHeader(prop) {
   const [messages, setMessages] = React.useState([]);
   const [notifications, setNotifications] = React.useState([]);
-  const [triggerNotification, setTriggerNotification] = React.useState(false);
-  const { profile, setConnectedSockets } = prop;
+  const {
+    profile,
+    setConnectedSockets,
+    triggerNotification,
+    setTriggerNotification,
+  } = prop;
 
   React.useEffect(() => {
     const socket = io(backendURL);
@@ -136,9 +139,6 @@ function LoggedInHeader(prop) {
               />
             </li>
             <li>
-              <ChatMenu />
-            </li>
-            <li>
               <AccountMenu setLoggedIn={prop.setLoggedIn} profile={profile} />
             </li>
           </ul>
@@ -184,6 +184,7 @@ function LandingHeader(prop) {
 }
 
 export default function Header(prop) {
+  const { triggerNotification, setTriggerNotification } = prop;
   const [connectedSockets, setConnectedSockets] = React.useState([]);
   return (
     <>
@@ -192,6 +193,8 @@ export default function Header(prop) {
           setLoggedIn={prop.setLoggedIn}
           profile={prop.profile}
           setConnectedSockets={setConnectedSockets}
+          triggerNotification={triggerNotification}
+          setTriggerNotification={setTriggerNotification}
         />
       ) : (
         <LandingHeader

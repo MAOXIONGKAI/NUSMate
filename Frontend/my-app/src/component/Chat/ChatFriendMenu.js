@@ -9,7 +9,7 @@ import {
   Divider,
   Typography,
 } from "@mui/material";
-import ColorNameAvatar from "./ColorNameAvatar";
+import ColorNameAvatar from "../ColorNameAvatar";
 import PersonOffOutlinedIcon from '@mui/icons-material/PersonOffOutlined';
 
 export default function ChatFriendMenu(prop) {

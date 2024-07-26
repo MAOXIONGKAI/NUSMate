@@ -1,21 +1,21 @@
 import React from "react";
 import axios from "axios";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
-import ColorNameAvatar from "./ColorNameAvatar";
+import ColorNameAvatar from "../ColorNameAvatar";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CardDetail from "./CardDetail";
-import CheckIfPendingRequest from "../data/Friend/CheckIfPendingRequest";
-import CheckIfFriend from "../data/Friend/CheckIfFriend";
-import SendFriendRequest from "../data/Friend/SendFriendRequest";
-import GetFriendRequestData from "../data/Friend/GetFriendRequestData";
-import WithdrawFriendRequest from "../data/Friend/WithdrawFriendRequest";
-import ApproveFriendRequest from "../data/Friend/ApproveFriendRequest";
-import DeclineFriendRequest from "../data/Friend/DeclineFriendRequest";
-import GetFriendshipData from "../data/Friend/GetFriendshipData";
-import RemoveFriend from "../data/Friend/RemoveFriend";
-import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
-import RemoveParticipant from "../data/Participant/RemoveParticipant";
+import CardDetail from "../Friend/CardDetail";
+import CheckIfPendingRequest from "../../data/Friend/CheckIfPendingRequest";
+import CheckIfFriend from "../../data/Friend/CheckIfFriend";
+import SendFriendRequest from "../../data/Friend/SendFriendRequest";
+import GetFriendRequestData from "../../data/Friend/GetFriendRequestData";
+import WithdrawFriendRequest from "../../data/Friend/WithdrawFriendRequest";
+import ApproveFriendRequest from "../../data/Friend/ApproveFriendRequest";
+import DeclineFriendRequest from "../../data/Friend/DeclineFriendRequest";
+import GetFriendshipData from "../../data/Friend/GetFriendshipData";
+import RemoveFriend from "../../data/Friend/RemoveFriend";
+import GetJoinedParticipant from "../../data/Participant/GetJoinedParticipant";
+import RemoveParticipant from "../../data/Participant/RemoveParticipant";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -30,6 +30,7 @@ export default function MiniUserCard(prop) {
     setOpenRemoveSuccess,
     setOpenRemoveFail,
     handleRefresh,
+    triggerNotification,
   } = prop;
 
   const { username } = profile;
@@ -72,7 +73,7 @@ export default function MiniUserCard(prop) {
       setHasSentRequest(await CheckIfPendingRequest(userID, participantID));
     };
     checkSendRequestStatus();
-  }, [userID, participantID]);
+  }, [userID, participantID, triggerNotification]);
 
   // Check database to see if there is incoming request from target user
   React.useEffect(() => {
@@ -80,7 +81,7 @@ export default function MiniUserCard(prop) {
       setHasIncomingRequest(await CheckIfPendingRequest(participantID, userID));
     };
     checkIncomingRequestStatus();
-  }, [userID, participantID]);
+  }, [userID, participantID, triggerNotification]);
 
   // Check database to see if the user is a friend
   React.useEffect(() => {
@@ -88,7 +89,7 @@ export default function MiniUserCard(prop) {
       setIsFriend(await CheckIfFriend(userID, participantID));
     };
     checkFriendship();
-  }, [userID, participantID]);
+  }, [userID, participantID, triggerNotification]);
 
   const handleCheckProfile = () => {
     setOpenCard(true);
@@ -260,6 +261,7 @@ export default function MiniUserCard(prop) {
         handleApproveFriendRequest={handleApproveFriendRequest}
         handleDeclineFriendRequest={handleDeclineFriendRequest}
         handleRemoveFriend={handleRemoveFriend}
+        triggerNotification={triggerNotification}
       />
 
       <ColorNameAvatar

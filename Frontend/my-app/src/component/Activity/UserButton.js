@@ -1,22 +1,22 @@
 import React from "react";
 import axios from "axios";
-import { Button, TableCell, Typography } from "@mui/material";
-import ColorNameAvatar from "./ColorNameAvatar";
-import CardDetail from "./CardDetail";
-import CheckIfPendingRequest from "../data/Friend/CheckIfPendingRequest";
-import CheckIfFriend from "../data/Friend/CheckIfFriend";
-import SendFriendRequest from "../data/Friend/SendFriendRequest";
-import GetFriendRequestData from "../data/Friend/GetFriendRequestData";
-import WithdrawFriendRequest from "../data/Friend/WithdrawFriendRequest";
-import ApproveFriendRequest from "../data/Friend/ApproveFriendRequest";
-import DeclineFriendRequest from "../data/Friend/DeclineFriendRequest";
-import GetFriendshipData from "../data/Friend/GetFriendshipData";
-import RemoveFriend from "../data/Friend/RemoveFriend";
+import { Button, TableCell, Typography, Skeleton } from "@mui/material";
+import ColorNameAvatar from "../ColorNameAvatar";
+import CardDetail from "../Friend/CardDetail";
+import CheckIfPendingRequest from "../../data/Friend/CheckIfPendingRequest";
+import CheckIfFriend from "../../data/Friend/CheckIfFriend";
+import SendFriendRequest from "../../data/Friend/SendFriendRequest";
+import GetFriendRequestData from "../../data/Friend/GetFriendRequestData";
+import WithdrawFriendRequest from "../../data/Friend/WithdrawFriendRequest";
+import ApproveFriendRequest from "../../data/Friend/ApproveFriendRequest";
+import DeclineFriendRequest from "../../data/Friend/DeclineFriendRequest";
+import GetFriendshipData from "../../data/Friend/GetFriendshipData";
+import RemoveFriend from "../../data/Friend/RemoveFriend";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export default function UserButton(prop) {
-  const { request, userID } = prop;
+  const { request, userID, triggerNotification } = prop;
   const { requestUserID } = request;
   const userProfile = {
     ...request,
@@ -64,7 +64,7 @@ export default function UserButton(prop) {
       setHasSentRequest(await CheckIfPendingRequest(userID, requestUserID));
     };
     checkSendRequestStatus();
-  }, [userID, requestUserID]);
+  }, [userID, requestUserID, triggerNotification]);
 
   // Check database to see if there is incoming request from target user
   React.useEffect(() => {
@@ -72,7 +72,7 @@ export default function UserButton(prop) {
       setHasIncomingRequest(await CheckIfPendingRequest(requestUserID, userID));
     };
     checkIncomingRequestStatus();
-  }, [userID, requestUserID]);
+  }, [userID, requestUserID, triggerNotification]);
 
   // Check database to see if the user is a friend
   React.useEffect(() => {
@@ -80,7 +80,7 @@ export default function UserButton(prop) {
       setIsFriend(await CheckIfFriend(userID, requestUserID));
     };
     checkFriendship();
-  }, [userID, requestUserID]);
+  }, [userID, requestUserID, triggerNotification]);
 
   const handleCheckProfile = () => {
     setOpenCard(true);
@@ -220,6 +220,7 @@ export default function UserButton(prop) {
         handleApproveFriendRequest={handleApproveFriendRequest}
         handleDeclineFriendRequest={handleDeclineFriendRequest}
         handleRemoveFriend={handleRemoveFriend}
+        triggerNotification={triggerNotification}
       />
       <Button
         sx={{
@@ -239,13 +240,24 @@ export default function UserButton(prop) {
             gap: "8px",
           }}
         >
-          <ColorNameAvatar
-            username={username}
-            sx={{ size: "14px", fontSize: "10px" }}
-          />
-          <Typography variant="body2" sx={{ color: "gray", fontSize: "10px" }}>
-            {username}
-          </Typography>
+          {username ? (
+            <ColorNameAvatar
+              username={username}
+              sx={{ size: "14px", fontSize: "10px" }}
+            />
+          ) : (
+            <Skeleton variant="rectangular" width={50} height={50} />
+          )}
+          {username ? (
+            <Typography
+              variant="body2"
+              sx={{ color: "gray", fontSize: "10px" }}
+            >
+              {username}
+            </Typography>
+          ) : (
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          )}
         </TableCell>
       </Button>
     </>

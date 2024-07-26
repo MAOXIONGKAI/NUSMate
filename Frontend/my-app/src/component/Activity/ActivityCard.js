@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import dayjs from "dayjs";
 import {
   Typography,
@@ -11,38 +12,43 @@ import {
   Tooltip,
   Grid,
 } from "@mui/material";
-import ColorNameAvatar from "../component/ColorNameAvatar";
+import ColorNameAvatar from "../ColorNameAvatar";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import GroupsIcon from "@mui/icons-material/Groups";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
-import ShareIcon from "@mui/icons-material/Share";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
 import CancelOutlined from "@mui/icons-material/CancelOutlined";
-import DeleteActivity from "../data/Activity/DeleteActivity";
-import CustomizedSnackbar from "./CustomizedSnackbar";
+import DeleteActivity from "../../data/Activity/DeleteActivity";
+import CustomizedSnackbar from "../CustomizedSnackbar";
 import ActivityDetail from "./ActivityDetail";
-import CreateParticipant from "../data/Participant/CreateParticipant";
-import RemoveParticipant from "../data/Participant/RemoveParticipant";
-import GetParticipantRequest from "../data/Participant/GetParticipantRequest";
-import CheckIfJoined from "../data/Participant/CheckIfJoined";
-import GetUserProfile from "../data/GetUserProfile";
-import GetJoinedParticipant from "../data/Participant/GetJoinedParticipant";
-import GetAllJoinedParticipants from "../data/Participant/GetAllJoinedParticipants";
+import CreateParticipant from "../../data/Participant/CreateParticipant";
+import RemoveParticipant from "../../data/Participant/RemoveParticipant";
+import GetParticipantRequest from "../../data/Participant/GetParticipantRequest";
+import CheckIfJoined from "../../data/Participant/CheckIfJoined";
+import GetUserProfile from "../../data/GetUserProfile";
+import GetJoinedParticipant from "../../data/Participant/GetJoinedParticipant";
+import GetAllJoinedParticipants from "../../data/Participant/GetAllJoinedParticipants";
 import EditActivityForm from "./EditActivityForm";
 import ManageParticipantMenu from "./MangeParticipantMenu";
 import FriendInviteMenu from "./FriendInviteMenu";
-import CheckIfInvited from "../data/Participant/CheckIfInvited";
-import AcceptInvitation from "../data/Participant/AcceptInvitation";
-import RejectInvitation from "../data/Participant/RejectInvitation";
-import GetInvitationRequest from "../data/Participant/GetInvitationRequest";
+import CheckIfInvited from "../../data/Participant/CheckIfInvited";
+import GetActivity from "../../data/Activity/GetActivity";
+import AcceptInvitation from "../../data/Participant/AcceptInvitation";
+import RejectInvitation from "../../data/Participant/RejectInvitation";
+import GetInvitationRequest from "../../data/Participant/GetInvitationRequest";
+
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+
+const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export default function ActivityCard(prop) {
-  const { profile, activity, setHasModified } = prop;
+  const { profile, activity, setHasModified, triggerNotification } = prop;
   let {
     _id,
     hostID,
@@ -59,6 +65,7 @@ export default function ActivityCard(prop) {
   endDate = dayjs(endDate).format("ddd, MMM D, YYYY h:mm A");
 
   const [openDetail, setOpenDetail] = React.useState(false);
+  const [isFavorite, setIsFavorite] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
   const [openParticipantMenu, setOpenParticipantMenu] = React.useState(false);
   const [openInviteMenu, setOpenInviteMenu] = React.useState(false);
@@ -82,6 +89,32 @@ export default function ActivityCard(prop) {
     setRefresh((prev) => !prev);
   };
 
+  // Check database to see if the activity has been added to favorite
+  React.useEffect(() => {
+    const getFavStatus = async () => {
+      try {
+        const response = await axios.post(
+          `${backendURL}/api/favorite_activities/check_relationship`,
+          {
+            userID: profile._id,
+            favoriteActivityID: _id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setIsFavorite(response.data.length !== 0);
+      } catch (error) {
+        console.log(
+          `Error when getting favorite status of ${activityName}: ` + error
+        );
+      }
+    };
+    getFavStatus();
+  }, []);
+
   React.useEffect(() => {
     const getParticipants = async () => {
       const participations = await GetAllJoinedParticipants(_id);
@@ -96,7 +129,7 @@ export default function ActivityCard(prop) {
       setParticipants(result);
     };
     getParticipants();
-  }, [_id, hostID, refresh]);
+  }, [_id, hostID, refresh, triggerNotification]);
 
   //Check with database about whether the user has requested to join this activity
   React.useEffect(() => {
@@ -108,7 +141,7 @@ export default function ActivityCard(prop) {
       }
     };
     checkRequested();
-  }, [_id, profile._id, refresh]);
+  }, [_id, profile._id, refresh, triggerNotification]);
 
   //Check with database about whether the user has joined this activity
   React.useEffect(() => {
@@ -116,7 +149,7 @@ export default function ActivityCard(prop) {
       setHasJoined(await CheckIfJoined(profile._id, _id));
     };
     checkJoinedStatus();
-  }, []);
+  }, [triggerNotification]);
 
   const handleOpenDetail = () => {
     setOpenDetail(true);
@@ -128,7 +161,7 @@ export default function ActivityCard(prop) {
       setHasBeenInvited(await CheckIfInvited(profile._id, hostID, _id));
     };
     checkInviteStatus();
-  }, []);
+  }, [triggerNotification]);
 
   React.useEffect(() => {
     if (!openDeleteSuccess) {
@@ -147,6 +180,7 @@ export default function ActivityCard(prop) {
 
   const handleJoinActivity = (participantID, hostID, activityID) => {
     const sendJoinRequest = async () => {
+      if (!(await GetActivity(activityID))) return;
       if (await CreateParticipant(participantID, hostID, activityID)) {
         setHasRequestedToJoin(true);
         setHasModified((prev) => !prev);
@@ -162,6 +196,7 @@ export default function ActivityCard(prop) {
         participantID,
         activityID
       );
+      if (!requestData) return;
       const requestID = await requestData._id;
       if (await RemoveParticipant(requestID)) {
         setHasRequestedToJoin(false);
@@ -178,6 +213,7 @@ export default function ActivityCard(prop) {
         participantID,
         activityID
       );
+      if (!approvedRequest) return;
       const requestID = await approvedRequest._id;
       if (await RemoveParticipant(requestID)) {
         setHasJoined(false);
@@ -236,6 +272,61 @@ export default function ActivityCard(prop) {
   const handleFrinedInvite = () => {
     setOpenInviteMenu(true);
     handleRefresh();
+  };
+
+  const createFavorite = async () => {
+    try {
+      if (!(await GetActivity(_id))) return;
+      const response = await axios.post(
+        `${backendURL}/api/favorite_activities`,
+        {
+          userID: profile._id,
+          favoriteActivityID: _id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      console.log("Error when setting user profile as favorite: " + error);
+    }
+  };
+
+  const deleteFavorite = async () => {
+    try {
+      const response = await axios.delete(
+        `${backendURL}/api/favorite_activities`,
+        {
+          data: {
+            userID: profile._id,
+            favoriteActivityID: _id,
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      console.log(
+        "Error when deleting favorite activity from user collection: " + error
+      );
+    }
+  };
+
+  const handleAddFavorite = () => {
+    setIsFavorite(true);
+    createFavorite();
+    setHasModified((prev) => !prev);
+  };
+
+  const handleDeleteFavorite = () => {
+    setIsFavorite(false);
+    deleteFavorite();
+    setHasModified((prev) => !prev);
   };
 
   return (
@@ -298,6 +389,7 @@ export default function ActivityCard(prop) {
         endDate={endDate}
         location={location}
         description={description}
+        triggerNotification={triggerNotification}
       />
       <EditActivityForm
         open={openEdit}
@@ -324,6 +416,7 @@ export default function ActivityCard(prop) {
         hostName={hostName}
         activityName={activityName}
         pax={pax}
+        triggerNotification={triggerNotification}
       />
       <FriendInviteMenu
         open={openInviteMenu}
@@ -334,6 +427,7 @@ export default function ActivityCard(prop) {
         handleRefresh={handleRefresh}
         setOpenInviteSuccess={setOpenInviteSuccess}
         setOpenInviteFail={setOpenInviteFail}
+        triggerNotification={triggerNotification}
       />
       <Card
         sx={{
@@ -529,6 +623,7 @@ export default function ActivityCard(prop) {
                 <Tooltip title={`Accept Invitation from ${activity.hostName}`}>
                   <IconButton
                     sx={{ color: "#32CD32" }}
+                    disabled={activity.pax <= participants.length}
                     onClick={() =>
                       handleAcceptActivityInvitation(profile._id, _id)
                     }
@@ -557,11 +652,19 @@ export default function ActivityCard(prop) {
                 </IconButton>
               </Tooltip>
             )}
-            <Tooltip title="Share this activity">
-              <IconButton>
-                <ShareIcon />
-              </IconButton>
-            </Tooltip>
+            {isFavorite ? (
+              <Tooltip title={`Remove ${activityName} from Favorite`}>
+                <IconButton onClick={handleDeleteFavorite}>
+                  <FavoriteIcon sx={{ color: "red" }} />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title={`Add ${activityName} to Favorite`}>
+                <IconButton onClick={handleAddFavorite}>
+                  <FavoriteBorderIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </Grid>
         </CardActions>
       </Card>

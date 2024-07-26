@@ -12,6 +12,7 @@ const Profile = require("./models/profile.model");
 // Import route
 const profileRoute = require("./routes/profile.route.js");
 const favoriteRoute = require("./routes/favorite.route.js");
+const favoriteActivityRoute = require("./routes/favorite_activity.route.js")
 const activityRoute = require("./routes/activity.route.js");
 const friendRoute = require("./routes/friend.route.js");
 const participantRoute = require("./routes/participant.route.js")
@@ -42,9 +43,11 @@ app.use(
 // Use routes
 app.use("/api/profiles", profileRoute);
 app.use("/api/favorites", favoriteRoute);
+app.use("/api/favorite_activities", favoriteActivityRoute);
 app.use("/api/activities", activityRoute);
 app.use("/api/friends", friendRoute);
 app.use("/api/participants", participantRoute);
+
 
 // Testing Code
 app.get("/", (req, res) => {

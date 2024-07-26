@@ -119,6 +119,7 @@ export default function SignUp(prop) {
   // Update user's profile data when sign up form is submitted successfully
   const sendData = () => {
     const backendURL = process.env.REACT_APP_BACKEND_URL;
+    if (!formData) return;
     const send = async () => {
       try {
         const response = await axios.post(
@@ -207,9 +208,6 @@ export default function SignUp(prop) {
     setError((prev) => ({ ...prev, birthday: !validBirthday }));
   }, [validBirthday]);
 
-  // Keep track of whether user has finished the personality test
-  const [finishTest, setFinishTest] = React.useState(true);
-
   // Form handling (Validation & Submission)
   // Validating whether each step is completed with valid data
   const validateStep = (step) => {
@@ -263,6 +261,7 @@ export default function SignUp(prop) {
 
   // Handle action when user jump page by clicking the step icon directly
   const handleStep = (step) => () => {
+    if (step === activeStep) return;
     if (validateStep(activeStep)) {
       setCompleted((prev) => ({ ...prev, [activeStep]: true }));
     } else {
@@ -300,6 +299,7 @@ export default function SignUp(prop) {
 
   // Check if the sign up form email is already registered
   async function emailRegistered() {
+    if (!formData.email) return;
     const backendURL = process.env.REACT_APP_BACKEND_URL;
     try {
       const response = await axios.get(
@@ -318,6 +318,7 @@ export default function SignUp(prop) {
 
   // Check if the sign up form username is already registered
   async function usernameRegistered() {
+    if (!formData.username) return;
     const backendURL = process.env.REACT_APP_BACKEND_URL;
     try {
       const response = await axios.get(
@@ -346,25 +347,25 @@ export default function SignUp(prop) {
         key: "username",
         name: "Username",
         step: 1,
-        condition: formData.username.trim() !== "",
+        condition: formData.username?.trim() !== "",
       },
       {
         key: "email",
         name: "Email",
         step: 1,
-        condition: formData.email.trim() !== "",
+        condition: formData.email?.trim() !== "",
       },
       {
         key: "password",
         name: "Password",
         step: 1,
-        condition: formData.password.trim() !== "",
+        condition: formData.password?.trim() !== "",
       },
       {
         key: "confirmPassword",
         name: "Confirm_Password",
         step: 1,
-        condition: formData.confirmPassword.trim() !== "",
+        condition: formData.confirmPassword?.trim() !== "",
       },
       {
         key: "first_major",
@@ -411,16 +412,13 @@ export default function SignUp(prop) {
     ];
 
     const firstInvalidField = requiredFields.find((field) => !field.condition);
-    setFinishTest(formData.personality !== "");
 
     if (
       !firstInvalidField &&
       passwordMatch &&
       validEmailFormat &&
-      validBirthday &&
-      finishTest
+      validBirthday
     ) {
-
       // Check if email or username has already been registered, if yes then do not
       // create account in the database
       // The code is written like this because the operations are asynchronous,
@@ -440,7 +438,7 @@ export default function SignUp(prop) {
       formData.description = formData.description.trim();
 
       //Then proceeds to send data to database
-      if (sendData()) {
+      if (await sendData()) {
         //If data successfully sent, save local profiel and logged in status
         // Prompt user to his/her profile page
         prop.setProfile(formData);
@@ -544,11 +542,6 @@ export default function SignUp(prop) {
               <Alert severity="error">
                 The field {submissionStatus.invalidField} in step{" "}
                 {submissionStatus.invalidStep} is required but is not filled.
-              </Alert>
-            )}
-            {!finishTest && (
-              <Alert severity="error">
-                The personality test is required but not finished.
               </Alert>
             )}
             {usernameTaken && (

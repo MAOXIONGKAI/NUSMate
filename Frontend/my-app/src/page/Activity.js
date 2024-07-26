@@ -1,8 +1,6 @@
 import React from "react";
-import dayjs from "dayjs";
 import {
   Box,
-  Button,
   IconButton,
   Table,
   TableCell,
@@ -18,34 +16,33 @@ import Pagination from "@mui/material/Pagination";
 import ToggleMenu from "../component/ToggleMenu";
 import NoActivityPage from "../image/NoActivityPage.jpg";
 import AddIcon from "@mui/icons-material/Add";
-import FormDialog from "../component/FormDialog";
+import FormDialog from "../component/Activity/FormDialog";
 import CustomizedSnackbar from "../component/CustomizedSnackbar";
 import UpdateLocalUserProfile from "../data/UpdateLocalUserProfile";
 import GetActivities from "../data/Activity/GetActivities";
-import ActivityCard from "../component/ActivityCard";
-import ActivityDetail from "../component/ActivityDetail";
+import ActivityCard from "../component/Activity/ActivityCard";
+import ActivityDetail from "../component/Activity/ActivityDetail";
 import GetAllSentRequests from "../data/Participant/GetAllSentRequests";
 import GetActivity from "../data/Activity/GetActivity";
 import GetPendingActivityRequests from "../data/Activity/GetPendingActivityRequests";
 import GetUserProfile from "../data/GetUserProfile";
-import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
-import CancelOutlined from "@mui/icons-material/CancelOutlined";
-
-import CalculateTimesAgo from "../data/CalculateTimesAgo";
 import ApproveParticipant from "../data/Participant/ApproveParticipant";
 import DeclineParticipant from "../data/Participant/DeclineParticipant";
 import GetAllJoinedActivities from "../data/Participant/GetAllJoinedActivities";
-import UserButton from "../component/UserButton";
 import AcceptInvitation from "../data/Participant/AcceptInvitation";
 import RejectInvitation from "../data/Participant/RejectInvitation";
+import GetFavoriteActivities from "../data/Activity/GetFavoriteActivities";
+import ActivityRequest from "../component/Activity/ActivityRequest";
 
 export default function Activity(prop) {
+  const { triggerNotification } = prop;
   const groupOptions = [
     { value: "All Activities" },
     { value: "Requested Activities" },
     { value: "Joined Activities" },
     { value: "My Hosted Activities" },
     { value: "Pending Request" },
+    { value: "Favorite" },
   ];
   const [currentGroup, setCurrentGroup] = React.useState("All Activities");
   const [currentResult, setCurrentResult] = React.useState([]);
@@ -154,6 +151,15 @@ export default function Activity(prop) {
           })
         );
         setCurrentResult(requests);
+      } else if (currentGroup === "Favorite") {
+        const favorite_activities = await GetFavoriteActivities(
+          prop.profile._id
+        );
+        const promises = favorite_activities.map((activity) =>
+          GetActivity(activity.favoriteActivityID)
+        );
+        const results = await Promise.all(promises);
+        setCurrentResult(results);
       } else {
         setCurrentResult([]);
       }
@@ -341,116 +347,17 @@ export default function Activity(prop) {
                     </TableHead>
                     <TableBody>
                       {activitySection.map((request) => (
-                        <TableRow key={request._id + prop.profile._id}>
-                          <UserButton
-                            request={request}
-                            userID={prop.profile._id}
-                          />
-                          <TableCell sx={{ textAlign: "center" }}>
-                            <Typography>
-                              <Typography
-                                sx={{
-                                  display: "inline",
-                                  color: "gray",
-                                  fontSize: "16px",
-                                }}
-                              >
-                                {request.status === "Pending"
-                                  ? "requested to join"
-                                  : request.status === "Invited"
-                                  ? "has invited you to join"
-                                  : ""}
-                              </Typography>{" "}
-                              <Button
-                                onClick={() =>
-                                  handleOpenActivityDetail(
-                                    prop.profile,
-                                    request.activityID,
-                                    request.hostID,
-                                    request.hostName,
-                                    request.activityName,
-                                    request.pax,
-                                    dayjs(request.startDate).format(
-                                      "ddd, MMM D, YYYY h:mm A"
-                                    ),
-                                    dayjs(request.endDate).format(
-                                      "ddd, MMM D, YYYY h:mm A"
-                                    ),
-                                    request.activityLocation,
-                                    request.activityDescription
-                                  )
-                                }
-                              >
-                                {request.activityName}
-                              </Button>
-                            </Typography>
-                          </TableCell>
-                          <TableCell sx={{ textAlign: "center" }}>
-                            <Typography
-                              sx={{
-                                color: "gray",
-                                fontSize: "16px",
-                                fontWeight: 400,
-                              }}
-                            >
-                              {CalculateTimesAgo(request.updatedAt)}
-                            </Typography>
-                          </TableCell>
-                          <TableCell sx={{ textAlign: "center" }}>
-                            <Tooltip
-                              title={
-                                request.hostID === prop.profile._id
-                                  ? `Approve join request from ${request.username}`
-                                  : `Accept Invitation from ${request.username}`
-                              }
-                            >
-                              <IconButton
-                                sx={{ color: "#32CD32" }}
-                                onClick={
-                                  request.hostID === prop.profile._id
-                                    ? () => {
-                                        handleApproveActivityRequest(
-                                          request._id
-                                        );
-                                      }
-                                    : () => {
-                                        handleAcceptActivityInvitation(
-                                          request._id
-                                        );
-                                      }
-                                }
-                              >
-                                <CheckCircleOutline />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip
-                              title={
-                                request.hostID === prop.profile._id
-                                  ? `Decline join request from ${request.username}`
-                                  : `Reject invitation from ${request.username}`
-                              }
-                            >
-                              <IconButton
-                                sx={{ color: "red" }}
-                                onClick={
-                                  request.hostID === prop.profile._id
-                                    ? () => {
-                                        handleDeclineActivityRequest(
-                                          request._id
-                                        );
-                                      }
-                                    : () => {
-                                        handleRejectActivityInvitation(
-                                          request._id
-                                        );
-                                      }
-                                }
-                              >
-                                <CancelOutlined />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
+                        <ActivityRequest
+                          key={prop.profile._id + request._id}
+                          request={request}
+                          profile={prop.profile}
+                          triggerNotification={triggerNotification}
+                          handleOpenActivityDetail={handleOpenActivityDetail}
+                          handleApproveActivityRequest={handleApproveActivityRequest}
+                          handleAcceptActivityInvitation={handleAcceptActivityInvitation}
+                          handleDeclineActivityRequest={handleDeclineActivityRequest}
+                          handleRejectActivityInvitation={handleRejectActivityInvitation}
+                        />
                       ))}
                     </TableBody>
                   </Table>
@@ -462,6 +369,7 @@ export default function Activity(prop) {
                     activity={activity}
                     profile={prop.profile}
                     setHasModified={setHasModified}
+                    triggerNotification={triggerNotification}
                   />
                 ))
               )}
