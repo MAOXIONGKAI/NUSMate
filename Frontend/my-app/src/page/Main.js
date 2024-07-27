@@ -21,10 +21,10 @@ import Diversity1Icon from "@mui/icons-material/Diversity1";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import ForumIcon from "@mui/icons-material/Forum";
 import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
-import NearMeIcon from "@mui/icons-material/NearMe";
-import CakeIcon from "@mui/icons-material/Cake";
+import QuickreplyIcon from '@mui/icons-material/Quickreply';
+import Diversity3Icon from '@mui/icons-material/Diversity3';
 
 const HeroContent = styled(Box)(({ theme }) => ({
   padding: theme.spacing(8, 0, 6),
@@ -152,11 +152,22 @@ function LandingPage(prop) {
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
+                <InsertEmoticonIcon sx={{ height: "60px", width: "60px" }} />
+                <FeatureText>
+                  <ListItemText
+                    primary="#2 Personality Test"
+                    secondary="Understand your personality trait better through our customized persoanlity test!"
+                  />
+                </FeatureText>
+              </Feature>
+            </ListItem>
+            <ListItem className="fade-in">
+              <Feature>
                 <Diversity1Icon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
-                    primary="#2 Find Your Tribe"
-                    secondary="Connect with others through Sharing of Interests, Hobbies, Courses, and More!"
+                    primary="#3 Find Your Tribe"
+                    secondary="Connect with others by sharing your interests, hobbies, courses, and more!"
                   />
                 </FeatureText>
               </Feature>
@@ -166,8 +177,19 @@ function LandingPage(prop) {
                 <PersonSearchIcon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
-                    primary="#3 Customized Search"
+                    primary="#4 Customized Search"
                     secondary="Search others by hobbies, study years, location, and more to find your perfect match!"
+                  />
+                </FeatureText>
+              </Feature>
+            </ListItem>
+            <ListItem className="fade-in">
+              <Feature>
+                <TravelExploreIcon sx={{ height: "60px", width: "60px" }} />
+                <FeatureText>
+                  <ListItemText
+                    primary="#5 Instant Matching"
+                    secondary="Hard to find friends of your preference? Let the system do the job for you!"
                   />
                 </FeatureText>
               </Feature>
@@ -177,7 +199,7 @@ function LandingPage(prop) {
                 <ForumIcon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
-                    primary="#4 Direct Communication"
+                    primary="#6 Direct Communication"
                     secondary="DM each other via an integrated chat system to know each other better!"
                   />
                 </FeatureText>
@@ -190,7 +212,7 @@ function LandingPage(prop) {
                 />
                 <FeatureText>
                   <ListItemText
-                    primary="#5 Activity Posting"
+                    primary="#7 Activity Posting"
                     secondary="Share holiday plans or social activities, and invite other people to join!"
                   />
                 </FeatureText>
@@ -198,44 +220,22 @@ function LandingPage(prop) {
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
-                <CalendarMonthIcon sx={{ height: "60px", width: "60px" }} />
+                <QuickreplyIcon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
-                    primary="#6 Activity Tracking"
-                    secondary="Track your social engagement with other users on the platform!"
+                    primary="#8 Instant Interactions & Notifications"
+                    secondary="Responsive user interactions will make sure that you never miss an opportunity to socialize!"
                   />
                 </FeatureText>
               </Feature>
             </ListItem>
             <ListItem className="fade-in">
               <Feature>
-                <TravelExploreIcon sx={{ height: "60px", width: "60px" }} />
+                <Diversity3Icon sx={{ height: "60px", width: "60px" }} />
                 <FeatureText>
                   <ListItemText
-                    primary="#7 Instant Matching"
-                    secondary="Hard to find friends to join you? Let the system do the job for you!"
-                  />
-                </FeatureText>
-              </Feature>
-            </ListItem>
-            <ListItem className="fade-in">
-              <Feature>
-                <NearMeIcon sx={{ height: "60px", width: "60px" }} />
-                <FeatureText>
-                  <ListItemText
-                    primary="#8 Drift Bottle"
-                    secondary="Connect with random nearby users, let location data introduce you to new people nearby!"
-                  />
-                </FeatureText>
-              </Feature>
-            </ListItem>
-            <ListItem className="fade-in">
-              <Feature>
-                <CakeIcon sx={{ height: "60px", width: "60px" }} />
-                <FeatureText>
-                  <ListItemText
-                    primary="#9 Birthday Celebration"
-                    secondary="Send birthday greetings and messages to anyone celebrating their special day!"
+                    primary="#9 Efficient Relationship Management"
+                    secondary="Manage your friend and activities on the same platform altogether!"
                   />
                 </FeatureText>
               </Feature>
