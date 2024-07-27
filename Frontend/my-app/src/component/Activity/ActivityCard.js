@@ -169,9 +169,9 @@ export default function ActivityCard(prop) {
     }
   }, [openDeleteSuccess, setHasModified]);
 
-  const handleDeleteActivity = (ID) => {
+  const handleDeleteActivity = (userID, ID) => {
     const sendDeleteRequest = async () => {
-      if (await DeleteActivity(ID)) {
+      if (await DeleteActivity(userID, ID)) {
         setOpenDeleteSuccess(true);
       }
     };
@@ -595,7 +595,9 @@ export default function ActivityCard(prop) {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Delete this activity">
-                  <IconButton onClick={() => handleDeleteActivity(_id)}>
+                  <IconButton
+                    onClick={() => handleDeleteActivity(profile._id, _id)}
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </Tooltip>
