@@ -7,23 +7,13 @@ export default async function DeleteActivity(userID, ID) {
     const URLs = [
       `${backendURL}/api/activities/${ID}`,
       `${backendURL}/api/participants/remove_all_participants/${ID}`,
-      `${backendURL}/api/favorite_activities`,
     ];
     const requestPromises = URLs.map((URL) => {
-      return axios.delete(
-        URL,
-        {
-          data: {
-            userID: userID,
-            favoriteActivityID: ID,
-          },
+      return axios.delete(URL, {
+        headers: {
+          "Content-Type": "application/json",
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      });
     });
 
     const response = await axios.all(requestPromises);
