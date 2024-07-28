@@ -23,7 +23,7 @@ export default function FormDialog(prop) {
     setOpen(false);
   };
 
-  const [formData, setFormData] = React.useState({
+  const defaultForm = {
     hostID: prop.profile._id,
     hostName: prop.profile.username,
     activityName: "",
@@ -32,7 +32,9 @@ export default function FormDialog(prop) {
     endDate: null,
     location: "",
     description: "",
-  });
+  }
+
+  const [formData, setFormData] = React.useState(defaultForm);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -88,6 +90,7 @@ export default function FormDialog(prop) {
     if (isValid) {
       if (CreateActivity(formData)) {
         prop.setOpenSuccess(true);
+        setFormData(defaultForm);
         handleClose();
       } else {
         prop.setOpenFail(true);
