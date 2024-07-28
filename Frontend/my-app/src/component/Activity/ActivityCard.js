@@ -172,6 +172,9 @@ export default function ActivityCard(prop) {
   const handleDeleteActivity = (userID, ID) => {
     const sendDeleteRequest = async () => {
       if (await DeleteActivity(userID, ID)) {
+        if (isFavorite) {
+          await deleteFavorite();
+        }
         setOpenDeleteSuccess(true);
       }
     };
