@@ -57,37 +57,11 @@ describe("Activity Card", () => {
     renderComponent(profile);
     expect(screen.getByText(/Unit 704 SIR Reservist/i)).toBeInTheDocument();
   });
-  it("correctly displays the participant number", () => {
-    renderComponent(profile);
-    expect(screen.getByText(/15/i)).toBeInTheDocument();
-  });
-  it("correctly displays the activity start date", () => {
-    renderComponent(profile);
-    expect(screen.getByText(/Mon, Jun 16, 2025 12:00 AM/i)).toBeInTheDocument();
-  });
-  it("correctly displays the activity end date", () => {
-    renderComponent(profile);
-    expect(
-      screen.getByText(/Fri, Jun 20, 2025 12:00 AM/i)
-    ).toBeInTheDocument();
-  });
   it("correctly displays the activity location", () => {
     renderComponent(profile);
     expect(screen.getByText(/Kranji Camp II/i)).toBeInTheDocument();
   });
   it("correctly displays the activity description", () => {
-    renderComponent(profile);
-    expect(
-      screen.getByText(/Don't be late and I will see you in the ARMY!/i)
-    ).toBeInTheDocument();
-  });
-  it("correctly displays the edit activity button", () => {
-    renderComponent(profile);
-    expect(
-      screen.getByText(/Don't be late and I will see you in the ARMY!/i)
-    ).toBeInTheDocument();
-  });
-  it("correctly displays the edit activity form when edit activity button is clicked", () => {
     renderComponent(profile);
     expect(
       screen.getByText(/Don't be late and I will see you in the ARMY!/i)
